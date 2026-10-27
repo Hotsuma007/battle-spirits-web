@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../../../../localization/displayLanguage.js";
 import { useState } from "react";
 import { isHandCardDrag, readHandCardDragPayload } from "../../interactions/handInteraction.js";
 import ArenaZone from "./ArenaZone.jsx";
@@ -48,7 +49,7 @@ export default function BattlefieldZone({
   }
 
   return (
-    <ArenaZone zone="battlefield" label="Field" side={side} count={cards.length}>
+    <ArenaZone zone="battlefield" label={___bsJa("Field", "分野")} side={side} count={cards.length}>
       <div
         className={`arena-redesign-battlefield-cards is-${density}${handDropActive ? " is-hand-drop-active" : ""}`}
         data-card-count={cards.length}

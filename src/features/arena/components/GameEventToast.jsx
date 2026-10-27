@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { japaneseGameLog } from "../../../localization/gameLog.js";
 import "../../../styles/arena/gameEventToastV490.css";
 
 const DISPLAY_MS = 2100;
@@ -13,7 +14,7 @@ function nextUnseenEntries(entries, lastSeenId) {
   return entries.slice(index + 1);
 }
 
-export default function GameEventToast({ entries = [], classifyEntry, language = "ptBR" }) {
+export default function GameEventToast({ entries = [], cardIndex, classifyEntry, language = "ptBR" }) {
   const lastSeenIdRef = useRef(null);
   const timerRef = useRef(null);
   const [queue, setQueue] = useState([]);
@@ -59,7 +60,7 @@ export default function GameEventToast({ entries = [], classifyEntry, language =
 
   if (!active) return null;
 
-  const label = {
+  const label = language === "ja" ? ({ battle: "バトル", timing: "タイミング", life: "ライフ", removal: "カード移動", play: "カード使用" }[active.visualKind] || "イベント") : {
     battle: language === "en" ? "BATTLE" : "BATALHA",
     timing: "TIMING",
     life: "LIFE",
@@ -77,7 +78,7 @@ export default function GameEventToast({ entries = [], classifyEntry, language =
       <i aria-hidden="true" />
       <div>
         <span>{label}</span>
-        <strong>{active.text}</strong>
+        <strong>{language === "ja" ? japaneseGameLog(active.text, cardIndex) : active.text}</strong>
       </div>
     </div>
   );

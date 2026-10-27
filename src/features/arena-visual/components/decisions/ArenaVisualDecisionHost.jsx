@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../../../../localization/displayLanguage.js";
 import { useEffect, useState } from "react";
 import ArenaVisualCardSelectionDecision from "./ArenaVisualCardSelectionDecision.jsx";
 import ArenaVisualCoreDistributionDecision from "./ArenaVisualCoreDistributionDecision.jsx";
@@ -93,12 +94,12 @@ export default function ArenaVisualDecisionHost({ decision, onActionRequest }) {
   return (
     <section className={`arena-visual-center-decision is-${decision.kind}`} aria-live="polite">
       <header>
-        <span>Effect Resolution</span>
-        <strong>{decision.title || "Effect Resolution"}</strong>
-        {decision.waiting ? <small>Waiting for the other player</small> : null}
+        <span>{___bsJa("Effect Resolution", "効果の解決")}</span>
+        <strong>{decision.title || ___bsJa("Effect Resolution", "効果の解決")}</strong>
+        {decision.waiting ? <small>{___bsJa("Waiting for the other player", "他のプレイヤーを待っています")}</small> : null}
       </header>
       {decision.instruction ? <p>{decision.instruction}</p> : null}
-      {!decision.waiting ? body : <div className="arena-visual-decision-waiting">The decision belongs to the other player.</div>}
+      {!decision.waiting ? body : <div className="arena-visual-decision-waiting">{___bsJa("The decision belongs to the other player.", "決定は他のプレイヤーに属します。")}</div>}
     </section>
   );
 }

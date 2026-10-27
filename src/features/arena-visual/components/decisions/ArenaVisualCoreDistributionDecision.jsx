@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../../../../localization/displayLanguage.js";
 export default function ArenaVisualCoreDistributionDecision({
   decision,
   distribution,
@@ -22,8 +23,8 @@ export default function ArenaVisualCoreDistributionDecision({
         );
       })}
       <footer className="arena-visual-center-decision-footer">
-        <span>{assigned}/{required} Cores • Source: {decision.sourceCoreZone || "reserve"}</span>
-        <button type="button" disabled={!ready} onClick={() => resolve({ coreDistribution: distribution })}>Confirm Cores</button>
+        <span>{assigned}/{required}{___bsJa(" Cores • Source: ", " コア • 出典: ")}{decision.sourceCoreZone || ___bsJa("reserve", "リザーブ")}</span>
+        <button type="button" disabled={!ready} onClick={() => resolve({ coreDistribution: distribution })}>{___bsJa("Confirm Cores", "コアを確定")}</button>
       </footer>
     </div>
   );

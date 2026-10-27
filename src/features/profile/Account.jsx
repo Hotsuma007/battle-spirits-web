@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../../localization/displayLanguage.js";
 import EternalCinematicBackdrop from "../../components/layout/EternalCinematicBackdrop.jsx";
 import {
   useCallback,
@@ -197,7 +198,7 @@ export default function Account({
           );
 
           setMessage(
-            pt
+            language === "ja" ? "現在、アカウント情報を読み込めません。" : pt
               ? "Não foi possível carregar sua conta agora."
               : "Could not load your account right now."
           );
@@ -245,7 +246,7 @@ export default function Account({
 
         if (active) {
           setMessage(
-            pt
+            language === "ja" ? "現在、アカウント情報を読み込めません。" : pt
               ? "Não foi possível carregar sua conta agora."
               : "Could not load your account right now."
           );
@@ -319,12 +320,12 @@ export default function Account({
       setMessage(
         result?.ok
           ? (
-            pt
+            language === "ja" ? "完了しました。" : pt
               ? "Concluído."
               : "Done."
           )
           : (
-            pt
+            language === "ja" ? "操作を完了できませんでした。" : pt
               ? "Não foi possível concluir a operação."
               : "Could not complete the operation."
           )
@@ -340,7 +341,7 @@ export default function Account({
       );
 
       setMessage(
-        pt
+        language === "ja" ? "現在、アカウントにアクセスできません。" : pt
           ? "Não foi possível acessar sua conta agora."
           : "Could not access your account right now."
       );
@@ -356,7 +357,7 @@ export default function Account({
     localProfile.displayName ||
     localProfile.name ||
     (
-      pt
+      language === "ja" ? "プレイヤー" : pt
         ? "Jogador"
         : "Player"
     );
@@ -393,27 +394,25 @@ export default function Account({
           }
         >
           {pt
-            ? "Voltar"
-            : "Back"}
+            ? ___bsJa("Voltar", "戻る")
+            : ___bsJa("Back", "戻る")}
         </button>
 
 
         <div className="account-v2-title">
 
-          <span className="eyebrow">
-            ACCOUNT
-          </span>
+          <span className="eyebrow">{___bsJa("ACCOUNT", "アカウント")}</span>
 
           <h1>
             {pt
-              ? "Conta Battle Spirits"
-              : "Battle Spirits Account"}
+              ? ___bsJa("Conta Battle Spirits", "バトルスピリッツアカウント")
+              : ___bsJa("Battle Spirits Account", "バトルスピリッツアカウント")}
           </h1>
 
           <p>
             {pt
-              ? "Gerencie sua identidade, login e sincronização com a nuvem."
-              : "Manage your identity, login and cloud synchronization."}
+              ? ___bsJa("Gerencie sua identidade, login e sincronização com a nuvem.", "ID、ログイン、クラウド同期を管理します。")
+              : ___bsJa("Manage your identity, login and cloud synchronization.", "ID、ログイン、クラウド同期を管理します。")}
           </p>
 
         </div>
@@ -437,13 +436,13 @@ export default function Account({
               {connected
                 ? (
                   pt
-                    ? "CONTA"
-                    : "ACCOUNT"
+                    ? ___bsJa("CONTA", "アカウント")
+                    : ___bsJa("ACCOUNT", "アカウント")
                 )
                 : (
                   accountsEnabled
-                    ? "CLOUD"
-                    : "LOCAL"
+                    ? ___bsJa("CLOUD", "雲")
+                    : ___bsJa("LOCAL", "ローカル")
                 )}
             </span>
 
@@ -451,12 +450,12 @@ export default function Account({
               {connected
                 ? (
                   pt
-                    ? "CONECTADA"
-                    : "CONNECTED"
+                    ? ___bsJa("CONECTADA", "接続済み")
+                    : ___bsJa("CONNECTED", "接続済み")
                 )
                 : accountsEnabled
-                  ? "OFFLINE"
-                  : "LOCAL"}
+                  ? ___bsJa("OFFLINE", "オフライン")
+                  : ___bsJa("LOCAL", "ローカル")}
             </strong>
           </div>
         </div>
@@ -492,8 +491,8 @@ export default function Account({
               <div className="account-v2-profile-copy">
                 <span className="eyebrow">
                   {pt
-                    ? "PERFIL LOCAL"
-                    : "LOCAL PROFILE"}
+                    ? ___bsJa("PERFIL LOCAL", "ローカルプロフィール")
+                    : ___bsJa("LOCAL PROFILE", "ローカルプロフィール")}
                 </span>
 
                 <h2>
@@ -505,16 +504,14 @@ export default function Account({
                     ? `@${username}`
                     : (
                       pt
-                        ? "Perfil salvo neste dispositivo"
-                        : "Profile saved on this device"
+                        ? ___bsJa("Perfil salvo neste dispositivo", "このデバイスに保存されたプロフィール")
+                        : ___bsJa("Profile saved on this device", "このデバイスに保存されたプロフィール")
                     )}
                 </p>
               </div>
 
 
-              <span className="account-v2-local-badge">
-                LOCAL
-              </span>
+              <span className="account-v2-local-badge">{___bsJa("LOCAL", "ローカル")}</span>
 
             </div>
 
@@ -528,14 +525,14 @@ export default function Account({
               <div>
                 <h3>
                   {pt
-                    ? "Seu perfil continua funcionando normalmente"
-                    : "Your profile still works normally"}
+                    ? ___bsJa("Seu perfil continua funcionando normalmente", "ローカルプロフィールを利用できます")
+                    : ___bsJa("Your profile still works normally", "ローカルプロフィールを利用できます")}
                 </h3>
 
                 <p>
                   {pt
-                    ? "Seus decks, perfil e configurações permanecem salvos neste PC. Recursos de conta online podem ficar indisponíveis nesta instalação."
-                    : "Your decks, profile and settings remain saved on this PC. Online account features may be unavailable in this installation."}
+                    ? ___bsJa("Seus decks, perfil e configurações permanecem salvos neste PC. Recursos de conta online podem ficar indisponíveis nesta instalação.", "デッキ、プロフィール、設定はこの PC に保存されたままになります。このインストールではオンライン アカウント機能が利用できない場合があります。")
+                    : ___bsJa("Your decks, profile and settings remain saved on this PC. Online account features may be unavailable in this installation.", "デッキ、プロフィール、設定はこの PC に保存されたままになります。このインストールではオンライン アカウント機能が利用できない場合があります。")}
                 </p>
               </div>
 
@@ -550,8 +547,8 @@ export default function Account({
             >
               <span>
                 {pt
-                  ? "Abrir Social Hub"
-                  : "Open Social Hub"}
+                  ? ___bsJa("Abrir Social Hub", "プロフィールを開く")
+                  : ___bsJa("Open Social Hub", "プロフィールを開く")}
               </span>
 
               <b aria-hidden="true">
@@ -565,20 +562,18 @@ export default function Account({
 
             <div className="account-spinner" />
 
-            <span className="eyebrow">
-              CLOUD ACCOUNT
-            </span>
+            <span className="eyebrow">{___bsJa("CLOUD ACCOUNT", "クラウドアカウント")}</span>
 
             <h2>
               {pt
-                ? "Conectando à conta..."
-                : "Connecting to account..."}
+                ? ___bsJa("Conectando à conta...", "アカウントに接続しています...")
+                : ___bsJa("Connecting to account...", "アカウントに接続しています...")}
             </h2>
 
             <p>
               {pt
-                ? "Aguarde enquanto verificamos sua sessão."
-                : "Please wait while we verify your session."}
+                ? ___bsJa("Aguarde enquanto verificamos sua sessão.", "セッションを確認するまでお待ちください。")
+                : ___bsJa("Please wait while we verify your session.", "セッションを確認するまでお待ちください。")}
             </p>
 
           </section>
@@ -606,9 +601,7 @@ export default function Account({
 
               <div className="account-v2-identity-copy">
 
-                <span className="eyebrow">
-                  ONLINE
-                </span>
+                <span className="eyebrow">{___bsJa("ONLINE", "オンライン")}</span>
 
                 <h2>
                   {displayName}
@@ -619,15 +612,13 @@ export default function Account({
                     ? `@${username}`
                     : (
                       pt
-                        ? "Perfil Battle Spirits"
-                        : "Battle Spirits profile"
+                        ? ___bsJa("Perfil Battle Spirits", "バトルスピリッツのプロフィール")
+                        : ___bsJa("Battle Spirits profile", "バトルスピリッツのプロフィール")
                     )}
                 </p>
 
                 <div className="account-v2-email">
-                  <span>
-                    E-MAIL
-                  </span>
+                  <span>{___bsJa("E-MAIL", "電子メール")}</span>
 
                   <strong>
                     {accountEmail}
@@ -642,8 +633,8 @@ export default function Account({
 
                 <span>
                   {pt
-                    ? "Conta conectada"
-                    : "Connected account"}
+                    ? ___bsJa("Conta conectada", "接続されたアカウント")
+                    : ___bsJa("Connected account", "接続されたアカウント")}
                 </span>
               </div>
 
@@ -655,28 +646,26 @@ export default function Account({
               <header className="account-v2-section-heading">
 
                 <div>
-                  <span className="eyebrow">
-                    CLOUD SYNC
-                  </span>
+                  <span className="eyebrow">{___bsJa("CLOUD SYNC", "クラウド同期")}</span>
 
                   <h3>
                     {pt
-                      ? "Sincronização"
-                      : "Synchronization"}
+                      ? ___bsJa("Sincronização", "同期")
+                      : ___bsJa("Synchronization", "同期")}
                   </h3>
 
                   <p>
                     {pt
-                      ? "Envie ou recupere seus dados da nuvem."
-                      : "Upload or restore your data from the cloud."}
+                      ? ___bsJa("Envie ou recupere seus dados da nuvem.", "クラウドからデータをアップロードまたは復元します。")
+                      : ___bsJa("Upload or restore your data from the cloud.", "クラウドからデータをアップロードまたは復元します。")}
                   </p>
                 </div>
 
 
                 <span className="account-v2-sync-state">
                   {pt
-                    ? "NUVEM DISPONÍVEL"
-                    : "CLOUD AVAILABLE"}
+                    ? ___bsJa("NUVEM DISPONÍVEL", "クラウド利用可能")
+                    : ___bsJa("CLOUD AVAILABLE", "クラウド利用可能")}
                 </span>
 
               </header>
@@ -687,18 +676,18 @@ export default function Account({
                 <SyncAction
                   eyebrow={
                     pt
-                      ? "PERFIL"
-                      : "PROFILE"
+                      ? ___bsJa("PERFIL", "プロフィール")
+                      : ___bsJa("PROFILE", "プロフィール")
                   }
                   title={
                     pt
-                      ? "Enviar para nuvem"
-                      : "Upload to cloud"
+                      ? ___bsJa("Enviar para nuvem", "クラウドにアップロード")
+                      : ___bsJa("Upload to cloud", "クラウドにアップロード")
                   }
                   description={
                     pt
-                      ? "Salva avatar, banner e informações do perfil."
-                      : "Saves avatar, banner and profile information."
+                      ? ___bsJa("Salva avatar, banner e informações do perfil.", "アバター、バナー、プロフィール情報を保存します。")
+                      : ___bsJa("Saves avatar, banner and profile information.", "アバター、バナー、プロフィール情報を保存します。")
                   }
                   icon="↑"
                   disabled={
@@ -716,18 +705,18 @@ export default function Account({
                 <SyncAction
                   eyebrow={
                     pt
-                      ? "PERFIL"
-                      : "PROFILE"
+                      ? ___bsJa("PERFIL", "プロフィール")
+                      : ___bsJa("PROFILE", "プロフィール")
                   }
                   title={
                     pt
-                      ? "Baixar da nuvem"
-                      : "Download from cloud"
+                      ? ___bsJa("Baixar da nuvem", "クラウドからダウンロード")
+                      : ___bsJa("Download from cloud", "クラウドからダウンロード")
                   }
                   description={
                     pt
-                      ? "Restaura seu perfil salvo online."
-                      : "Restores your online profile."
+                      ? ___bsJa("Restaura seu perfil salvo online.", "オンラインプロフィールを復元します。")
+                      : ___bsJa("Restores your online profile.", "オンラインプロフィールを復元します。")
                   }
                   icon="↓"
                   disabled={
@@ -745,18 +734,18 @@ export default function Account({
                 <SyncAction
                   eyebrow={
                     pt
-                      ? "DECKS"
-                      : "DECKS"
+                      ? ___bsJa("DECKS", "デッキ")
+                      : ___bsJa("DECKS", "デッキ")
                   }
                   title={
                     pt
-                      ? "Enviar para nuvem"
-                      : "Upload to cloud"
+                      ? ___bsJa("Enviar para nuvem", "クラウドにアップロード")
+                      : ___bsJa("Upload to cloud", "クラウドにアップロード")
                   }
                   description={
                     pt
-                      ? "Sincroniza sua biblioteca de decks."
-                      : "Synchronizes your deck library."
+                      ? ___bsJa("Sincroniza sua biblioteca de decks.", "デッキライブラリを同期します。")
+                      : ___bsJa("Synchronizes your deck library.", "デッキライブラリを同期します。")
                   }
                   icon="↑"
                   disabled={
@@ -774,18 +763,18 @@ export default function Account({
                 <SyncAction
                   eyebrow={
                     pt
-                      ? "DECKS"
-                      : "DECKS"
+                      ? ___bsJa("DECKS", "デッキ")
+                      : ___bsJa("DECKS", "デッキ")
                   }
                   title={
                     pt
-                      ? "Baixar da nuvem"
-                      : "Download from cloud"
+                      ? ___bsJa("Baixar da nuvem", "クラウドからダウンロード")
+                      : ___bsJa("Download from cloud", "クラウドからダウンロード")
                   }
                   description={
                     pt
-                      ? "Recupera os decks salvos na conta."
-                      : "Restores decks saved to the account."
+                      ? ___bsJa("Recupera os decks salvos na conta.", "アカウントに保存されているデッキを復元します。")
+                      : ___bsJa("Restores decks saved to the account.", "アカウントに保存されているデッキを復元します。")
                   }
                   icon="↓"
                   disabled={
@@ -814,8 +803,8 @@ export default function Account({
               >
                 <span>
                   {pt
-                    ? "Abrir Social Hub"
-                    : "Open Social Hub"}
+                    ? ___bsJa("Abrir Social Hub", "プロフィールを開く")
+                    : ___bsJa("Open Social Hub", "プロフィールを開く")}
                 </span>
 
                 <b aria-hidden="true">
@@ -843,8 +832,8 @@ export default function Account({
                 }
               >
                 {pt
-                  ? "Sair da conta"
-                  : "Sign out"}
+                  ? ___bsJa("Sair da conta", "サインアウト")
+                  : ___bsJa("Sign out", "サインアウト")}
               </button>
 
             </footer>
@@ -860,20 +849,18 @@ export default function Account({
 
 
               <div>
-                <span className="eyebrow">
-                  CLOUD ACCOUNT
-                </span>
+                <span className="eyebrow">{___bsJa("CLOUD ACCOUNT", "クラウドアカウント")}</span>
 
                 <h2>
                   {pt
-                    ? "Entre na sua conta"
-                    : "Sign in to your account"}
+                    ? ___bsJa("Entre na sua conta", "アカウントにサインインする")
+                    : ___bsJa("Sign in to your account", "アカウントにサインインする")}
                 </h2>
 
                 <p>
                   {pt
-                    ? "Sincronize perfil, decks, amigos e mensagens entre dispositivos."
-                    : "Sync profile, decks, friends and messages across devices."}
+                    ? ___bsJa("Sincronize perfil, decks, amigos e mensagens entre dispositivos.", "プロフィール、デッキ、友達、メッセージをデバイス間で同期します。")
+                    : ___bsJa("Sync profile, decks, friends and messages across devices.", "プロフィール、デッキ、友達、メッセージをデバイス間で同期します。")}
                 </p>
               </div>
 
@@ -883,9 +870,7 @@ export default function Account({
             <div className="account-v2-auth-form">
 
               <label>
-                <span>
-                  E-mail
-                </span>
+                <span>{___bsJa("E-mail", "電子メール")}</span>
 
                 <input
                   type="email"
@@ -908,8 +893,8 @@ export default function Account({
               <label>
                 <span>
                   {pt
-                    ? "Senha"
-                    : "Password"}
+                    ? ___bsJa("Senha", "パスワード")
+                    : ___bsJa("Password", "パスワード")}
                 </span>
 
                 <input
@@ -954,8 +939,8 @@ export default function Account({
                 }
               >
                 {pt
-                  ? "Entrar"
-                  : "Sign in"}
+                  ? ___bsJa("Entrar", "サインイン")
+                  : ___bsJa("Sign in", "サインイン")}
               </button>
 
 
@@ -978,8 +963,8 @@ export default function Account({
                 }
               >
                 {pt
-                  ? "Criar conta"
-                  : "Create account"}
+                  ? ___bsJa("Criar conta", "アカウントを作成する")
+                  : ___bsJa("Create account", "アカウントを作成する")}
               </button>
 
             </div>

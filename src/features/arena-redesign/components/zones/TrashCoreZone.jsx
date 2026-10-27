@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../../../../localization/displayLanguage.js";
 import CoreResourceZone from "../resources/CoreResourceZone.jsx";
 
 export default function TrashCoreZone({
@@ -13,7 +14,7 @@ export default function TrashCoreZone({
 
   return (
     <CoreResourceZone
-      label="Core Trash"
+      label={___bsJa("Core Trash", "コアトラッシュ")}
       zone="trash"
       regularCount={trashCores}
       soulCore={soulCore}

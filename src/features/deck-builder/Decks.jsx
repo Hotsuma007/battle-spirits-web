@@ -1,3 +1,6 @@
+import { getDisplayCardName as getCardName } from "../../localization/displayCardName.js";
+import { localizeShopText } from "../../localization/shopText.js";
+import { japaneseText as ___bsJa, isJapaneseDisplay as ___bsJapanese } from "../../localization/displayLanguage.js";
 import EternalCinematicBackdrop from "../../components/layout/EternalCinematicBackdrop.jsx";
 import PointerTiltSurface from "../../components/layout/PointerTiltSurface.jsx";
 import { useEffect, useMemo, useState } from "react";
@@ -16,7 +19,7 @@ import {
 } from "../../services/cards/cardRepository.js";
 
 import {
-  getCardName,
+
   resolveCardImage,
   resolveCardThumbnail
 } from "../../game/cardAdapter.js";
@@ -220,7 +223,7 @@ function CoverImage({
       src={image}
       alt={
         name ||
-        "Deck cover"
+        ___bsJa("Deck cover", "デッキカバー")
       }
       draggable="false"
       loading="lazy"
@@ -271,7 +274,7 @@ function DeckLibraryCard({
           cover
         )
       : (
-        language === "en"
+        language === "ja" ? "表紙なし" : language === "en"
           ? "No cover"
           : "Sem capa"
       );
@@ -289,7 +292,7 @@ function DeckLibraryCard({
       updatedAt.getTime()
     )
       ? updatedAt.toLocaleDateString(
-          language === "en"
+          language === "ja" ? "ja-JP" : language === "en"
             ? "en-US"
             : "pt-BR",
           {
@@ -321,8 +324,8 @@ function DeckLibraryCard({
         }
         aria-label={
           language === "en"
-            ? `Edit ${deck.name}`
-            : `Editar ${deck.name}`
+            ? (___bsJapanese() ? `${deck.name}を編集` : `Edit ${deck.name}`)
+            : (___bsJapanese() ? `${deck.name}を編集` : `Editar ${deck.name}`)
         }
       >
 
@@ -343,9 +346,7 @@ function DeckLibraryCard({
           </div>
 
 
-          <span className="deck-library-v2-cover-label">
-            DECK COVER
-          </span>
+          <span className="deck-library-v2-cover-label">{___bsJa("DECK COVER", "デッキカバー")}</span>
 
         </div>
 
@@ -358,8 +359,8 @@ function DeckLibraryCard({
               <span className="eyebrow">
                 {size}{" "}
                 {language === "en"
-                  ? "CARDS"
-                  : "CARTAS"}
+                  ? ___bsJa("CARDS", "枚")
+                  : ___bsJa("CARTAS", "枚")}
               </span>
 
               <h2>
@@ -383,13 +384,13 @@ function DeckLibraryCard({
                 {validation.ok
                   ? (
                     language === "en"
-                      ? "VALID"
-                      : "VÁLIDO"
+                      ? ___bsJa("VALID", "有効")
+                      : ___bsJa("VÁLIDO", "有効")
                   )
                   : (
                     language === "en"
-                      ? "REVIEW"
-                      : "REVISAR"
+                      ? ___bsJa("REVIEW", "レビュー")
+                      : ___bsJa("REVISAR", "レビュー")
                   )}
               </span>
             </div>
@@ -400,8 +401,8 @@ function DeckLibraryCard({
           <p className="deck-library-v2-cover-name">
             <span>
               {language === "en"
-                ? "Cover"
-                : "Capa"}
+                ? ___bsJa("Cover", "カバー")
+                : ___bsJa("Capa", "カバー")}
             </span>
 
             <strong
@@ -419,8 +420,8 @@ function DeckLibraryCard({
             <div>
               <span>
                 {language === "en"
-                  ? "UNIQUE"
-                  : "ÚNICAS"}
+                  ? ___bsJa("UNIQUE", "種類")
+                  : ___bsJa("ÚNICAS", "種類")}
               </span>
 
               <strong>
@@ -430,9 +431,7 @@ function DeckLibraryCard({
 
 
             <div>
-              <span>
-                TOTAL
-              </span>
+              <span>{___bsJa("TOTAL", "合計")}</span>
 
               <strong>
                 {size}
@@ -443,8 +442,8 @@ function DeckLibraryCard({
             <div>
               <span>
                 {language === "en"
-                  ? "UPDATED"
-                  : "ATUALIZADO"}
+                  ? ___bsJa("UPDATED", "更新日")
+                  : ___bsJa("ATUALIZADO", "更新日")}
               </span>
 
               <strong>
@@ -459,8 +458,8 @@ function DeckLibraryCard({
 
             <span>
               {language === "en"
-                ? "OPEN DECK"
-                : "ABRIR DECK"}
+                ? ___bsJa("OPEN DECK", "デッキを開く")
+                : ___bsJa("ABRIR DECK", "デッキを開く")}
             </span>
 
             <b aria-hidden="true">
@@ -516,7 +515,7 @@ function CreateDeckOverlay({
 
     if (!selected?.ready) {
       setError(
-        pt
+        language === "ja" ? "コレクションのカードが足りず、このデッキはまだ完成していません。" : pt
           ? "Este deck ainda não está completo na coleção disponível."
           : "This deck is not complete in the available card collection yet."
       );
@@ -536,8 +535,8 @@ function CreateDeckOverlay({
       aria-modal="true"
       aria-label={
         pt
-          ? "Criar deck"
-          : "Create deck"
+          ? ___bsJa("Criar deck", "デッキを作成する")
+          : ___bsJa("Create deck", "デッキを作成する")
       }
     >
       <div
@@ -553,21 +552,21 @@ function CreateDeckOverlay({
           <div>
             <span className="eyebrow">
               {pt
-                ? "NOVO DECK"
-                : "NEW DECK"}
+                ? ___bsJa("NOVO DECK", "新しいデッキ")
+                : ___bsJa("NEW DECK", "新しいデッキ")}
             </span>
 
             <h2>
               {step === "choice"
                 ? (
                   pt
-                    ? "Como você quer começar?"
-                    : "How do you want to start?"
+                    ? ___bsJa("Como você quer começar?", "どのように始めたいですか?")
+                    : ___bsJa("How do you want to start?", "どのように始めたいですか?")
                 )
                 : (
                   pt
-                    ? "Escolha um deck pronto"
-                    : "Choose a prebuilt deck"
+                    ? ___bsJa("Escolha um deck pronto", "構築済みのデッキを選択する")
+                    : ___bsJa("Choose a prebuilt deck", "構築済みのデッキを選択する")
                 )}
             </h2>
 
@@ -575,13 +574,13 @@ function CreateDeckOverlay({
               {step === "choice"
                 ? (
                   pt
-                    ? "Comece do zero ou use uma lista pré-construída como ponto de partida."
-                    : "Start from scratch or use a prebuilt list as your starting point."
+                    ? ___bsJa("Comece do zero ou use uma lista pré-construída como ponto de partida.", "最初から始めるか、事前に作成されたリストを出発点として使用します。")
+                    : ___bsJa("Start from scratch or use a prebuilt list as your starting point.", "最初から始めるか、事前に作成されたリストを出発点として使用します。")
                 )
                 : (
                   pt
-                    ? "O deck será copiado para Meus Decks e poderá ser editado normalmente."
-                    : "The deck will be copied to My Decks and can be edited normally."
+                    ? ___bsJa("O deck será copiado para Meus Decks e poderá ser editado normalmente.", "デッキはマイ​​デッキにコピーされ、通常通り編集できるようになります。")
+                    : ___bsJa("The deck will be copied to My Decks and can be edited normally.", "デッキはマイ​​デッキにコピーされ、通常通り編集できるようになります。")
                 )}
             </p>
           </div>
@@ -592,8 +591,8 @@ function CreateDeckOverlay({
             onClick={onClose}
             aria-label={
               pt
-                ? "Fechar"
-                : "Close"
+                ? ___bsJa("Fechar", "閉じる")
+                : ___bsJa("Close", "閉じる")
             }
           >
             ×
@@ -608,9 +607,7 @@ function CreateDeckOverlay({
               className="deck-create-option empty"
               onClick={onEmpty}
             >
-              <span className="deck-create-option-code">
-                EMPTY DECK
-              </span>
+              <span className="deck-create-option-code">{___bsJa("EMPTY DECK", "空のデッキ")}</span>
 
               <div className="deck-create-option-mark">
                 +
@@ -618,20 +615,20 @@ function CreateDeckOverlay({
 
               <strong>
                 {pt
-                  ? "Construir do Zero"
-                  : "Build from Scratch"}
+                  ? ___bsJa("Construir do Zero", "ゼロから構築")
+                  : ___bsJa("Build from Scratch", "ゼロから構築")}
               </strong>
 
               <p>
                 {pt
-                  ? "Abra o Deck Builder com uma lista vazia e monte seu próprio deck."
-                  : "Open Deck Builder with an empty list and build your own deck."}
+                  ? ___bsJa("Abra o Deck Builder com uma lista vazia e monte seu próprio deck.", "空のリストでデッキビルダーを開き、独自のデッキを構築します。")
+                  : ___bsJa("Open Deck Builder with an empty list and build your own deck.", "空のリストでデッキビルダーを開き、独自のデッキを構築します。")}
               </p>
 
               <span className="deck-create-option-action">
                 {pt
-                  ? "Abrir Deck Builder"
-                  : "Open Deck Builder"}
+                  ? ___bsJa("Abrir Deck Builder", "デッキビルダーを開く")
+                  : ___bsJa("Open Deck Builder", "デッキビルダーを開く")}
                 <b>→</b>
               </span>
             </button>
@@ -646,9 +643,7 @@ function CreateDeckOverlay({
                 )
               }
             >
-              <span className="deck-create-option-code">
-                PREBUILT DECKS
-              </span>
+              <span className="deck-create-option-code">{___bsJa("PREBUILT DECKS", "構築済みデッキ")}</span>
 
               <div className="deck-create-option-stack" aria-hidden="true">
                 <i />
@@ -658,20 +653,20 @@ function CreateDeckOverlay({
 
               <strong>
                 {pt
-                  ? "Deck Pronto"
-                  : "Prebuilt Deck"}
+                  ? ___bsJa("Deck Pronto", "構築済みデッキ")
+                  : ___bsJa("Prebuilt Deck", "構築済みデッキ")}
               </strong>
 
               <p>
                 {pt
-                  ? "Experimente decks como SD10, SD17, SD19 e SD20 sem precisar montar a lista manualmente."
-                  : "Try decks such as SD10, SD17, SD19 and SD20 without building the list manually."}
+                  ? ___bsJa("Experimente decks como SD10, SD17, SD19 e SD20 sem precisar montar a lista manualmente.", "リストを手動で作成せずに、SD10、SD17、SD19、SD20 などのデッキを試してください。")
+                  : ___bsJa("Try decks such as SD10, SD17, SD19 and SD20 without building the list manually.", "リストを手動で作成せずに、SD10、SD17、SD19、SD20 などのデッキを試してください。")}
               </p>
 
               <span className="deck-create-option-action">
                 {pt
-                  ? "Escolher deck pronto"
-                  : "Choose prebuilt deck"}
+                  ? ___bsJa("Escolher deck pronto", "構築済みデッキを選択する")
+                  : ___bsJa("Choose prebuilt deck", "構築済みデッキを選択する")}
                 <b>→</b>
               </span>
             </button>
@@ -688,15 +683,15 @@ function CreateDeckOverlay({
                 }}
               >
                 {pt
-                  ? "Voltar"
-                  : "Back"}
+                  ? ___bsJa("Voltar", "戻る")
+                  : ___bsJa("Back", "戻る")}
               </button>
 
               <div className="prebuilt-list-heading">
                 <span className="eyebrow">
                   {pt
-                    ? "DECKS DISPONÍVEIS"
-                    : "AVAILABLE DECKS"}
+                    ? ___bsJa("DECKS DISPONÍVEIS", "利用可能なデッキ")
+                    : ___bsJa("AVAILABLE DECKS", "利用可能なデッキ")}
                 </span>
                 <strong>
                   {builtTemplates.length}
@@ -735,7 +730,7 @@ function CreateDeckOverlay({
                         <span className="prebuilt-template-thumb">
                           <CoverImage
                             card={item.cover}
-                            name={template.title}
+                            name={localizeShopText(template.title, language)}
                           />
                         </span>
 
@@ -744,13 +739,13 @@ function CreateDeckOverlay({
                             {template.setCode}
                           </small>
                           <strong>
-                            {template.title}
+                            {localizeShopText(template.title, language)}
                           </strong>
                           <em>
                             {item.totalCards}{" "}
                             {pt
-                              ? "cartas"
-                              : "cards"}
+                              ? ___bsJa("cartas", "枚")
+                              : ___bsJa("cards", "枚")}
                           </em>
                         </span>
 
@@ -778,7 +773,7 @@ function CreateDeckOverlay({
                     <div className="prebuilt-detail-cover">
                       <CoverImage
                         card={selected.cover}
-                        name={selected.template.title}
+                        name={localizeShopText(selected.template.title, language)}
                       />
                     </div>
                   </PointerTiltSurface>
@@ -789,11 +784,11 @@ function CreateDeckOverlay({
                     </span>
 
                     <h3>
-                      {selected.template.title}
+                      {localizeShopText(selected.template.title, language)}
                     </h3>
 
                     <p>
-                      {pt
+                      {language === "ja" ? "カードリストを確認した構築済みデッキです。" : pt
                         ? selected.template.subtitlePT
                         : selected.template.subtitleEN}
                     </p>
@@ -802,8 +797,8 @@ function CreateDeckOverlay({
                       <div>
                         <span>
                           {pt
-                            ? "COR"
-                            : "COLOR"}
+                            ? ___bsJa("COR", "色")
+                            : ___bsJa("COLOR", "色")}
                         </span>
                         <strong>
                           {pt
@@ -815,8 +810,8 @@ function CreateDeckOverlay({
                       <div>
                         <span>
                           {pt
-                            ? "NÍVEL"
-                            : "LEVEL"}
+                            ? ___bsJa("NÍVEL", "レベル")
+                            : ___bsJa("LEVEL", "レベル")}
                         </span>
                         <strong>
                           {pt
@@ -828,8 +823,8 @@ function CreateDeckOverlay({
                       <div>
                         <span>
                           {pt
-                            ? "CARTAS"
-                            : "CARDS"}
+                            ? ___bsJa("CARTAS", "枚")
+                            : ___bsJa("CARDS", "枚")}
                         </span>
                         <strong>
                           {selected.totalCards}
@@ -839,8 +834,8 @@ function CreateDeckOverlay({
                       <div>
                         <span>
                           {pt
-                            ? "ÚNICAS"
-                            : "UNIQUE"}
+                            ? ___bsJa("ÚNICAS", "種類")
+                            : ___bsJa("UNIQUE", "種類")}
                         </span>
                         <strong>
                           {selected.uniqueCards}
@@ -854,13 +849,11 @@ function CreateDeckOverlay({
                 <div className="prebuilt-card-list-block">
                   <header>
                     <div>
-                      <span className="eyebrow">
-                        DECK LIST
-                      </span>
+                      <span className="eyebrow">{___bsJa("DECK LIST", "デッキリスト")}</span>
                       <strong>
                         {pt
-                          ? "Lista de cartas"
-                          : "Card list"}
+                          ? ___bsJa("Lista de cartas", "カードリスト")
+                          : ___bsJa("Card list", "カードリスト")}
                       </strong>
                     </div>
 
@@ -876,13 +869,13 @@ function CreateDeckOverlay({
                       {selected.ready
                         ? (
                           pt
-                            ? "PRONTO"
-                            : "READY"
+                            ? ___bsJa("PRONTO", "準備ができて")
+                            : ___bsJa("READY", "準備ができて")
                         )
                         : (
                           pt
-                            ? "INCOMPLETO"
-                            : "INCOMPLETE"
+                            ? ___bsJa("INCOMPLETO", "不完全")
+                            : ___bsJa("INCOMPLETE", "不完全")
                         )}
                     </span>
                   </header>
@@ -931,8 +924,8 @@ function CreateDeckOverlay({
                 {!selected.ready && (
                   <div className="prebuilt-warning">
                     {pt
-                      ? `A lista precisa ter ${selected.template.expectedSize} cartas disponíveis para ser criada.`
-                      : `The list needs ${selected.template.expectedSize} available cards before it can be created.`}
+                      ? (___bsJapanese() ? `リストには、作成可能な ${selected.template.expectedSize} カードが含まれている必要があります。` : `A lista precisa ter ${selected.template.expectedSize} cartas disponíveis para ser criada.`)
+                      : (___bsJapanese() ? `リストを作成するには、${selected.template.expectedSize} 個の利用可能なカードが必要です。` : `The list needs ${selected.template.expectedSize} available cards before it can be created.`)}
                   </div>
                 )}
 
@@ -940,8 +933,8 @@ function CreateDeckOverlay({
                 <footer className="prebuilt-detail-footer">
                   <p>
                     {pt
-                      ? "Uma cópia normal será adicionada à sua biblioteca. Você poderá renomear, editar, trocar a capa e exportar o deck."
-                      : "A normal copy will be added to your library. You can rename, edit, change the cover and export the deck."}
+                      ? ___bsJa("Uma cópia normal será adicionada à sua biblioteca. Você poderá renomear, editar, trocar a capa e exportar o deck.", "通常のコピーがライブラリに追加されます。デッキの名前変更、編集、カバーの変更、エクスポートが可能です。")
+                      : ___bsJa("A normal copy will be added to your library. You can rename, edit, change the cover and export the deck.", "通常のコピーがライブラリに追加されます。デッキの名前変更、編集、カバーの変更、エクスポートが可能です。")}
                   </p>
 
                   <button
@@ -952,8 +945,8 @@ function CreateDeckOverlay({
                   >
                     <span>
                       {pt
-                        ? "Criar este Deck"
-                        : "Create this Deck"}
+                        ? ___bsJa("Criar este Deck", "このデッキを作成する")
+                        : ___bsJa("Create this Deck", "このデッキを作成する")}
                     </span>
 
                   </button>
@@ -1155,7 +1148,14 @@ export default function Decks({
 
 
   const copy =
-    language === "en"
+    language === "ja"
+      ? {
+          eyebrow: "デッキ", title: "マイデッキ", subtitle: "保存したデッキを選んで編集できます。",
+          newDeck: "新しいデッキ", search: "デッキ名や表紙カードで検索", decks: "デッキ", valid: "使用可能",
+          cards: "カード", library: "デッキ一覧", result: "件のデッキ", none: "デッキがありません",
+          noneBody: "新しいデッキを作るか、構築済みデッキから始めてください。", noSearch: "検索条件に合うデッキはありません。", clear: "検索をクリア"
+        }
+      : language === "en"
       ? {
           eyebrow:
             "DECKS",
@@ -1258,7 +1258,7 @@ export default function Decks({
       upsertDeck({
         id: null,
         name:
-          `${template.setCode} — ${template.title}`,
+          `${template.setCode} · ${localizeShopText(template.title, language)}`,
         cards:
           built.entries.map(
             (entry) => ({
@@ -1310,8 +1310,8 @@ export default function Decks({
           }
         >
           {language === "en"
-            ? "Back"
-            : "Voltar"}
+            ? ___bsJa("Back", "戻る")
+            : ___bsJa("Voltar", "戻る")}
         </button>
 
 
@@ -1522,9 +1522,9 @@ export default function Decks({
         )}
 
         {filteredDecks.length > decksPerPage && (
-          <nav className="deck-library-v2-pagination" aria-label={language === "en" ? "Deck pages" : "Páginas de decks"}>
+          <nav className="deck-library-v2-pagination" aria-label={language === "en" ? ___bsJa("Deck pages", "デッキページ") : ___bsJa("Páginas de decks", "デッキページ")}>
             <button disabled={libraryPage === 1} onClick={() => setLibraryPage((page) => Math.max(1, page - 1))}>
-              {language === "en" ? "Previous" : "Anterior"}
+              {language === "en" ? ___bsJa("Previous", "前の") : ___bsJa("Anterior", "前の")}
             </button>
             {Array.from({ length: libraryPages }, (_, index) => index + 1).map((page) => (
               <button
@@ -1537,7 +1537,7 @@ export default function Decks({
               </button>
             ))}
             <button disabled={libraryPage === libraryPages} onClick={() => setLibraryPage((page) => Math.min(libraryPages, page + 1))}>
-              {language === "en" ? "Next" : "Próxima"}
+              {language === "en" ? ___bsJa("Next", "次") : ___bsJa("Próxima", "次")}
             </button>
           </nav>
         )}

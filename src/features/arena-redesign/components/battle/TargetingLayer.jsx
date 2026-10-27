@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../../../../localization/displayLanguage.js";
 export default function TargetingLayer({ interaction }) {
   if (!interaction?.targetingActive) return null;
 
@@ -8,7 +9,7 @@ export default function TargetingLayer({ interaction }) {
   return (
     <div className="arena-redesign-targeting-layer" role="status" aria-live="polite">
       <strong>{prompt}</strong>
-      <span>{selected.length} selected · {targets.length} available</span>
+      <span>{selected.length}{___bsJa(" selected · ", " 選択された · ")}{targets.length}{___bsJa(" available", " 利用可能")}</span>
     </div>
   );
 }

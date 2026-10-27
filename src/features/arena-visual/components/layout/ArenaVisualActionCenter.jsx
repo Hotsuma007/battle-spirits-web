@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../../../../localization/displayLanguage.js";
 import { useEffect, useRef } from "react";
 import ArenaVisualDecisionHost from "../decisions/ArenaVisualDecisionHost.jsx";
 import ArenaVisualUltimateTriggerPrompt from "../trigger/ArenaVisualUltimateTriggerPrompt.jsx";
@@ -39,7 +40,7 @@ export default function ArenaVisualActionCenter({ utility = {}, onActionRequest 
   if (!decision && !ultimateTrigger && !actions.length && !utility?.battle && !utility?.burstOpportunity && !utility?.setup) return null;
 
   return (
-    <div className="arena-visual-action-center" aria-label={language === "ja" ? "対戦操作" : "Arena action prompt"}>
+    <div className="arena-visual-action-center" aria-label={language === "ja" ? "対戦操作" : ___bsJa("Arena action prompt", "アリーナアクションプロンプト")}>
       {decision ? <ArenaVisualDecisionHost decision={decision} onActionRequest={onActionRequest} /> : null}
       {!decision && ultimateTrigger ? <ArenaVisualUltimateTriggerPrompt trigger={ultimateTrigger} onActionRequest={onActionRequest} /> : null}
       {!decision && !ultimateTrigger && utility?.setup ? <ArenaVisualMulliganPrompt setup={utility.setup} onActionRequest={onActionRequest} /> : null}
@@ -48,7 +49,7 @@ export default function ArenaVisualActionCenter({ utility = {}, onActionRequest 
       {!decision && !ultimateTrigger && actions.length ? (
         <section className="arena-visual-center-prompt" aria-live="polite">
           <span className="arena-visual-center-prompt-label">
-            {language === "ja" ? (utility?.battle?.flashPriorityPlayerId ? "フラッシュタイミング" : utility?.battle ? "バトル" : "操作を選択") : utility?.battle?.flashPriorityPlayerId ? "Flash Timing" : utility?.battle ? "Battle Action" : "Action Required"}
+            {language === "ja" ? (utility?.battle?.flashPriorityPlayerId ? "フラッシュタイミング" : utility?.battle ? "バトル" : "操作を選択") : utility?.battle?.flashPriorityPlayerId ? ___bsJa("Flash Timing", "フラッシュのタイミング") : utility?.battle ? ___bsJa("Battle Action", "バトルアクション") : ___bsJa("Action Required", "必要なアクション")}
           </span>
           <div className="arena-visual-center-action-buttons">
             {actions.map((action) => (

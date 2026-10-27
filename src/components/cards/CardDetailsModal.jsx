@@ -1,25 +1,28 @@
+import { getDisplayCardName as getCardName } from "../../localization/displayCardName.js";
+import { japaneseText as ___bsJa } from "../../localization/displayLanguage.js";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { resolveCardImage } from "../../game/cardAdapter.js";
+import {  resolveCardImage } from "../../game/cardAdapter.js";
+import { getJapaneseCardText, getJapaneseFamily } from "../../localization/cardText.js";
 
 import "../../styles/cards/cardDetailsModal.css";
 import "../../styles/cards/cardDetailsTilt.css";
 
 const COLOR_LABELS = {
-  red: { ptBR: "Vermelho", en: "Red" },
-  purple: { ptBR: "Roxo", en: "Purple" },
-  green: { ptBR: "Verde", en: "Green" },
-  white: { ptBR: "Branco", en: "White" },
-  yellow: { ptBR: "Amarelo", en: "Yellow" },
-  blue: { ptBR: "Azul", en: "Blue" },
-  ultimate: { ptBR: "Ultimate", en: "Ultimate" }
+  red: { ja: "赤", ptBR: "Vermelho", en: "Red" },
+  purple: { ja: "紫", ptBR: "Roxo", en: "Purple" },
+  green: { ja: "緑", ptBR: "Verde", en: "Green" },
+  white: { ja: "白", ptBR: "Branco", en: "White" },
+  yellow: { ja: "黄", ptBR: "Amarelo", en: "Yellow" },
+  blue: { ja: "青", ptBR: "Azul", en: "Blue" },
+  ultimate: { ja: "アルティメット", ptBR: "Ultimate", en: "Ultimate" }
 };
 
 const TYPE_LABELS = {
-  spirit: { ptBR: "Spirit", en: "Spirit" },
-  brave: { ptBR: "Brave", en: "Brave" },
-  ultimate: { ptBR: "Ultimate", en: "Ultimate" },
-  nexus: { ptBR: "Nexus", en: "Nexus" },
-  magic: { ptBR: "Magic", en: "Magic" }
+  spirit: { ja: "スピリット", ptBR: "Spirit", en: "Spirit" },
+  brave: { ja: "ブレイヴ", ptBR: "Brave", en: "Brave" },
+  ultimate: { ja: "アルティメット", ptBR: "Ultimate", en: "Ultimate" },
+  nexus: { ja: "ネクサス", ptBR: "Nexus", en: "Nexus" },
+  magic: { ja: "マジック", ptBR: "Magic", en: "Magic" }
 };
 
 const KEYWORD_PATTERN = [
@@ -97,6 +100,7 @@ const HIGHLIGHT_REGEX = new RegExp(
 
 function localized(value, language) {
   if (value == null) return "";
+  if (language === "ja") return getJapaneseCardText(value);
   if (typeof value === "string") return value;
 
   if (language === "en") {
@@ -107,6 +111,7 @@ function localized(value, language) {
 }
 
 function cardName(card, language) {
+  if (language === "ja") return getCardName(card, language);
   if (language === "en") {
     return card.nameEN || card.name || card.namePT || card.id || "";
   }
@@ -220,10 +225,8 @@ function getEffectEntries(card, language) {
 
   if (parsed.length) return parsed;
 
-  const fallback =
-    language === "en"
-      ? localized(card?.effectText, "en") || card?.textEN || card?.textPT || ""
-      : localized(card?.effectText, "ptBR") || card?.textPT || card?.textEN || "";
+  const fallback = localized(card?.effectText, language) ||
+    (language === "en" ? card?.textEN || card?.textPT : card?.textPT || card?.textEN) || "";
 
   return splitRawEffect(fallback);
 }
@@ -365,12 +368,12 @@ function SectionTitle({ children }) {
 export default function CardDetailsModal({
   card,
   onClose,
-  initialLanguage = "ptBR",
+  initialLanguage = "ja",
   relatedCards = [],
   onSelectRelated,
   crafting = null
 }) {
-  const [language, setLanguage] = useState(initialLanguage === "en" ? "en" : "ptBR");
+  const [language, setLanguage] = useState(["ja", "en", "ptBR"].includes(initialLanguage) ? initialLanguage : "ja");
   const cardTiltRef = useRef(null);
   const tiltFrameRef = useRef(null);
 
@@ -474,7 +477,14 @@ export default function CardDetailsModal({
   const glowTheme = getGlowTheme(activeCard);
 
   const labels =
-    language === "en"
+    language === "ja"
+      ? {
+          title: "カード詳細", set: "収録弾", rarity: "レアリティ", type: "種類", colors: "色", cost: "コスト",
+          reduction: "軽減", symbols: "シンボル", families: "系統", subtypes: "特徴", levels: "レベル / BP",
+          effect: "効果", noEffect: "このカードに効果はありません。", noReduction: "なし", noSymbol: "なし",
+          related: "関連カード", close: "閉じる", craft: "生成", owned: "所持", discounted: "コレクション割引", maxCopies: "所持上限"
+        }
+      : language === "en"
       ? {
           title: "Card Details",
           set: "Set",
@@ -566,21 +576,20 @@ export default function CardDetailsModal({
 
         <div className="card-details-info-column">
           <header className="card-details-toolbar">
-            <div className="card-details-language-switch" aria-label="Idioma da carta">
+            <div className="card-details-language-switch" aria-label={___bsJa("Idioma da carta", "カードの表示言語")}>
+              <button type="button" className={language === "ja" ? "active" : ""} onClick={() => setLanguage("ja")}>
+                日本語
+              </button>
               <button
                 type="button"
                 className={language === "ptBR" ? "active" : ""}
                 onClick={() => setLanguage("ptBR")}
-              >
-                PT-BR
-              </button>
+              >{___bsJa("PT-BR", "ポルトガル語")}</button>
               <button
                 type="button"
                 className={language === "en" ? "active" : ""}
                 onClick={() => setLanguage("en")}
-              >
-                EN
-              </button>
+              >{___bsJa("EN", "英語")}</button>
             </div>
 
             <button
@@ -692,7 +701,7 @@ export default function CardDetailsModal({
                     <SectionTitle>{labels.families}</SectionTitle>
                     <div className="card-details-tag-list">
                       {families.map((family) => (
-                        <span key={family}>{family}</span>
+                        <span key={family}>{language === "ja" ? getJapaneseFamily(family) : family}</span>
                       ))}
                     </div>
                   </div>
@@ -703,7 +712,7 @@ export default function CardDetailsModal({
                     <SectionTitle>{labels.subtypes}</SectionTitle>
                     <div className="card-details-tag-list secondary">
                       {subtypes.map((subtype) => (
-                        <span key={subtype}>{subtype}</span>
+                        <span key={subtype}>{language === "ja" ? getJapaneseFamily(subtype) : subtype}</span>
                       ))}
                     </div>
                   </div>
@@ -720,11 +729,11 @@ export default function CardDetailsModal({
                       <strong className="card-details-level-badge">LV{level.level}</strong>
                       <span className="card-details-level-cores">
                         <b>{level.cores ?? 0}</b>
-                        <small>{language === "en" ? "Cores" : "Cores"}</small>
+                        <small>{language === "en" ? ___bsJa("Cores", "コア") : ___bsJa("Cores", "コア")}</small>
                       </span>
                       {activeCard.cardType !== "nexus" && level.bp != null && (
                         <span className="card-details-bp">
-                          <b>{Number(level.bp).toLocaleString("pt-BR")}</b>
+                          <b>{Number(level.bp).toLocaleString(language === "ja" ? "ja-JP" : language === "en" ? "en-US" : "pt-BR")}</b>
                           <small>BP</small>
                         </span>
                       )}
@@ -736,6 +745,7 @@ export default function CardDetailsModal({
 
             <section className="card-details-section card-details-effects-section">
               <SectionTitle>{labels.effect}</SectionTitle>
+              {language === "ja" && effectEntries.length > 0 && <small>効果文は参考訳です。正確な内容はカード画像をご確認ください。</small>}
 
               {effectEntries.length > 0 ? (
                 <div className="card-details-effect-list">

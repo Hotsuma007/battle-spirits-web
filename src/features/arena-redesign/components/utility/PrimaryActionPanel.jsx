@@ -1,7 +1,8 @@
+import { japaneseText as ___bsJa } from "../../../../localization/displayLanguage.js";
 export default function PrimaryActionPanel({ actions = [], onActionRequest }) {
   return (
-    <section className="arena-redesign-utility-section" aria-label="Contextual actions">
-      <header className="arena-redesign-utility-title">Actions</header>
+    <section className="arena-redesign-utility-section" aria-label={___bsJa("Contextual actions", "コンテキストに応じたアクション")}>
+      <header className="arena-redesign-utility-title">{___bsJa("Actions", "アクション")}</header>
       <div className="arena-redesign-primary-actions" data-action-count={actions.length}>
         {actions.length ? actions.map((action) => (
           <button
@@ -13,7 +14,7 @@ export default function PrimaryActionPanel({ actions = [], onActionRequest }) {
             {action.label}
           </button>
         )) : (
-          <div className="arena-redesign-utility-empty">No global action available</div>
+          <div className="arena-redesign-utility-empty">{___bsJa("No global action available", "使用可能なグローバル アクションはありません")}</div>
         )}
       </div>
     </section>

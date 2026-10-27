@@ -17,6 +17,7 @@ export const RECOMMENDED_THEMES = [
       "eternal",
 
     name: {
+      ja: "エターナル",
       ptBR:
         "Eternal",
       en:
@@ -24,6 +25,7 @@ export const RECOMMENDED_THEMES = [
     },
 
     description: {
+      ja: "黒・白・グレーを基調に、カードとシンボルの色を際立たせます。",
       ptBR:
         "A identidade padrão preto, branco e grafite do simulador, deixando as cores das cartas e símbolos ganharem destaque.",
       en:
@@ -40,6 +42,7 @@ export const RECOMMENDED_THEMES = [
       "crimson-dragon",
 
     name: {
+      ja: "クリムゾンドラゴン",
       ptBR:
         "Crimson Dragon",
       en:
@@ -47,6 +50,7 @@ export const RECOMMENDED_THEMES = [
     },
 
     description: {
+      ja: "深い赤と黒、金を組み合わせた配色です。",
       ptBR:
         "Vermelho profundo, preto e dourado para decks agressivos.",
       en:
@@ -71,6 +75,7 @@ export const RECOMMENDED_THEMES = [
       "azure-core",
 
     name: {
+      ja: "アズールコア",
       ptBR:
         "Azure Core",
       en:
@@ -78,6 +83,7 @@ export const RECOMMENDED_THEMES = [
     },
 
     description: {
+      ja: "濃い青とシアンを組み合わせた配色です。",
       ptBR:
         "Azul intenso e ciano com aparência tecnológica.",
       en:
@@ -102,6 +108,7 @@ export const RECOMMENDED_THEMES = [
       "purple-void",
 
     name: {
+      ja: "パープルヴォイド",
       ptBR:
         "Purple Void",
       en:
@@ -109,6 +116,7 @@ export const RECOMMENDED_THEMES = [
     },
 
     description: {
+      ja: "紫と金を組み合わせた配色です。",
       ptBR:
         "Roxo, violeta e dourado com clima mais misterioso.",
       en:
@@ -133,6 +141,7 @@ export const RECOMMENDED_THEMES = [
       "emerald-spirit",
 
     name: {
+      ja: "エメラルドスピリット",
       ptBR:
         "Emerald Spirit",
       en:
@@ -140,6 +149,7 @@ export const RECOMMENDED_THEMES = [
     },
 
     description: {
+      ja: "エメラルドグリーンと深い青緑の配色です。",
       ptBR:
         "Verde-esmeralda e azul petróleo para uma arena mais natural.",
       en:
@@ -164,6 +174,7 @@ export const RECOMMENDED_THEMES = [
       "monochrome",
 
     name: {
+      ja: "モノクローム",
       ptBR:
         "Monochrome",
       en:
@@ -171,6 +182,7 @@ export const RECOMMENDED_THEMES = [
     },
 
     description: {
+      ja: "黒・白・グレーを基調とした配色です。",
       ptBR:
         "Cinza, preto e branco com um toque metálico.",
       en:

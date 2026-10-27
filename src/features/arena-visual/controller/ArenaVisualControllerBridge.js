@@ -1,3 +1,4 @@
+import { getDisplayCardName as getCardName } from "../../../localization/displayCardName.js";
 import {
   findPhysicalCard,
   getCurrentLevel,
@@ -6,8 +7,9 @@ import {
 } from "../../../game/selectors.js";
 import { getLegalBraveHosts } from "../../../game/brave.js";
 import { getTriggerCounterCards } from "../../../game/specialRules.js";
+import { getJapaneseCardText, getJapaneseDecisionText } from "../../../localization/cardText.js";
 import {
-  getCardName,
+
   resolveCardImage
 } from "../../../game/cardAdapter.js";
 
@@ -17,13 +19,8 @@ function arrayOrEmpty(value) {
 
 function effectText(card, language) {
   if (!card) return "";
+  if (language === "ja") return getJapaneseCardText(card.effectText || card.textJP || card.description);
   if (typeof card.effectText === "string") return card.effectText;
-  if (language === "ja") {
-    const japanese = card.effectText?.ja || card.textJP;
-    if (japanese) return japanese;
-    if (/^this card has no effect\.?$/i.test(String(card.effectText?.en || "").trim())) return "このカードに効果はありません。";
-    return card.effectText?.en || card.effectText?.ptBR || card.description || "";
-  }
   return language === "en"
     ? (card.effectText?.en || card.textEN || card.effectText?.ptBR || card.textPT || card.description || "")
     : (card.effectText?.ptBR || card.textPT || card.effectText?.en || card.textEN || card.description || "");
@@ -231,8 +228,8 @@ function pendingActionPresentation(match, playerId, language, cardIndex) {
     kind: pendingPlay ? "play" : "cost",
     instanceId: pending.instanceId || null,
     label: pendingPlay
-      ? (language === "en" ? "Summon payment" : "Pagamento da invocação")
-      : (language === "en" ? "Manual cost payment" : "Pagamento manual"),
+      ? (language === "ja" ? "召喚コストの支払い" : language === "en" ? "Summon payment" : "Pagamento da invocação")
+      : (language === "ja" ? "コストの支払い" : language === "en" ? "Manual cost payment" : "Pagamento manual"),
     cardName: databaseCard ? getCardName(databaseCard, language) : "",
     printedCost: Number(pending.printedCost ?? payableCost),
     reductionApplied: Number(pending.reductionApplied || 0),
@@ -255,12 +252,16 @@ function decisionCandidatePresentation(match, candidate, cardIndex, language) {
     instanceId,
     triggerId: candidate.triggerId || null,
     cardId: candidate.cardId || ctx?.card?.cardId || card?.id || null,
-    name: card ? getCardName(card, language) : (candidate.labelEN || candidate.labelPT || candidate.cardId || instanceId || "Choice"),
+    name: card ? getCardName(card, language) : language === "ja"
+      ? getJapaneseDecisionText(candidate.labelEN || candidate.labelPT || candidate.cardId || instanceId || "") || "選択肢"
+      : (candidate.labelEN || candidate.labelPT || candidate.cardId || instanceId || "Choice"),
     image: card ? resolveCardImage(card) : null,
     bp: ctx?.card && ["spirits", "nexuses", "other"].includes(ctx.zone)
       ? Number(getEffectiveBP(match, cardIndex, ctx.card) || 0)
       : null,
-    label: language === "en"
+    label: language === "ja"
+      ? getJapaneseDecisionText(candidate.labelEN || candidate.labelPT || candidate.event || "")
+      : language === "en"
       ? (candidate.labelEN || candidate.labelPT || candidate.event || null)
       : (candidate.labelPT || candidate.labelEN || candidate.event || null),
     event: candidate.event || null,
@@ -277,7 +278,7 @@ function effectDecisionPresentation({ match, playerId, cardIndex, language, titl
     language,
     playerId: decision.playerId,
     waiting: decision.playerId !== playerId,
-    title: title || (language === "en" ? "Effect Resolution" : "Resolução de Efeito"),
+    title: title || (language === "ja" ? "効果の解決" : language === "en" ? "Effect Resolution" : "Resolução de Efeito"),
     instruction,
     minimum: Number(decision.minimum || 0),
     maximum: Number(decision.maximum || 1),
@@ -288,7 +289,9 @@ function effectDecisionPresentation({ match, playerId, cardIndex, language, titl
     sourceCoreZone: decision.sourceCoreZone || "reserve",
     options: arrayOrEmpty(decision.options).map((option, index) => ({
       id: String(option?.id ?? index),
-      label: language === "en"
+      label: language === "ja"
+        ? getJapaneseDecisionText(option?.labelEN || option?.labelPT || "") || `選択肢 ${index + 1}`
+        : language === "en"
         ? (option?.labelEN || option?.labelPT || `Option ${index + 1}`)
         : (option?.labelPT || option?.labelEN || `Opção ${index + 1}`)
     })),
@@ -307,14 +310,14 @@ function ultimateTriggerPresentation({ match, playerId, cardIndex, language }) {
   const revealedCard = trigger.revealedCardId ? cardIndex?.get?.(trigger.revealedCardId) : null;
   const isCounterWindow = trigger.status === "counterWindow";
   const resolvingPlayerId = isCounterWindow ? trigger.counterPlayerId : trigger.controllerPlayerId;
-  const resultLabel = trigger.countered ? "COUNTERED" : trigger.hit ? "HIT" : "GUARD";
+  const resultLabel = language === "ja" ? (trigger.countered ? "無効" : trigger.hit ? "ヒット" : "ガード") : trigger.countered ? "COUNTERED" : trigger.hit ? "HIT" : "GUARD";
   const statusLabel = isCounterWindow
-    ? (language === "en" ? "TRIGGER COUNTER WINDOW" : "JANELA DE TRIGGER COUNTER")
+    ? (language === "ja" ? "トリガーカウンターの確認" : language === "en" ? "TRIGGER COUNTER WINDOW" : "JANELA DE TRIGGER COUNTER")
     : trigger.countered
-      ? (language === "en" ? "TRIGGER COUNTERED" : "TRIGGER ANULADO")
+      ? (language === "ja" ? "トリガー無効" : language === "en" ? "TRIGGER COUNTERED" : "TRIGGER ANULADO")
       : trigger.hit
-        ? (language === "en" ? "TRIGGER HIT" : "TRIGGER ACERTOU")
-        : (language === "en" ? "TRIGGER GUARDED" : "TRIGGER DEFENDIDO");
+        ? (language === "ja" ? "トリガーヒット" : language === "en" ? "TRIGGER HIT" : "TRIGGER ACERTOU")
+        : (language === "ja" ? "トリガーガード" : language === "en" ? "TRIGGER GUARDED" : "TRIGGER DEFENDIDO");
 
   const counterCards = isCounterWindow && trigger.counterPlayerId === playerId
     ? getTriggerCounterCards(match, playerId, cardIndex).map(({ physical, card }) => ({
@@ -340,7 +343,9 @@ function ultimateTriggerPresentation({ match, playerId, cardIndex, language }) {
     originalHit: Boolean(trigger.originalHit),
     sourceCost: Number.isFinite(Number(trigger.sourceCost)) ? Number(trigger.sourceCost) : null,
     revealedCost: trigger.revealedCost == null ? null : Number(trigger.revealedCost),
-    effectText: language === "en"
+    effectText: language === "ja"
+      ? getJapaneseCardText(trigger.effectTextEN || trigger.effectTextPT || "")
+      : language === "en"
       ? (trigger.effectTextEN || trigger.effectTextPT || "")
       : (trigger.effectTextPT || trigger.effectTextEN || ""),
     source: {
@@ -351,13 +356,15 @@ function ultimateTriggerPresentation({ match, playerId, cardIndex, language }) {
     revealed: {
       cardId: trigger.revealedCardId || revealedCard?.id || null,
       name: trigger.status === "emptyDeck"
-        ? (language === "en" ? "Empty Deck" : "Deck vazio")
+        ? (language === "ja" ? "デッキ切れ" : language === "en" ? "Empty Deck" : "Deck vazio")
         : (revealedCard ? getCardName(revealedCard, language) : (trigger.revealedCardId || "—")),
       image: revealedCard ? resolveCardImage(revealedCard) : null
     },
     criticalHit: trigger.criticalHit ? {
       eligible: Boolean(trigger.criticalHit.eligible),
-      text: language === "en"
+      text: language === "ja"
+        ? getJapaneseDecisionText(trigger.criticalHit.textEN || trigger.criticalHit.textPT || "")
+        : language === "en"
         ? (trigger.criticalHit.textEN || trigger.criticalHit.textPT || "")
         : (trigger.criticalHit.textPT || trigger.criticalHit.textEN || "")
     } : null,
@@ -476,13 +483,13 @@ function battlePresentation(match, playerId, cardIndex, language) {
   const attacker = battleCardPresentation(match, battle.attackerInstanceId, cardIndex, language);
   const blocker = battleCardPresentation(match, battle.blockerInstanceId, cardIndex, language);
   const stageLabels = {
-    attack: language === "en" ? "Attack Declared" : "Ataque Declarado",
-    ultimateTrigger: language === "en" ? "Ultimate Trigger" : "Ultimate Trigger",
-    flash1: language === "en" ? "First Flash Timing" : "Primeiro Flash Timing",
-    block: language === "en" ? "Block Timing" : "Block Timing",
-    flash2: language === "en" ? "Second Flash Timing" : "Segundo Flash Timing",
-    resolve: language === "en" ? "Battle Resolution" : "Resolução da Batalha",
-    end: language === "en" ? "Battle End" : "Fim da Batalha"
+    attack: language === "ja" ? "アタック宣言" : language === "en" ? "Attack Declared" : "Ataque Declarado",
+    ultimateTrigger: language === "ja" ? "アルティメットトリガー" : language === "en" ? "Ultimate Trigger" : "Ultimate Trigger",
+    flash1: language === "ja" ? "フラッシュタイミング1" : language === "en" ? "First Flash Timing" : "Primeiro Flash Timing",
+    block: language === "ja" ? "ブロック" : language === "en" ? "Block Timing" : "Block Timing",
+    flash2: language === "ja" ? "フラッシュタイミング2" : language === "en" ? "Second Flash Timing" : "Segundo Flash Timing",
+    resolve: language === "ja" ? "バトルの解決" : language === "en" ? "Battle Resolution" : "Resolução da Batalha",
+    end: language === "ja" ? "バトル終了" : language === "en" ? "Battle End" : "Fim da Batalha"
   };
   const restrictions = [];
   if (attacker?.pendingDestruction) restrictions.push(language === "ja" ? "アタックしたカードは破壊待ちです。" : language === "en" ? "Attacker is pending destruction." : "O atacante está pendente de destruição.");
@@ -491,7 +498,7 @@ function battlePresentation(match, playerId, cardIndex, language) {
 
   return {
     stage: battle.stage || null,
-    stageLabel: stageLabels[battle.stage] || (language === "en" ? "Battle" : "Batalha"),
+    stageLabel: stageLabels[battle.stage] || (language === "ja" ? "バトル" : language === "en" ? "Battle" : "Batalha"),
     attackerInstanceId: battle.attackerInstanceId || null,
     blockerInstanceId: battle.blockerInstanceId || null,
     attacker,
@@ -521,35 +528,35 @@ function createContextActions({ match, playerId, selectedInstanceId, cardIndex, 
 
   if (match?.burstOpportunity?.playerId === playerId) {
     return [
-      { id: "activate-burst", type: "ACTIVATE_BURST", label: language === "en" ? "Activate Burst" : "Ativar Burst", emphasis: true },
-      { id: "pass-burst", type: "PASS_BURST", label: language === "en" ? "Pass" : "Passar", tone: "quiet" }
+      { id: "activate-burst", type: "ACTIVATE_BURST", label: language === "ja" ? "バーストを発動" : language === "en" ? "Activate Burst" : "Ativar Burst", emphasis: true },
+      { id: "pass-burst", type: "PASS_BURST", label: language === "ja" ? "パス" : language === "en" ? "Pass" : "Passar", tone: "quiet" }
     ];
   }
 
   if (match?.pendingManualPlay?.playerId === playerId) {
     return [
-      { id: "confirm-manual-play", type: "CONFIRM_MANUAL_PLAY", label: language === "en" ? "Confirm" : "Confirmar", emphasis: true },
-      { id: "cancel-manual-play", type: "CANCEL_MANUAL_PLAY", label: language === "en" ? "Cancel" : "Cancelar", tone: "quiet" }
+      { id: "confirm-manual-play", type: "CONFIRM_MANUAL_PLAY", label: language === "ja" ? "確定" : language === "en" ? "Confirm" : "Confirmar", emphasis: true },
+      { id: "cancel-manual-play", type: "CANCEL_MANUAL_PLAY", label: language === "ja" ? "取り消す" : language === "en" ? "Cancel" : "Cancelar", tone: "quiet" }
     ];
   }
 
   if (match?.pendingManualCost?.playerId === playerId) {
     return [
-      { id: "confirm-manual-cost", type: "CONFIRM_MANUAL_COST", label: language === "en" ? "Confirm" : "Confirmar", emphasis: true },
-      { id: "cancel-manual-cost", type: "CANCEL_MANUAL_COST", label: language === "en" ? "Cancel" : "Cancelar", tone: "quiet" }
+      { id: "confirm-manual-cost", type: "CONFIRM_MANUAL_COST", label: language === "ja" ? "確定" : language === "en" ? "Confirm" : "Confirmar", emphasis: true },
+      { id: "cancel-manual-cost", type: "CANCEL_MANUAL_COST", label: language === "ja" ? "取り消す" : language === "en" ? "Cancel" : "Cancelar", tone: "quiet" }
     ];
   }
 
   const battle = match?.battle || null;
   const globalBattleActions = [];
   if (battle?.flash?.priorityPlayerId === playerId) {
-    globalBattleActions.push({ id: "pass-flash", type: "PASS_FLASH", label: language === "en" ? "Pass Flash" : "Passar Flash", emphasis: true, battleEssential: true });
+    globalBattleActions.push({ id: "pass-flash", type: "PASS_FLASH", label: language === "ja" ? "フラッシュをパス" : language === "en" ? "Pass Flash" : "Passar Flash", emphasis: true, battleEssential: true });
   }
   if (battle?.stage === "block" && battle?.defenderPlayerId === playerId) {
-    globalBattleActions.push({ id: "decline-block", type: "DECLINE_BLOCK", label: language === "en" ? "No Block" : "Não Bloquear", tone: "quiet", battleEssential: true });
+    globalBattleActions.push({ id: "decline-block", type: "DECLINE_BLOCK", label: language === "ja" ? "ブロックしない" : language === "en" ? "No Block" : "Não Bloquear", tone: "quiet", battleEssential: true });
   }
   if (battle?.stage === "resolve") {
-    globalBattleActions.push({ id: "resolve-battle", type: "RESOLVE_BATTLE", label: language === "en" ? "Resolve Battle" : "Resolver Batalha", emphasis: true });
+    globalBattleActions.push({ id: "resolve-battle", type: "RESOLVE_BATTLE", label: language === "ja" ? "バトルを解決" : language === "en" ? "Resolve Battle" : "Resolver Batalha", emphasis: true });
   }
 
   if (!selectedInstanceId) return globalBattleActions;
@@ -574,7 +581,7 @@ if (selected.zone === "hand") {
     actions.push({
       id: "play-selected-card",
       type: "PLAY_HAND_CARD",
-      label: language === "en" ? "Play Card" : "Jogar Carta",
+      label: language === "ja" ? "カードを使う" : language === "en" ? "Play Card" : "Jogar Carta",
       instanceId: selectedInstanceId,
       emphasis: true
     });
@@ -585,7 +592,7 @@ if (selected.zone === "hand") {
     actions.push({
       id: `use-magic-${legalMagic.options?.mode || (inFlash ? "flash" : "main")}`,
       type: "BEGIN_MAGIC_COST",
-      label: inFlash ? (language === "en" ? "Use Flash" : "Usar Flash") : (language === "en" ? "Use Magic" : "Usar Magic"),
+      label: inFlash ? (language === "ja" ? "フラッシュを使う" : language === "en" ? "Use Flash" : "Usar Flash") : (language === "ja" ? "マジックを使う" : language === "en" ? "Use Magic" : "Usar Magic"),
       instanceId: selectedInstanceId,
       options: { mode: legalMagic.options?.mode || (inFlash ? "flash" : "main") },
       emphasis: true
@@ -596,7 +603,7 @@ if (selected.zone === "hand") {
     actions.push({
       id: "use-high-speed",
       type: "USE_HIGH_SPEED",
-      label: language === "en" ? "Use High Speed" : "Usar High Speed",
+      label: language === "ja" ? "神速を使う" : language === "en" ? "Use High Speed" : "Usar High Speed",
       instanceId: selectedInstanceId,
       options: selectedLegalActions.find((entry) => entry.type === "USE_HIGH_SPEED")?.options || { highSpeed: true },
       emphasis: true
@@ -607,7 +614,7 @@ if (selected.zone === "hand") {
     actions.push({
       id: "set-selected-burst",
       type: "SET_BURST_CARD",
-      label: language === "en" ? "Set Burst" : "Definir Burst",
+      label: language === "ja" ? "バーストをセット" : language === "en" ? "Set Burst" : "Definir Burst",
       instanceId: selectedInstanceId
     });
   }
@@ -616,7 +623,7 @@ if (selected.zone === "hand") {
     actions.push({
       id: "set-selected-mirage",
       type: "BEGIN_MIRAGE_COST",
-      label: language === "en" ? "Set Mirage" : "Definir Mirage",
+      label: language === "ja" ? "ミラージュをセット" : language === "en" ? "Set Mirage" : "Definir Mirage",
       instanceId: selectedInstanceId
     });
   }
@@ -625,7 +632,7 @@ if (selected.zone === "hand") {
     actions.push({
       id: `direct-combine-${directCombine.options.directCombineHostInstanceId}`,
       type: "DIRECT_COMBINE_BRAVE",
-      label: `${language === "en" ? "Direct Combine" : "Direct Combine"} → ${directCombine.hostName || directCombine.options.directCombineHostInstanceId}`,
+      label: `${language === "ja" ? "直接合体" : language === "en" ? "Direct Combine" : "Direct Combine"} → ${directCombine.hostName || directCombine.options.directCombineHostInstanceId}`,
       instanceId: selectedInstanceId,
       hostInstanceId: directCombine.options.directCombineHostInstanceId,
       options: directCombine.options
@@ -651,7 +658,7 @@ if (selected.zone === "hand") {
     globalBattleActions.unshift({
       id: "activate-field-flash",
       type: "ACTIVATE_FIELD_FLASH",
-      label: language === "en" ? "Use Field Flash" : "Usar Field Flash",
+      label: language === "ja" ? "フィールドのフラッシュ効果を使う" : language === "en" ? "Use Field Flash" : "Usar Field Flash",
       instanceId: selectedInstanceId,
       emphasis: true
     });
@@ -664,14 +671,14 @@ if (selected.zone === "hand") {
       const actions = [{
         id: "separate-brave",
         type: "SEPARATE_BRAVE",
-        label: language === "en" ? "Separate Brave" : "Separar Brave",
+        label: language === "ja" ? "ブレイヴを分離" : language === "en" ? "Separate Brave" : "Separar Brave",
         braveInstanceId: selectedInstanceId
       }];
       for (const exchange of legalActionMatches(legalActions, "EXCHANGE_BRAVE", selectedInstanceId)) {
         actions.push({
           id: `exchange-${exchange.hostInstanceId}`,
           type: "EXCHANGE_BRAVE",
-          label: `${language === "en" ? "Exchange Brave" : "Trocar Brave"} → ${exchange.hostName || exchange.hostInstanceId}`,
+          label: `${language === "ja" ? "ブレイヴの合体先を変更" : language === "en" ? "Exchange Brave" : "Trocar Brave"} → ${exchange.hostName || exchange.hostInstanceId}`,
           braveInstanceId: selectedInstanceId,
           hostInstanceId: exchange.hostInstanceId,
           options: exchange.options || {}
@@ -684,7 +691,7 @@ if (selected.zone === "hand") {
       .map((entry) => ({
         id: `combine-${entry.physical.instanceId}`,
         type: "COMBINE_BRAVE",
-        label: `${language === "en" ? "Combine" : "Combinar"} → ${getCardName(entry.card, language)}`,
+        label: `${language === "ja" ? "合体" : language === "en" ? "Combine" : "Combinar"} → ${getCardName(entry.card, language)}`,
         braveInstanceId: selectedInstanceId,
         hostInstanceId: entry.physical.instanceId,
         options: { confirmCondition: Boolean(entry.manual) }
@@ -697,14 +704,14 @@ if (selected.zone === "hand") {
       const actions = [{
         id: "separate-attached-brave",
         type: "SEPARATE_BRAVE",
-        label: language === "en" ? "Separate Brave" : "Separar Brave",
+        label: language === "ja" ? "ブレイヴを分離" : language === "en" ? "Separate Brave" : "Separar Brave",
         braveInstanceId: attached.instanceId
       }];
       for (const exchange of legalActionMatches(legalActions, "EXCHANGE_BRAVE", attached.instanceId)) {
         actions.push({
           id: `exchange-attached-${exchange.hostInstanceId}`,
           type: "EXCHANGE_BRAVE",
-          label: `${language === "en" ? "Exchange Brave" : "Trocar Brave"} → ${exchange.hostName || exchange.hostInstanceId}`,
+          label: `${language === "ja" ? "ブレイヴの合体先を変更" : language === "en" ? "Exchange Brave" : "Trocar Brave"} → ${exchange.hostName || exchange.hostInstanceId}`,
           braveInstanceId: attached.instanceId,
           hostInstanceId: exchange.hostInstanceId,
           options: exchange.options || {}

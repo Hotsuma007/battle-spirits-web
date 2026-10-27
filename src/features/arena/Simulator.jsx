@@ -1,3 +1,7 @@
+import { japaneseGameError } from "../../localization/japaneseGameErrors.js";
+import { getDisplayCardName as getCardName } from "../../localization/displayCardName.js";
+import { japaneseText as ___bsJa, isJapaneseDisplay as ___bsJapanese } from "../../localization/displayLanguage.js";
+import { getJapaneseCardText, getJapaneseDecisionText } from "../../localization/cardText.js";
 import { useEffect, useMemo, useRef, useState } from "react";
 import CardTile from "../../components/cards/CardTile.jsx";
 import EffectText from "../../components/cards/EffectText.jsx";
@@ -39,7 +43,7 @@ import {
   getEffectiveSymbols
 } from "../../game/selectors.js";
 import {
-  getCardName,
+
   resolveCardImage
 } from "../../game/cardAdapter.js";
 import { otherPlayerId } from "../../game/utils.js";
@@ -109,6 +113,7 @@ import "../../styles/arena/combatLayoutStabilityV500.css";
 
 function effectText(card, language) {
   if (!card) return "";
+  if (language === "ja") return getJapaneseCardText(card.effectText || card.textJP);
 
   if (typeof card.effectText === "string") {
     return card.effectText;
@@ -248,14 +253,14 @@ function EternalSequence({
         <div>
           <span className="eyebrow">
             {language === "en"
-              ? "TURN FLOW"
-              : "FLUXO DO TURNO"}
+              ? ___bsJa("TURN FLOW", "ターンの進行")
+              : ___bsJa("FLUXO DO TURNO", "ターンの進行")}
           </span>
 
           <strong>
             {language === "en"
-              ? "Eternal Sequence"
-              : "Sequência Eternal"}
+              ? ___bsJa("Eternal Sequence", "エターナルの進行")
+              : ___bsJa("Sequência Eternal", "エターナルの進行")}
           </strong>
         </div>
 
@@ -322,8 +327,8 @@ function EternalSequence({
                     <span>
                       {language ===
                       "en"
-                        ? "CURRENT PHASE"
-                        : "FASE ATUAL"}
+                        ? ___bsJa("CURRENT PHASE", "現在のステップ")
+                        : ___bsJa("FASE ATUAL", "現在のステップ")}
                     </span>
                   )}
                 </div>
@@ -868,12 +873,12 @@ export default function Simulator({
       const votes = state?.votes || {};
       const mine = Boolean(votes?.[viewerPlayerId]);
       setRematchPending(mine);
-      if (mine) setPostMatchActionNotice(language === "en" ? "Rematch requested. Waiting for the opponent…" : "Revanche solicitada. Aguardando o adversário…");
+      if (mine) setPostMatchActionNotice(language === "ja" ? "再戦を申し込みました。相手の返答を待っています…" : language === "en" ? "Rematch requested. Waiting for the opponent…" : "Revanche solicitada. Aguardando o adversário…");
     };
 
     const onRematchStarted = () => {
       setRematchPending(false);
-      setPostMatchActionNotice(language === "en" ? "Rematch accepted." : "Revanche aceita.");
+      setPostMatchActionNotice(language === "ja" ? "再戦が承認されました。" : language === "en" ? "Rematch accepted." : "Revanche aceita.");
     };
 
     const onSocketConnect = () => setOnlineSocketConnected(true);
@@ -1204,7 +1209,7 @@ export default function Simulator({
         asPlayerId
       ) {
         return setError(
-          language === "en"
+          language === "ja" ? "相手の操作をお待ちください。" : language === "en"
             ? "Wait for the other player."
             : "Aguarde a ação do outro jogador."
         );
@@ -1223,7 +1228,7 @@ export default function Simulator({
             setError(
               onlineErrorMessage(result, {
                 language,
-                fallback: language === "en"
+                fallback: language === "ja" ? "今はこの操作を行えません。" : language === "en"
                   ? "This action is not available."
                   : "Esta ação não está disponível."
               })
@@ -1236,7 +1241,7 @@ export default function Simulator({
             !result?.match?.pendingEffectDecision
           ) {
             setNotice(
-              language === "en"
+              language === "ja" ? "この効果はカードのテキストを確認し、手動で処理してください。" : language === "en"
                 ? "This effect still needs manual resolution."
                 : "O efeito ainda precisa de resolução manual conforme o texto."
             );
@@ -1272,7 +1277,7 @@ export default function Simulator({
       !result.match?.pendingEffectDecision
     ) {
       setNotice(
-        language === "en"
+        language === "ja" ? "この効果はカードのテキストを確認し、手動で処理してください。" : language === "en"
           ? "This effect still needs manual resolution."
           : "O efeito ainda precisa de resolução manual conforme o texto."
       );
@@ -1343,7 +1348,7 @@ export default function Simulator({
 
     if (!action) {
       setNotice(
-        language === "en"
+        language === "ja" ? "CPUが実行可能な自動操作を見つけられず、一時停止しました。" : language === "en"
           ? "CPU paused because no legal automatic action was found."
           : "A CPU foi pausada porque nenhuma ação automática legal foi encontrada."
       );
@@ -1401,6 +1406,7 @@ export default function Simulator({
       return "";
     }
 
+    if (language === "ja") return getJapaneseDecisionText(effectDecision.titleEN || effectDecision.titlePT || "") || "効果の解決";
     return language === "en"
       ? (
           effectDecision.titleEN ||
@@ -1421,7 +1427,9 @@ export default function Simulator({
     }
 
     const custom =
-      language === "en"
+      language === "ja"
+        ? getJapaneseDecisionText(effectDecision.instructionEN || effectDecision.instructionPT || "")
+        : language === "en"
         ? (
             effectDecision.instructionEN ||
             effectDecision.instructionPT
@@ -1433,6 +1441,22 @@ export default function Simulator({
 
     if (custom) {
       return custom;
+    }
+
+    if (language === "ja") {
+      const instructions = {
+        chooseOption: "効果を選択してください。",
+        selectMultipleTargets: "対象のカードを選び、確定してください。",
+        selectTrashTarget: "トラッシュから対象のカードを選んでください。",
+        chooseCardsFromHand: "手札から必要なカードを選んでください。",
+        chooseCardsFromTrash: "トラッシュから必要なカードを選んでください。",
+        chooseCardsFromDeck: "デッキから必要なカードを選んでください。",
+        chooseOrder: "カードの処理順を決め、確定してください。",
+        chooseTriggerOrder: "同時に発揮した効果の処理順を決め、確定してください。",
+        chooseCoreDistribution: "対象のカードに必要なコアを割り振ってください。",
+        chooseYesNo: "「はい」または「いいえ」を選んでください。"
+      };
+      return instructions[effectDecision.kind] || "対象のカードを選んでください。";
     }
 
     if (
@@ -1768,7 +1792,7 @@ export default function Simulator({
           maximum
         ) {
           setError(
-            language === "en"
+            language === "ja" ? `カードは${maximum}枚まで選択できます。` : language === "en"
               ? `You can select up to ${maximum} card(s).`
               : `Você pode selecionar no máximo ${maximum} carta(s).`
           );
@@ -1790,7 +1814,7 @@ export default function Simulator({
             )
         ) {
           setError(
-            language === "en"
+            language === "ja" ? `選択したカードのBPの合計が${effectDecision.maxTotalBP}を超えています。` : language === "en"
               ? `The selected cards exceed ${effectDecision.maxTotalBP} total BP.`
               : `As cartas selecionadas ultrapassam ${effectDecision.maxTotalBP} BP no total.`
           );
@@ -1916,8 +1940,8 @@ export default function Simulator({
             <div>
               <span className="eyebrow">
                 {language === "en"
-                  ? "EFFECT RESOLUTION"
-                  : "RESOLUÇÃO DE EFEITO"}
+                  ? ___bsJa("EFFECT RESOLUTION", "効果の解決")
+                  : ___bsJa("RESOLUÇÃO DE EFEITO", "効果の解決")}
               </span>
 
               <strong>
@@ -1934,8 +1958,8 @@ export default function Simulator({
             {waiting && (
               <span className="effect-decision-waiting">
                 {language === "en"
-                  ? "Waiting for the other player"
-                  : "Aguardando o outro jogador"}
+                  ? ___bsJa("Waiting for the other player", "他のプレイヤーを待っています")
+                  : ___bsJa("Aguardando o outro jogador", "他のプレイヤーを待っています")}
               </span>
             )}
           </header>
@@ -1967,16 +1991,18 @@ export default function Simulator({
                       )
                     }
                   >
-                    {language === "en"
+                    {language === "ja"
+                      ? getJapaneseDecisionText(option.labelEN || option.labelPT || "") || `選択肢 ${index + 1}`
+                      : language === "en"
                       ? (
                           option.labelEN ||
                           option.labelPT ||
-                          `Option ${index + 1}`
+                          (___bsJapanese() ? `オプション ${index + 1}` : `Option ${index + 1}`)
                         )
                       : (
                           option.labelPT ||
                           option.labelEN ||
-                          `Opção ${index + 1}`
+                          (___bsJapanese() ? `オプション ${index + 1}` : `Opção ${index + 1}`)
                         )}
                   </button>
                 )
@@ -2068,9 +2094,9 @@ export default function Simulator({
                 );
               })}
               <footer className="effect-decision-footer">
-                <div className="effect-decision-counter"><b>{orderedCandidates.length}</b><span>{language === "en" ? "cards ordered" : "cartas ordenadas"}</span></div>
+                <div className="effect-decision-counter"><b>{orderedCandidates.length}</b><span>{language === "en" ? ___bsJa("cards ordered", "枚の順番を決定") : ___bsJa("cartas ordenadas", "枚の順番を決定")}</span></div>
                 <button type="button" className="primary-btn" onClick={isTriggerOrderPicker ? resolveTriggerDecisionOrder : resolveEffectDecisionOrder}>
-                  {language === "en" ? "Confirm order" : "Confirmar ordem"}
+                  {language === "en" ? ___bsJa("Confirm order", "順番を確定") : ___bsJa("Confirmar ordem", "順番を確定")}
                 </button>
               </footer>
             </div>
@@ -2097,7 +2123,7 @@ export default function Simulator({
               <footer className="effect-decision-footer">
                 <div className="effect-decision-counter">
                   <b>{coresAssigned}/{requiredCores}</b>
-                  <span>{language === "en" ? "Cores assigned" : "Cores distribuídos"}</span>
+                  <span>{language === "en" ? ___bsJa("Cores assigned", "割り振ったコア") : ___bsJa("Cores distribuídos", "割り振ったコア")}</span>
                 </div>
                 <button
                   type="button"
@@ -2105,7 +2131,7 @@ export default function Simulator({
                   disabled={effectDecision.exactTotal !== false ? coresAssigned !== requiredCores : coresAssigned > requiredCores}
                   onClick={resolveEffectCoreDistribution}
                 >
-                  {language === "en" ? "Confirm Cores" : "Confirmar Cores"}
+                  {language === "en" ? ___bsJa("Confirm Cores", "コアを確定") : ___bsJa("Confirmar Cores", "コアを確定")}
                 </button>
               </footer>
             </div>
@@ -2148,8 +2174,8 @@ export default function Simulator({
                   }
                 >
                   {language === "en"
-                    ? "Confirm targets"
-                    : "Confirmar alvos"}
+                    ? ___bsJa("Confirm targets", "対象を確定")
+                    : ___bsJa("Confirmar alvos", "対象を確定")}
                 </button>
               )}
 
@@ -2167,8 +2193,8 @@ export default function Simulator({
                   }
                 >
                   {language === "en"
-                    ? "Choose none"
-                    : "Não selecionar"}
+                    ? ___bsJa("Choose none", "何も選択しない")
+                    : ___bsJa("Não selecionar", "何も選択しない")}
                 </button>
               )}
             </footer>
@@ -2627,7 +2653,7 @@ export default function Simulator({
     if (!target) {
       if (activePending) {
         setNotice(
-          language === "en"
+          language === "ja" ? "必要なコアの支払いは完了しています。操作を確定するか、手動でコアを調整してください。" : language === "en"
             ? "The required Core payment is already complete. Confirm the action or adjust the Cores manually."
             : "Os requisitos de Cores já foram preenchidos. Confirme a jogada ou ajuste os Cores manualmente."
         );
@@ -2950,9 +2976,7 @@ export default function Simulator({
             data-card-drop-player={ownsRow ? playerId : undefined}
             data-card-drop-placement="top"
           >
-            <span>
-              DECK
-            </span>
+            <span>{___bsJa("DECK", "デッキ")}</span>
 
             <b>
               {
@@ -2963,7 +2987,7 @@ export default function Simulator({
 
             <img
               src="./images/card-back.webp"
-              alt="Deck"
+              alt={___bsJa("Deck", "デッキ")}
             />
           </div>
 
@@ -2994,8 +3018,8 @@ export default function Simulator({
           >
             {language ===
             "en"
-              ? "Reveal"
-              : "Revelar"}
+              ? ___bsJa("Reveal", "公開する")
+              : ___bsJa("Revelar", "公開する")}
           </button>
 
 
@@ -3010,8 +3034,8 @@ export default function Simulator({
           >
             {language ===
             "en"
-              ? "Top"
-              : "Topo"}
+              ? ___bsJa("Top", "上")
+              : ___bsJa("Topo", "上")}
           </button>
 
 
@@ -3026,8 +3050,8 @@ export default function Simulator({
           >
             {language ===
             "en"
-              ? "Bottom"
-              : "Fundo"}
+              ? ___bsJa("Bottom", "下")
+              : ___bsJa("Fundo", "下")}
           </button>
 
         </div>
@@ -3253,21 +3277,19 @@ export default function Simulator({
                       : (
                           language ===
                           "en"
-                            ? "Set Burst"
-                            : "Burst definido"
+                            ? ___bsJa("Set Burst", "バーストをセット")
+                            : ___bsJa("Burst definido", "バーストをセット")
                         )
                   )
                 : (
                     language ===
                     "en"
-                      ? "No Burst set"
-                      : "Nenhum Burst definido"
+                      ? ___bsJa("No Burst set", "バースト未セット")
+                      : ___bsJa("Nenhum Burst definido", "バースト未セット")
                   )
             }
           >
-            <span>
-              BURST
-            </span>
+            <span>{___bsJa("BURST", "バースト")}</span>
 
 
             {burstPhysical
@@ -3276,7 +3298,7 @@ export default function Simulator({
                   <img
                     className="burst-card-back"
                     src="./images/card-back.webp"
-                    alt="Burst"
+                    alt={___bsJa("Burst", "バースト")}
                   />
 
                   <i
@@ -3286,9 +3308,7 @@ export default function Simulator({
                     ◆
                   </i>
 
-                  <b>
-                    SET
-                  </b>
+                  <b>{___bsJa("SET", "セット")}</b>
                 </>
               )
               : (
@@ -3361,9 +3381,7 @@ export default function Simulator({
               }
             }}
           >
-            <span>
-              TRASH
-            </span>
+            <span>{___bsJa("TRASH", "トラッシュ")}</span>
 
             <b>
               {
@@ -3394,7 +3412,7 @@ export default function Simulator({
                     )
                   }
 
-                  alt="Trash"
+                  alt={___bsJa("Trash", "トラッシュ")}
                 />
               )
               : null}
@@ -3633,7 +3651,7 @@ export default function Simulator({
 
                     data-blocker-label={
                       legalBlockerIds?.has(physical.instanceId)
-                        ? (language === "en" ? "CAN BLOCK" : "PODE BLOQUEAR")
+                        ? (language === "ja" ? "ブロック可能" : language === "en" ? "CAN BLOCK" : "PODE BLOQUEAR")
                         : undefined
                     }
                   >
@@ -3917,9 +3935,7 @@ export default function Simulator({
                 key="directcombine"
                 className="combine-box"
               >
-                <span>
-                  Direct Combine:
-                </span>
+                <span>{___bsJa("Direct Combine:", "直接合体：")}</span>
 
                 {hosts.map(
                   (hostEntry) => (
@@ -4115,9 +4131,7 @@ export default function Simulator({
                   physical.instanceId
               })
             }
-          >
-            Set Burst
-          </button>
+          >{___bsJa("Set Burst", "バーストをセット")}</button>
         );
       }
 
@@ -4165,9 +4179,7 @@ export default function Simulator({
                 ownerId
               )
             }
-          >
-            Set Mirage
-          </button>
+          >{___bsJa("Set Mirage", "ミラージュをセット")}</button>
         );
       }
     }
@@ -4300,8 +4312,8 @@ export default function Simulator({
         >
           <span>
             {language === "en"
-              ? "COMBINED BRAVE"
-              : "BRAVE COMBINADO"}
+              ? ___bsJa("COMBINED BRAVE", "合体中のブレイヴ")
+              : ___bsJa("BRAVE COMBINADO", "合体中のブレイヴ")}
           </span>
 
           <strong>
@@ -4336,8 +4348,8 @@ export default function Simulator({
           }
         >
           {language === "en"
-            ? "Separate Brave"
-            : "Separar Brave"}
+            ? ___bsJa("Separate Brave", "ブレイヴを分離")
+            : ___bsJa("Separar Brave", "ブレイヴを分離")}
         </button>
       );
 
@@ -4360,9 +4372,7 @@ export default function Simulator({
             key="exchange"
             className="combine-box"
           >
-            <span>
-              Exchange Brave:
-            </span>
+            <span>{___bsJa("Exchange Brave:", "ブレイヴを交換：")}</span>
 
             {exchangeHosts.map(
               (hostEntry) => (
@@ -4435,8 +4445,8 @@ export default function Simulator({
             }
           >
             {language === "en"
-              ? "Separate Brave"
-              : "Separar Brave"}
+              ? ___bsJa("Separate Brave", "ブレイヴを分離")
+              : ___bsJa("Separar Brave", "ブレイヴを分離")}
           </button>
         );
       } else {
@@ -4459,9 +4469,7 @@ export default function Simulator({
               key="combine"
               className="combine-box"
             >
-              <span>
-                Combine:
-              </span>
+              <span>{___bsJa("Combine:", "合体：")}</span>
 
               {hosts.map(
                 (hostEntry) => (
@@ -4532,34 +4540,34 @@ export default function Simulator({
         <section className="brave-action-modal">
           <span className="eyebrow">
             {language === "en"
-              ? "BRAVE / SEPARATION"
-              : "BRAVE / SEPARAÇÃO"}
+              ? ___bsJa("BRAVE / SEPARATION", "ブレイヴの分離")
+              : ___bsJa("BRAVE / SEPARAÇÃO", "ブレイヴの分離")}
           </span>
 
           <h2>
             {language === "en"
-              ? "Separate Brave?"
-              : "Separar o Brave?"}
+              ? ___bsJa("Separate Brave?", "ブレイヴを分離しますか？")
+              : ___bsJa("Separar o Brave?", "ブレイヴを分離しますか？")}
           </h2>
 
           <p>
             <b>{preview.braveName}</b>
             {language === "en"
-              ? " will return to Spirit State."
-              : " voltará ao Spirit State."}
+              ? ___bsJa(" will return to Spirit State.", "はスピリット状態に戻ります。")
+              : ___bsJa(" voltará ao Spirit State.", "はスピリット状態に戻ります。")}
           </p>
 
           <div className="brave-separation-stats">
             <div>
               <span>LV1</span>
-              <strong>{preview.minimum} Core</strong>
+              <strong>{preview.minimum}{___bsJa(" Core", " コア")}</strong>
             </div>
             <div>
-              <span>{language === "en" ? "HOST" : "ALVO"}</span>
+              <span>{language === "en" ? ___bsJa("HOST", "合体先") : ___bsJa("ALVO", "合体先")}</span>
               <strong>{preview.hostRegular}</strong>
             </div>
             <div>
-              <span>RESERVE</span>
+              <span>{___bsJa("RESERVE", "リザーブ")}</span>
               <strong>{preview.reserve}</strong>
             </div>
           </div>
@@ -4576,13 +4584,13 @@ export default function Simulator({
             {preview.survives
               ? (
                   language === "en"
-                    ? "There are enough Cores to maintain the Brave at LV1."
-                    : "Há Cores suficientes para manter o Brave no LV1."
+                    ? ___bsJa("There are enough Cores to maintain the Brave at LV1.", "ブレイヴをLV1に維持するのに十分なコアがあります。")
+                    : ___bsJa("Há Cores suficientes para manter o Brave no LV1.", "ブレイヴをLV1に維持するのに十分なコアがあります。")
                 )
               : (
                   language === "en"
-                    ? "There are not enough Cores. The Brave will be sent to the Trash."
-                    : "Não há Cores suficientes. O Brave será enviado ao Trash."
+                    ? ___bsJa("There are not enough Cores. The Brave will be sent to the Trash.", "コアが足りないため、ブレイヴはトラッシュに置かれます。")
+                    : ___bsJa("Não há Cores suficientes. O Brave será enviado ao Trash.", "コアが足りないため、ブレイヴはトラッシュに置かれます。")
                 )}
           </div>
 
@@ -4595,8 +4603,8 @@ export default function Simulator({
               }
             >
               {language === "en"
-                ? "Cancel"
-                : "Cancelar"}
+                ? ___bsJa("Cancel", "キャンセル")
+                : ___bsJa("Cancelar", "キャンセル")}
             </button>
 
             <button
@@ -4616,8 +4624,8 @@ export default function Simulator({
               }}
             >
               {language === "en"
-                ? "Separate Brave"
-                : "Separar Brave"}
+                ? ___bsJa("Separate Brave", "ブレイヴを分離")
+                : ___bsJa("Separar Brave", "ブレイヴを分離")}
             </button>
           </div>
         </section>
@@ -4688,7 +4696,7 @@ export default function Simulator({
         : (
             trigger.status === "emptyDeck"
               ? (
-                  language === "en"
+                  language === "ja" ? "デッキなし" : language === "en"
                     ? "Empty Deck"
                     : "Deck vazio"
                 )
@@ -4811,8 +4819,8 @@ export default function Simulator({
             <div>
               <span className="eyebrow">
                 {isXU
-                  ? "XU TRIGGER"
-                  : "ULTIMATE TRIGGER"}
+                  ? ___bsJa("XU TRIGGER", "XUトリガー")
+                  : ___bsJa("ULTIMATE TRIGGER", "アルティメットトリガー")}
               </span>
 
               <h2>
@@ -4824,25 +4832,25 @@ export default function Simulator({
               {isCounterWindow
                 ? (
                     language === "en"
-                      ? "TRIGGER COUNTER WINDOW"
-                      : "JANELA DE TRIGGER COUNTER"
+                      ? ___bsJa("TRIGGER COUNTER WINDOW", "トリガーカウンターの確認")
+                      : ___bsJa("JANELA DE TRIGGER COUNTER", "トリガーカウンターの確認")
                   )
                 : isCountered
                   ? (
                       language === "en"
-                        ? "TRIGGER COUNTERED"
-                        : "TRIGGER ANULADO"
+                        ? ___bsJa("TRIGGER COUNTERED", "トリガー無効")
+                        : ___bsJa("TRIGGER ANULADO", "トリガー無効")
                     )
                   : trigger.hit
                     ? (
                         language === "en"
-                          ? "TRIGGER HIT"
-                          : "TRIGGER ACERTOU"
+                          ? ___bsJa("TRIGGER HIT", "トリガーヒット")
+                          : ___bsJa("TRIGGER ACERTOU", "トリガーヒット")
                       )
                     : (
                         language === "en"
-                          ? "TRIGGER GUARDED"
-                          : "TRIGGER DEFENDIDO"
+                          ? ___bsJa("TRIGGER GUARDED", "トリガーガード")
+                          : ___bsJa("TRIGGER DEFENDIDO", "トリガーガード")
                       )}
             </span>
           </header>
@@ -4851,8 +4859,8 @@ export default function Simulator({
             <article className="ultimate-trigger-card source">
               <span>
                 {isXU
-                  ? "XU SOURCE"
-                  : "ULTIMATE"}
+                  ? ___bsJa("XU SOURCE", "XUトリガー元")
+                  : ___bsJa("ULTIMATE", "アルティメット")}
               </span>
 
               <div className="ultimate-trigger-image">
@@ -4868,8 +4876,7 @@ export default function Simulator({
 
               <strong>{sourceName}</strong>
 
-              <b>
-                COST {trigger.sourceCost}
+              <b>{___bsJa("COST ", "コスト ")}{trigger.sourceCost}
               </b>
             </article>
 
@@ -4890,8 +4897,8 @@ export default function Simulator({
             <article className="ultimate-trigger-card revealed">
               <span>
                 {language === "en"
-                  ? "REVEALED"
-                  : "REVELADA"}
+                  ? ___bsJa("REVEALED", "公開済み")
+                  : ___bsJa("REVELADA", "公開済み")}
               </span>
 
               <div className="ultimate-trigger-image">
@@ -4909,7 +4916,7 @@ export default function Simulator({
 
               <b>
                 {trigger.revealedCost != null
-                  ? `COST ${trigger.revealedCost}`
+                  ? (___bsJapanese() ? `コスト ${trigger.revealedCost}` : `COST ${trigger.revealedCost}`)
                   : "—"}
               </b>
             </article>
@@ -4919,14 +4926,12 @@ export default function Simulator({
             trigger.criticalHit
               ?.eligible && (
             <div className="ultimate-trigger-critical-hit">
-              <span>
-                CRITICAL HIT
-              </span>
+              <span>{___bsJa("CRITICAL HIT", "クリティカルヒット")}</span>
 
               <strong>
                 {language === "en"
-                  ? "Critical Hit condition met"
-                  : "Condição de Critical Hit cumprida"}
+                  ? ___bsJa("Critical Hit condition met", "クリティカルヒット条件を満たした")
+                  : ___bsJa("Condição de Critical Hit cumprida", "クリティカルヒット条件を満たした")}
               </strong>
 
               {criticalText && (
@@ -4939,20 +4944,18 @@ export default function Simulator({
 
           {isCounterWindow && (
             <div className="trigger-counter-window">
-              <span className="trigger-counter-kicker">
-                TRIGGER COUNTER
-              </span>
+              <span className="trigger-counter-kicker">{___bsJa("TRIGGER COUNTER", "トリガーカウンター")}</span>
 
               <strong>
                 {language === "en"
-                  ? "Respond before the HIT effect resolves"
-                  : "Responda antes da resolução do efeito de HIT"}
+                  ? ___bsJa("Respond before the HIT effect resolves", "ヒット効果の解決前に対応")
+                  : ___bsJa("Responda antes da resolução do efeito de HIT", "ヒット効果の解決前に対応")}
               </strong>
 
               <p>
                 {language === "en"
-                  ? "You may use a Trigger Counter card now, or pass the response window."
-                  : "Você pode usar uma carta com Trigger Counter agora ou passar esta janela de resposta."}
+                  ? ___bsJa("You may use a Trigger Counter card now, or pass the response window.", "今すぐトリガーカウンターカードを使用することも、応答ウィンドウを通過することもできます。")
+                  : ___bsJa("Você pode usar uma carta com Trigger Counter agora ou passar esta janela de resposta.", "今すぐトリガーカウンターカードを使用することも、応答ウィンドウを通過することもできます。")}
               </p>
 
               {!waiting && (
@@ -4996,8 +4999,7 @@ export default function Simulator({
                             {getCardName(card)}
                           </strong>
 
-                          <small>
-                            COST {card?.cost ?? "-"}
+                          <small>{___bsJa("COST ", "コスト ")}{card?.cost ?? "-"}
                           </small>
                         </span>
                       </button>
@@ -5018,8 +5020,8 @@ export default function Simulator({
                     }
                   >
                     {language === "en"
-                      ? "Do not use Trigger Counter"
-                      : "Não usar Trigger Counter"}
+                      ? ___bsJa("Do not use Trigger Counter", "トリガーカウンターを使わない")
+                      : ___bsJa("Não usar Trigger Counter", "トリガーカウンターを使わない")}
                   </button>
                 </div>
               )}
@@ -5031,17 +5033,17 @@ export default function Simulator({
             <div className="ultimate-trigger-effect-text">
               <span>
                 {isXU
-                  ? "XU HIT EFFECT"
+                  ? ___bsJa("XU HIT EFFECT", "XUヒット効果")
                   : trigger.hit
                     ? (
                         language === "en"
-                          ? "HIT EFFECT"
-                          : "EFEITO DE HIT"
+                          ? ___bsJa("HIT EFFECT", "ヒット効果")
+                          : ___bsJa("EFEITO DE HIT", "ヒット効果")
                       )
                     : (
                         language === "en"
-                          ? "RESULT"
-                          : "RESULTADO"
+                          ? ___bsJa("RESULT", "結果")
+                          : ___bsJa("RESULTADO", "結果")
                       )}
               </span>
 
@@ -5055,13 +5057,13 @@ export default function Simulator({
                 {isCounterWindow
                   ? (
                       language === "en"
-                        ? "Waiting for the opponent's Trigger Counter response."
-                        : "Aguardando a resposta de Trigger Counter do oponente."
+                        ? ___bsJa("Waiting for the opponent's Trigger Counter response.", "相手のトリガーカウンターの反応を待ちます。")
+                        : ___bsJa("Aguardando a resposta de Trigger Counter do oponente.", "相手のトリガーカウンターの反応を待ちます。")
                     )
                   : (
                       language === "en"
-                        ? "Waiting for the Trigger controller to continue."
-                        : "Aguardando o controlador do Trigger continuar."
+                        ? ___bsJa("Waiting for the Trigger controller to continue.", "トリガー コントローラーの続行を待機しています。")
+                        : ___bsJa("Aguardando o controlador do Trigger continuar.", "トリガー コントローラーの続行を待機しています。")
                     )}
               </span>
             ) : !isCounterWindow ? (
@@ -5081,19 +5083,19 @@ export default function Simulator({
                 {isCountered
                   ? (
                       language === "en"
-                        ? "Continue after Trigger Counter"
-                        : "Continuar após Trigger Counter"
+                        ? ___bsJa("Continue after Trigger Counter", "トリガーカウンター後に続行")
+                        : ___bsJa("Continuar após Trigger Counter", "トリガーカウンター後に続行")
                     )
                   : trigger.hit
                     ? (
                         language === "en"
-                          ? `Resolve ${isXU ? "XU HIT" : "HIT"} and continue`
-                          : `Resolver ${isXU ? "XU HIT" : "HIT"} e continuar`
+                          ? (___bsJapanese() ? `${isXU ? "XU HIT" : "HIT"} を解決して続行します` : `Resolve ${isXU ? "XU HIT" : "HIT"} and continue`)
+                          : (___bsJapanese() ? `${isXU ? "XU HIT" : "HIT"} を解決して続行します` : `Resolver ${isXU ? "XU HIT" : "HIT"} e continuar`)
                       )
                     : (
                         language === "en"
-                          ? "Continue"
-                          : "Continuar"
+                          ? ___bsJa("Continue", "続ける")
+                          : ___bsJa("Continuar", "続ける")
                       )}
               </button>
             ) : null}
@@ -5211,13 +5213,13 @@ export default function Simulator({
 
     const battleStageTitle = (() => {
       if (battle.stage === "block") {
-        return language === "en" ? "Block Step" : "Etapa de Bloqueio";
+        return language === "ja" ? "ブロック" : language === "en" ? "Block Step" : "Etapa de Bloqueio";
       }
       if (battle.stage === "resolve") {
-        return language === "en" ? "Battle Resolve" : "Resolução da Batalha";
+        return language === "ja" ? "バトル解決" : language === "en" ? "Battle Resolve" : "Resolução da Batalha";
       }
       if (battle.flash) {
-        return `${language === "en" ? "Flash Timing" : "Flash Timing"} ${battle.flash.number || ""}`.trim();
+        return `${language === "ja" ? "フラッシュタイミング" : language === "en" ? "Flash Timing" : "Flash Timing"} ${battle.flash.number || ""}`.trim();
       }
       return String(battle.stage || "battle").toUpperCase();
     })();
@@ -5226,19 +5228,19 @@ export default function Simulator({
     const battleStageHint = (() => {
       if (battle.flash) {
         const priorityName = match.players[battle.flash.priorityPlayerId]?.name || "—";
-        return language === "en"
+        return language === "ja" ? `${priorityName}はフラッシュ効果を使うか、優先権を渡せます。` : language === "en"
           ? `${priorityName} may use a Flash effect or pass priority.`
           : `${priorityName} pode usar um efeito Flash ou passar a prioridade.`;
       }
       if (battle.stage === "block") {
-        return language === "en"
+        return language === "ja" ? "強調表示されたカードでブロックするか、ブロックせずに進んでください。" : language === "en"
           ? "Choose one highlighted legal blocker, or continue without blocking."
           : "Escolha um dos bloqueadores válidos destacados ou continue sem bloquear.";
       }
       if (battle.stage === "resolve") {
         return blocker
-          ? (language === "en" ? "Compare BP and resolve the battle." : "Compare os BP e resolva a batalha.")
-          : (language === "en" ? "Resolve the direct attack on Life." : "Resolva o ataque direto ao Life.");
+          ? (language === "ja" ? "BPを比べてバトルを解決します。" : language === "en" ? "Compare BP and resolve the battle." : "Compare os BP e resolva a batalha.")
+          : (language === "ja" ? "ライフへのアタックを解決します。" : language === "en" ? "Resolve the direct attack on Life." : "Resolva o ataque direto ao Life.");
       }
       return "";
     })();
@@ -5257,7 +5259,7 @@ export default function Simulator({
 
           {battle.flash && (
             <em>
-              {language === "en" ? "FLASH PRIORITY" : "PRIORIDADE FLASH"}
+              {language === "en" ? ___bsJa("FLASH PRIORITY", "フラッシュの優先権") : ___bsJa("PRIORIDADE FLASH", "フラッシュの優先権")}
             </em>
           )}
 
@@ -5275,8 +5277,8 @@ export default function Simulator({
               {
                 language ===
                 "en"
-                  ? "ATK"
-                  : "ATQ"
+                  ? ___bsJa("ATK", "アタック")
+                  : ___bsJa("ATQ", "アタック")
               }
             </small>
 
@@ -5295,9 +5297,7 @@ export default function Simulator({
           </div>
 
 
-          <span className="battle-compact-vs">
-            VS
-          </span>
+          <span className="battle-compact-vs">{"VS"}</span>
 
 
           <div className="battle-compact-card defender">
@@ -5307,10 +5307,10 @@ export default function Simulator({
                 ? (
                     language ===
                     "en"
-                      ? "BLOCK"
-                      : "BLOQ"
+                      ? ___bsJa("BLOCK", "ブロック")
+                      : ___bsJa("BLOQ", "ブロック")
                   )
-                : "LIFE"}
+                : ___bsJa("LIFE", "ライフ")}
             </small>
 
             <b>
@@ -5319,8 +5319,8 @@ export default function Simulator({
                 : (
                     language ===
                     "en"
-                      ? "Direct Attack"
-                      : "Ataque Direto"
+                      ? ___bsJa("Direct Attack", "直接攻撃")
+                      : ___bsJa("Ataque Direto", "直接攻撃")
                   )}
             </b>
 
@@ -5330,8 +5330,8 @@ export default function Simulator({
                 : (
                     language ===
                     "en"
-                      ? "Life target"
-                      : "Alvo: Life"
+                      ? ___bsJa("Life target", "ライフを攻撃")
+                      : ___bsJa("Alvo: Life", "ライフを攻撃")
                   )}
             </span>
 
@@ -5348,8 +5348,8 @@ export default function Simulator({
                 {
                   language ===
                   "en"
-                    ? "Current priority"
-                    : "Prioridade atual"
+                    ? ___bsJa("Current priority", "現在の優先権")
+                    : ___bsJa("Prioridade atual", "現在の優先権")
                 }
               </span>
 
@@ -5483,7 +5483,7 @@ export default function Simulator({
         ) {
           setError(
             result?.error ||
-            "Chat error"
+            (language === "ja" ? "メッセージを送信できませんでした。" : "Chat error")
           );
         }
       }
@@ -5631,11 +5631,11 @@ export default function Simulator({
       : 0;
 
   const targetingLabel = targetingMode === "effect"
-    ? (language === "en" ? "Choose target" : "Escolha o alvo")
+    ? (language === "ja" ? "対象を選択" : language === "en" ? "Choose target" : "Escolha o alvo")
     : targetingMode === "block"
-      ? (language === "en" ? "Choose blocker" : "Escolha o bloqueador")
+      ? (language === "ja" ? "ブロックするカードを選択" : language === "en" ? "Choose blocker" : "Escolha o bloqueador")
       : targetingMode === "life"
-        ? (language === "en" ? "Life target" : "Alvo de Life")
+        ? (language === "ja" ? "ライフを選択" : language === "en" ? "Life target" : "Alvo de Life")
         : "";
 
 
@@ -5652,24 +5652,24 @@ export default function Simulator({
   async function requestPostMatchFriend() {
     const username = String(postMatchSummary?.opponent?.username || "").replace(/^@/, "").trim();
     if (!username) {
-      setPostMatchActionNotice(language === "en" ? "This opponent has no public username." : "Este adversário não possui @usuário público.");
+      setPostMatchActionNotice(language === "ja" ? "この相手には公開ユーザー名がありません。" : language === "en" ? "This opponent has no public username." : "Este adversário não possui @usuário público.");
       return;
     }
-    setPostMatchActionNotice(language === "en" ? "Finding opponent profile…" : "Localizando perfil do adversário…");
+    setPostMatchActionNotice(language === "ja" ? "相手のプロフィールを検索しています…" : language === "en" ? "Finding opponent profile…" : "Localizando perfil do adversário…");
     try {
       const results = await searchProfiles(username);
       const exact = (results || []).find((row) => String(row.username || "").toLowerCase() === username.toLowerCase());
       if (!exact?.id) {
-        setPostMatchActionNotice(language === "en" ? "Opponent profile not found." : "Perfil do adversário não encontrado.");
+        setPostMatchActionNotice(language === "ja" ? "相手のプロフィールが見つかりませんでした。" : language === "en" ? "Opponent profile not found." : "Perfil do adversário não encontrado.");
         return;
       }
       const result = await sendFriendRequest(exact.id);
       setPostMatchActionNotice(result.ok
-        ? (language === "en" ? "Friend request sent." : "Pedido de amizade enviado.")
-        : (result.error || (language === "en" ? "Could not send friend request." : "Não foi possível enviar o pedido.")));
+        ? (language === "ja" ? "フレンド申請を送信しました。" : language === "en" ? "Friend request sent." : "Pedido de amizade enviado.")
+        : (result.error || (language === "ja" ? "フレンド申請を送信できませんでした。" : language === "en" ? "Could not send friend request." : "Não foi possível enviar o pedido.")));
     } catch (socialError) {
       setPostMatchActionNotice(
-        socialError?.message || (language === "en" ? "Could not reach the Social service." : "Não foi possível acessar o serviço Social.")
+        socialError?.message || (language === "ja" ? "ソーシャル機能に接続できませんでした。" : language === "en" ? "Could not reach the Social service." : "Não foi possível acessar o serviço Social.")
       );
     }
   }
@@ -5677,18 +5677,18 @@ export default function Simulator({
   function requestOnlineRematch() {
     if (!onlineClient?.socket || rematchPending) return;
     if (!onlineClient.socket.connected) {
-      setPostMatchActionNotice(language === "en" ? "Reconnect before requesting a rematch." : "Reconecte antes de solicitar revanche.");
+      setPostMatchActionNotice(language === "ja" ? "再戦を申し込む前に再接続してください。" : language === "en" ? "Reconnect before requesting a rematch." : "Reconecte antes de solicitar revanche.");
       return;
     }
-    setPostMatchActionNotice(language === "en" ? "Requesting rematch…" : "Solicitando revanche…");
+    setPostMatchActionNotice(language === "ja" ? "再戦を申し込んでいます…" : language === "en" ? "Requesting rematch…" : "Solicitando revanche…");
     onlineClient.socket.emit("room:rematch", {}, (reply) => {
       if (!reply?.ok) {
         setRematchPending(false);
-        setPostMatchActionNotice(reply?.error || (language === "en" ? "Rematch unavailable." : "Revanche indisponível."));
+        setPostMatchActionNotice(reply?.error || (language === "ja" ? "再戦を申し込めませんでした。" : language === "en" ? "Rematch unavailable." : "Revanche indisponível."));
         return;
       }
       setRematchPending(!reply.started);
-      if (reply.started) setPostMatchActionNotice(language === "en" ? "Rematch accepted." : "Revanche aceita.");
+      if (reply.started) setPostMatchActionNotice(language === "ja" ? "再戦が承認されました。" : language === "en" ? "Rematch accepted." : "Revanche aceita.");
     });
   }
 
@@ -5745,7 +5745,7 @@ export default function Simulator({
       now: turnClockNow,
       turnRemainingSeconds: customTurnRemaining,
       notice,
-      error
+      error: language === "ja" ? japaneseGameError(error) : error
     });
 
     const arenaVisualManualPolicy = createArenaVisualManualPolicy({
@@ -5888,7 +5888,7 @@ if (match?.winnerId) {
         if (exitStrategy === ARENA_VISUAL_EXIT_STRATEGY.ONLINE_CONCEDE) {
           onlineClient.concede((result) => {
             if (!result?.ok) {
-              setError(result?.error || (language === "en"
+              setError(result?.error || (language === "ja" ? "投了できませんでした。" : language === "en"
                 ? "Could not surrender the match."
                 : "Não foi possível desistir da partida."));
               return;
@@ -6070,6 +6070,7 @@ if (match?.winnerId) {
           onExit
         }}
         feedbackMatch={match}
+        feedbackCardIndex={cardIndex}
         feedbackActorId={actorId}
         feedbackCanControlActor={canControlActor}
         feedbackLanguage={language}
@@ -6113,12 +6114,14 @@ if (match?.winnerId) {
         />
 
         <GameEventToast
+          cardIndex={cardIndex}
           entries={match.log || []}
           classifyEntry={classifyBattleLogEntry}
           language={language}
         />
 
         <GameLogDrawer
+          cardIndex={cardIndex}
           open={showLog}
           entries={match.log || []}
           classifyEntry={classifyBattleLogEntry}
@@ -6131,14 +6134,12 @@ if (match?.winnerId) {
 
         <img
           src="./images/logo_battlespirits.png"
-          alt="Battle Spirits"
+          alt={___bsJa("Battle Spirits", "バトルスピリッツ")}
         />
 
 
         <div>
-          <span>
-            Eternal v5.1.0 • Arena 2D
-          </span>
+          <span>{___bsJa("Eternal v5.1.0 • Arena 2D", "エターナル v5.1.0 • アリーナ 2D")}</span>
 
           <strong>
             {t(
@@ -6157,7 +6158,7 @@ if (match?.winnerId) {
 
           {online && customTurnRemaining !== null && !match.winnerId && (
             <small className={`custom-turn-clock ${customTurnRemaining <= 15 ? "danger" : customTurnRemaining <= 30 ? "warning" : ""}`}>
-              {language === "en" ? "TURN CLOCK" : "TEMPO DO TURNO"} · {customTurnRemaining}s
+              {language === "en" ? ___bsJa("TURN CLOCK", "残り時間") : ___bsJa("TEMPO DO TURNO", "残り時間")} · {customTurnRemaining}s
             </small>
           )}
 
@@ -6170,8 +6171,8 @@ if (match?.winnerId) {
               }`}
             >
               {actorId === aiPlayerId
-                ? (language === "en" ? "CPU thinking…" : "CPU pensando…")
-                : (language === "en" ? "Your action" : "Sua ação")}
+                ? (language === "en" ? ___bsJa("CPU thinking…", "CPUが考えています…") : ___bsJa("CPU pensando…", "CPUが考えています…"))
+                : (language === "en" ? ___bsJa("Your action", "あなたの行動") : ___bsJa("Sua ação", "あなたの行動"))}
             </small>
           )}
         </div>
@@ -6208,13 +6209,13 @@ if (match?.winnerId) {
             }
             title={
               language === "en"
-                ? "Card inspector"
-                : "Painel da carta"
+                ? ___bsJa("Card inspector", "カード詳細")
+                : ___bsJa("Painel da carta", "カード詳細")
             }
           >
             {language === "en"
-              ? "Card"
-              : "Carta"}
+              ? ___bsJa("Card", "カード")
+              : ___bsJa("Carta", "カード")}
           </button>
 
           <button
@@ -6230,13 +6231,13 @@ if (match?.winnerId) {
             }
             title={
               language === "en"
-                ? "Match controls"
-                : "Controles da partida"
+                ? ___bsJa("Match controls", "対戦操作")
+                : ___bsJa("Controles da partida", "対戦操作")
             }
           >
             {language === "en"
-              ? "Turn"
-              : "Turno"}
+              ? ___bsJa("Turn", "ターン")
+              : ___bsJa("Turno", "ターン")}
           </button>
 
           {online && (
@@ -6296,8 +6297,7 @@ if (match?.winnerId) {
               : "game-message notice"
           }
         >
-          {error ||
-            notice}
+          {language === "ja" ? japaneseGameError(error || notice) : error || notice}
         </div>
       )}
 
@@ -6385,9 +6385,7 @@ if (match?.winnerId) {
                       }
                     )
                   }
-                >
-                  Draw 1
-                </button>
+                >{___bsJa("Draw 1", "1枚ドロー")}</button>
 
 
                 <button
@@ -6412,9 +6410,7 @@ if (match?.winnerId) {
                       }
                     )
                   }
-                >
-                  Top → Trash
-                </button>
+                >{___bsJa("Top → Trash", "デッキ上→トラッシュ")}</button>
 
 
                 <button
@@ -6442,9 +6438,7 @@ if (match?.winnerId) {
                       }
                     )
                   }
-                >
-                  −1 Life
-                </button>
+                >{___bsJa("−1 Life", "−1ライフ")}</button>
 
 
                 <button
@@ -6472,9 +6466,7 @@ if (match?.winnerId) {
                       }
                     )
                   }
-                >
-                  +1 Life
-                </button>
+                >{___bsJa("+1 Life", "+1ライフ")}</button>
 
 
                 {selectedId && (
@@ -6505,9 +6497,7 @@ if (match?.winnerId) {
                           }
                         )
                       }
-                    >
-                      +1000 BP
-                    </button>
+                    >{___bsJa("+1000 BP", "+1000BP")}</button>
 
 
                     <button
@@ -6535,9 +6525,7 @@ if (match?.winnerId) {
                           }
                         )
                       }
-                    >
-                      −1000 BP
-                    </button>
+                    >{___bsJa("−1000 BP", "−1000BP")}</button>
 
 
                     <button
@@ -6562,9 +6550,7 @@ if (match?.winnerId) {
                           }
                         )
                       }
-                    >
-                      Refresh
-                    </button>
+                    >{___bsJa("Refresh", "回復")}</button>
 
 
                     <button
@@ -6589,9 +6575,7 @@ if (match?.winnerId) {
                           }
                         )
                       }
-                    >
-                      Exhaust
-                    </button>
+                    >{___bsJa("Exhaust", "疲労")}</button>
 
 
                     <button
@@ -6616,9 +6600,7 @@ if (match?.winnerId) {
                           }
                         )
                       }
-                    >
-                      Destroy
-                    </button>
+                    >{___bsJa("Destroy", "破壊")}</button>
 
 
                     <button
@@ -6643,9 +6625,7 @@ if (match?.winnerId) {
                           }
                         )
                       }
-                    >
-                      → Hand
-                    </button>
+                    >{___bsJa("→ Hand", "→手札")}</button>
 
 
                     <button
@@ -6672,9 +6652,7 @@ if (match?.winnerId) {
                           }
                         )
                       }
-                    >
-                      Void → Core
-                    </button>
+                    >{___bsJa("Void → Core", "ボイド→コア")}</button>
 
                   </>
                 )}
@@ -6722,7 +6700,7 @@ if (match?.winnerId) {
                   )
                 : "attack-focus-top-hud"
             }
-          
+
             data-targeting-state={directBattleTargetId === topId ? "targetable" : undefined}
           >
           <OpponentHUD
@@ -6790,7 +6768,7 @@ if (match?.winnerId) {
                   )
                 : ""
             }
-          
+
             data-targeting-state={directBattleTargetId === bottomId ? "targetable" : undefined}
           >
           <PlayerHUD
@@ -6839,8 +6817,8 @@ if (match?.winnerId) {
                 ? (
                   language ===
                   "en"
-                    ? "Resolve the current battle stage."
-                    : "Resolva o estágio atual da batalha."
+                    ? ___bsJa("Resolve the current battle stage.", "現在のバトルステージを解決します。")
+                    : ___bsJa("Resolva o estágio atual da batalha.", "現在のバトルステージを解決します。")
                 )
                 : `${t(
                     "phase"
@@ -6886,9 +6864,7 @@ if (match?.winnerId) {
                 "start" && (
               <div className="mulligan-box">
 
-                <span>
-                  Mulligan
-                </span>
+                <span>{___bsJa("Mulligan", "マリガン")}</span>
 
 
                 {[
@@ -6974,10 +6950,10 @@ if (match?.winnerId) {
                 }
               >
                 {match.burstOpportunity?.playerId === actorId
-                  ? (language === "en" ? "Burst — Condition met" : "Burst — Condição cumprida")
+                  ? (language === "en" ? ___bsJa("Burst — Condition met", "バースト — 条件が満たされました") : ___bsJa("Burst — Condição cumprida", "バースト — 条件が満たされました"))
                   : actorBurstEvent === "burstLifeDecrease"
-                    ? (language === "en" ? "Burst — Waiting for condition" : "Burst — Aguardando condição")
-                    : (language === "en" ? "Activate Burst" : "Ativar Burst")}
+                    ? (language === "en" ? ___bsJa("Burst — Waiting for condition", "バースト — 待機状態") : ___bsJa("Burst — Aguardando condição", "バースト — 待機状態"))
+                    : (language === "en" ? ___bsJa("Activate Burst", "バーストを発動する") : ___bsJa("Ativar Burst", "バーストを発動する"))}
               </button>
             )}
 
@@ -7043,9 +7019,9 @@ if (match?.winnerId) {
       {match.burstOpportunity && match.players[match.burstOpportunity.playerId]?.burst && (
         <section className="burst-opportunity-panel" aria-live="assertive">
           <div>
-            <span>BURST</span>
+            <span>{___bsJa("BURST", "バースト")}</span>
             <strong>
-              {language === "en" ? "Activation condition detected" : "Condição de ativação detectada"}
+              {language === "en" ? ___bsJa("Activation condition detected", "活性化条件が検出されました") : ___bsJa("Condição de ativação detectada", "活性化条件が検出されました")}
             </strong>
             <small>
               {match.players[match.burstOpportunity.playerId].name}
@@ -7071,7 +7047,7 @@ if (match?.winnerId) {
                 )
               }
             >
-              {language === "en" ? "Activate Burst" : "Ativar Burst"}
+              {language === "en" ? ___bsJa("Activate Burst", "バーストを発動する") : ___bsJa("Ativar Burst", "バーストを発動する")}
             </button>
 
             <button
@@ -7090,7 +7066,7 @@ if (match?.winnerId) {
                 )
               }
             >
-              {language === "en" ? "Pass" : "Passar"}
+              {language === "en" ? ___bsJa("Pass", "パス") : ___bsJa("Passar", "パス")}
             </button>
           </div>
         </section>
@@ -7139,8 +7115,8 @@ if (match?.winnerId) {
 
           <small className="pending-help">
             {language === "en"
-              ? "Click Reserve Cores to pay automatically. After the cost is paid, further clicks place Cores on the card. You can also drag Cores manually."
-              : "Clique nos Cores da Reserve para pagar automaticamente. Após o custo, os próximos cliques colocam Cores na carta. Você também pode arrastar manualmente."}
+              ? ___bsJa("Click Reserve Cores to pay automatically. After the cost is paid, further clicks place Cores on the card. You can also drag Cores manually.", "リザーブのコアを選ぶとコストを支払います。支払い後はカード上にコアを置きます。コアをドラッグして移動することもできます。")
+              : ___bsJa("Clique nos Cores da Reserve para pagar automaticamente. Após o custo, os próximos cliques colocam Cores na carta. Você também pode arrastar manualmente.", "リザーブのコアを選ぶとコストを支払います。支払い後はカード上にコアを置きます。コアをドラッグして移動することもできます。")}
           </small>
 
           <div className="pending-play-actions">
@@ -7181,7 +7157,7 @@ if (match?.winnerId) {
         <div className="pending-magic-layer" aria-live="polite">
           <section className={`pending-magic-modal payment-theme-${pendingTheme}`}>
             <span className="eyebrow">
-              {pendingCost.mode === "flash" ? "FLASH" : "MAGIC"}
+              {pendingCost.mode === "flash" ? ___bsJa("FLASH", "フラッシュ") : ___bsJa("MAGIC", "マジック")}
             </span>
             <strong>
               {getCardName(getDatabaseCard(cardIndex, pendingCtx?.card))}
@@ -7198,8 +7174,8 @@ if (match?.winnerId) {
 
             <small className="pending-help">
               {language === "en"
-                ? "Click Reserve Cores to pay automatically, or drag them to Core Trash. Then confirm or cancel."
-                : "Clique nos Cores da Reserve para pagar automaticamente ou arraste-os ao Core Trash. Depois confirme ou cancele."}
+                ? ___bsJa("Click Reserve Cores to pay automatically, or drag them to Core Trash. Then confirm or cancel.", "リザーブのコアを選ぶか、コアトラッシュにドラッグしてコストを支払ってください。その後、確定または取り消しを選びます。")
+                : ___bsJa("Clique nos Cores da Reserve para pagar automaticamente ou arraste-os ao Core Trash. Depois confirme ou cancele.", "リザーブのコアを選ぶか、コアトラッシュにドラッグしてコストを支払ってください。その後、確定または取り消しを選びます。")}
             </small>
 
             <div className="pending-play-actions">
@@ -7210,7 +7186,7 @@ if (match?.winnerId) {
                   dispatch({ type: "CONFIRM_MANUAL_COST" }, bottomId)
                 }
               >
-                {language === "en" ? "Confirm" : "Confirmar"}
+                {language === "en" ? ___bsJa("Confirm", "確定") : ___bsJa("Confirmar", "確定")}
               </button>
 
               <button
@@ -7220,7 +7196,7 @@ if (match?.winnerId) {
                   dispatch({ type: "CANCEL_MANUAL_COST" }, bottomId)
                 }
               >
-                {language === "en" ? "Cancel" : "Cancelar"}
+                {language === "en" ? ___bsJa("Cancel", "キャンセル") : ___bsJa("Cancelar", "キャンセル")}
               </button>
             </div>
           </section>
@@ -7286,8 +7262,8 @@ if (match?.winnerId) {
                     <span>
                       {language ===
                       "en"
-                        ? "REVEALED"
-                        : "REVELADAS"}
+                        ? ___bsJa("REVEALED", "公開済み")
+                        : ___bsJa("REVELADAS", "公開済み")}
                     </span>
 
                     <b>
@@ -7364,8 +7340,8 @@ if (match?.winnerId) {
                     <small>
                       {language ===
                       "en"
-                        ? "Drag a revealed card to your hand, Top or Bottom."
-                        : "Arraste uma carta revelada para sua mão, Topo ou Fundo."}
+                        ? ___bsJa("Drag a revealed card to your hand, Top or Bottom.", "公開されたカードを手札、デッキの上、またはデッキの下にドラッグしてください。")
+                        : ___bsJa("Arraste uma carta revelada para sua mão, Topo ou Fundo.", "公開されたカードを手札、デッキの上、またはデッキの下にドラッグしてください。")}
                     </small>
                   )}
 
@@ -7386,9 +7362,7 @@ if (match?.winnerId) {
         <div className="trash-hover-preview">
 
           <header>
-            <span>
-              TRASH
-            </span>
+            <span>{___bsJa("TRASH", "トラッシュ")}</span>
 
             <b>
               {
@@ -7464,8 +7438,8 @@ if (match?.winnerId) {
                 <p className="muted">
                   {language ===
                   "en"
-                    ? "Trash is empty."
-                    : "Trash vazio."}
+                    ? ___bsJa("Trash is empty.", "トラッシュにカードはありません。")
+                    : ___bsJa("Trash vazio.", "トラッシュにカードはありません。")}
                 </p>
               )}
           </div>
@@ -7485,7 +7459,7 @@ if (match?.winnerId) {
           source="hover"
           imageSrc={resolveCardImage(previewCard)}
           name={getCardName(previewCard)}
-          previewLabel={language === "en" ? "CARD PREVIEW" : "VISUALIZAÇÃO"}
+          previewLabel={language === "ja" ? "カード詳細" : language === "en" ? "CARD PREVIEW" : "VISUALIZAÇÃO"}
           style={previewAnchor
             ? {
                 left: Math.max(12, Math.min(

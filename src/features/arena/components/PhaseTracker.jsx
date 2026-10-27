@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../../../localization/displayLanguage.js";
 import { memo } from "react";
 
 const PHASES = [
@@ -26,10 +27,10 @@ function PhaseTrackerComponent({
     <section
       className={`arena-phase-tracker ${className}`.trim()}
       data-current-phase={currentPhase || "start"}
-      aria-label="Turn phase tracker"
+      aria-label={___bsJa("Turn phase tracker", "ターンフェーズトラッカー")}
     >
       <div className="arena-phase-tracker-meta">
-        <span>{language === "en" ? "TURN" : "TURNO"} {turnNumber}</span>
+        <span>{language === "en" ? ___bsJa("TURN", "振り向く") : ___bsJa("TURNO", "振り向く")} {turnNumber}</span>
         {activePlayerName ? <strong>{activePlayerName}</strong> : null}
       </div>
 
@@ -59,7 +60,7 @@ function PhaseTrackerComponent({
           disabled={!canAdvance}
           onClick={onAdvance}
         >
-          <span>{language === "en" ? "Next" : "Avançar"}</span>
+          <span>{language === "en" ? ___bsJa("Next", "次") : ___bsJa("Avançar", "次")}</span>
           <b aria-hidden="true">›</b>
         </button>
       ) : null}

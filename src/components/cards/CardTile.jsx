@@ -1,5 +1,7 @@
+import { getDisplayCardName as getCardName } from "../../localization/displayCardName.js";
+import { japaneseText as ___bsJa } from "../../localization/displayLanguage.js";
 import { useEffect, useState } from "react";
-import { resolveCardImage, resolveCardThumbnail, getCardName } from "../../game/cardAdapter.js";
+import { resolveCardImage, resolveCardThumbnail } from "../../game/cardAdapter.js";
 import { getCurrentLevel } from "../../game/selectors.js";
 import { CoreToken } from "./CoreArea.jsx";
 
@@ -137,7 +139,7 @@ export default function CardTile({
         </>
       )}
 
-      {physical?.combinedWith && <span className="combined-tag">BRAVE</span>}
+      {physical?.combinedWith && <span className="combined-tag">{___bsJa("BRAVE", "ブレイヴ")}</span>}
       {footer}
     </button>
   );

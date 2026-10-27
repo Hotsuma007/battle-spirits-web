@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../../../../localization/displayLanguage.js";
 import ArenaVisualCoreToken from "../resources/ArenaVisualCoreToken.jsx";
 import { coreClickIntent } from "../../interactions/arenaIntentFactory.js";
 import { writeArenaVisualCoreDrag } from "../../interactions/coreInteraction.js";
@@ -56,7 +57,7 @@ export default function ArenaVisualCardCoreOverlay({
   };
 
   return (
-    <div className="arena-visual-card-core-overlay" aria-label="Card cores">
+    <div className="arena-visual-card-core-overlay" aria-label={___bsJa("Card cores", "カードコア")}>
       {LEGACY_REGULAR_CORE_POSITIONS.slice(0, regularCount).map((position, index) => token("core", position, index))}
       {hasSoulCore ? token("soul-core", LEGACY_SOUL_CORE_POSITION, "soul", "is-soul-core") : null}
     </div>

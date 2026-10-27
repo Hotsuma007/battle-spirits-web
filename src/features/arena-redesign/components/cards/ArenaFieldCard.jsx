@@ -1,3 +1,5 @@
+import { getDisplayCardName } from "../../../../localization/displayCardName.js";
+import { japaneseText as ___bsJa, isJapaneseDisplay as ___bsJapanese } from "../../../../localization/displayLanguage.js";
 import { getCardArtworkUrl, getCardById } from "../../../../services/cards/cardRepository.js";
 import CorePool from "../resources/CorePool.jsx";
 import { readCoreDragPayload } from "../../interactions/coreInteraction.js";
@@ -13,7 +15,7 @@ import {
 import TargetMarker from "../battle/TargetMarker.jsx";
 
 function cardName(card, fallback) {
-  return card?.namePT || card?.nameEN || card?.name || fallback || "Card";
+  return card ? getDisplayCardName(card) : fallback || "カード";
 }
 
 export default function ArenaFieldCard({
@@ -118,12 +120,12 @@ export default function ArenaFieldCard({
         />
       </button>
 
-      <div className="arena-redesign-field-card-status" aria-label={`${title} status`}>
+      <div className="arena-redesign-field-card-status" aria-label={(___bsJapanese() ? `${title}ステータス` : `${title} status`)}>
         <span className="arena-redesign-field-card-level">
           {level ? `Lv${level.level}` : "—"}
         </span>
         <strong className="arena-redesign-field-card-bp">
-          {bp == null ? "— BP" : `${bp} BP`}
+          {bp == null ? ___bsJa("— BP", "— BP") : `${bp} BP`}
         </strong>
         {battleRole ? (
           <span className="arena-redesign-field-card-role">{battleRole}</span>
@@ -146,7 +148,7 @@ export default function ArenaFieldCard({
           soulCore={Boolean(physical?.cores?.soul)}
           compact={density !== "large"}
           maxVisible={8}
-          label={`${title} Cores`}
+          label={(___bsJapanese() ? `${title} コア` : `${title} Cores`)}
           playerId={interaction?.playerId || null}
           zone="card"
           instanceId={physical?.instanceId || null}
@@ -159,7 +161,7 @@ export default function ArenaFieldCard({
       </div>
 
       {physical?.combinedWith ? (
-        <span className="arena-redesign-field-card-combined">Brave</span>
+        <span className="arena-redesign-field-card-combined">{___bsJa("Brave", "ブレイヴ")}</span>
       ) : null}
     </article>
   );

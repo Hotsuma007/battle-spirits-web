@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../../../../localization/displayLanguage.js";
 export default function ArenaVisualOrderDecision({ decision, order, moveOrder, resolve }) {
   return (
     <div className="arena-visual-center-order">
@@ -16,9 +17,7 @@ export default function ArenaVisualOrderDecision({ decision, order, moveOrder, r
         type="button"
         className="arena-visual-center-confirm"
         onClick={() => resolve(decision.kind === "chooseTriggerOrder" ? { orderedTriggerIds: order } : { orderedInstanceIds: order })}
-      >
-        Confirm Order
-      </button>
+      >{___bsJa("Confirm Order", "順序を確定")}</button>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa, isJapaneseDisplay as ___bsJapanese } from "../../../../localization/displayLanguage.js";
 import ArenaVisualCardCoreOverlay from "./ArenaVisualCardCoreOverlay.jsx";
 import ArenaVisualBraveAttachment from "./ArenaVisualBraveAttachment.jsx";
 import ArenaVisualSummonPaymentPanel from "./ArenaVisualSummonPaymentPanel.jsx";
@@ -12,7 +13,7 @@ function LevelBadge({ level }) {
     <img
       className="arena-visual-level-badge"
       src={`/images/ui/arena/levels/lv${numericLevel}.webp`}
-      alt={`Level ${numericLevel}`}
+      alt={(___bsJapanese() ? `レベル${numericLevel}` : `Level ${numericLevel}`)}
       draggable="false"
     />
   );
@@ -62,7 +63,7 @@ export default function ArenaVisualBattlefieldCard({ side, card, onSelectCard, i
     >
       {card?.attachedBrave ? <ArenaVisualBraveAttachment brave={card.attachedBrave} /> : null}
       <div className="arena-visual-field-card-art">
-        <img src={image} alt={card?.hidden ? "Hidden card" : (card?.name || "Battlefield card")} draggable="false" />
+        <img src={image} alt={card?.hidden ? ___bsJa("Hidden card", "隠しカード") : (card?.name || ___bsJa("Battlefield card", "フィールドのカード"))} draggable="false" />
         <ArenaVisualCardCoreOverlay
           coreCount={card?.coreCount}
           soulCoreCount={card?.soulCoreCount}

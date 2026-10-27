@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../../../../localization/displayLanguage.js";
 import { useRef } from "react";
 import { playHandCardIntent } from "../../interactions/arenaIntentFactory.js";
 import { startArenaPointerCardDrag } from "../../interactions/arenaPointerCardDrag.js";
@@ -65,7 +66,7 @@ export default function ArenaVisualHandCard({ side, card, layout, onSelectCard, 
         interaction.requestIntent?.(playHandCardIntent(card.instanceId, { input: "mouse" }));
       } : undefined}
     >
-      <img src={image} alt={isOpponent ? "" : (card?.name || "Hand card")} draggable="false" />
+      <img src={image} alt={isOpponent ? "" : (card?.name || ___bsJa("Hand card", "手札"))} draggable="false" />
     </button>
   );
 }

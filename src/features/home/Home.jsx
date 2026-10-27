@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../../localization/displayLanguage.js";
 import { useEffect, useMemo, useState } from "react";
 import { getProfile } from "../../services/platform/storage.js";
 import { useLanguage } from "../../localization/i18n.jsx";
@@ -159,7 +160,7 @@ export default function Home({ go, initialSection = "root" }) {
 
       <section className="bs-main-menu-shell" aria-label={text("メインメニュー", "Menu principal", "Main menu")}>
         <div className="bs-main-menu-brand">
-          <img src="./images/logo_battlespirits.png" alt="Battle Spirits: KAIHOU! Simulator" />
+          <img src="./images/logo_battlespirits.png" alt={___bsJa("Battle Spirits: KAIHOU! Simulator", "バトルスピリッツ 界放シミュレーター")} />
 
           <div className={`bs-main-menu-title ${section !== "root" ? "is-submenu" : ""}`}>
             <span>{heading}</span>
@@ -188,7 +189,7 @@ export default function Home({ go, initialSection = "root" }) {
       )}
 
       <footer className="bs-main-menu-footer">
-        <span>Battle Spirits © BANDAI.</span>
+        <span>{___bsJa("Battle Spirits © BANDAI.", "バトルスピリッツ ©BANDAI.")}</span>
         <span className="bs-main-menu-footer-line" aria-hidden="true" />
         <strong>{text("非公式シミュレーター", "SIMULADOR NÃO OFICIAL", "UNOFFICIAL SIMULATOR")} · {APP_VERSION_LABEL}</strong>
       </footer>

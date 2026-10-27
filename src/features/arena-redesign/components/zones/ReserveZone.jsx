@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../../../../localization/displayLanguage.js";
 import CoreResourceZone from "../resources/CoreResourceZone.jsx";
 
 export default function ReserveZone({
@@ -11,7 +12,7 @@ export default function ReserveZone({
 
   return (
     <CoreResourceZone
-      label="Reserve"
+      label={___bsJa("Reserve", "リザーブ")}
       zone="reserve"
       regularCount={reserve}
       soulCore={soulCore}

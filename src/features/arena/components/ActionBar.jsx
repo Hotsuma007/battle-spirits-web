@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../../../localization/displayLanguage.js";
 import { Children } from "react";
 
 export default function ActionBar({
@@ -15,7 +16,7 @@ export default function ActionBar({
       className={`arena-action-bar ${className}`.trim()}
       data-action-context={context}
       data-action-count={count}
-      aria-label="Context actions"
+      aria-label={___bsJa("Context actions", "コンテキストアクション")}
     >
       <div className="arena-action-bar-inner inspector-actions">
         {actions}

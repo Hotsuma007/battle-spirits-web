@@ -14,7 +14,7 @@ export function formatMatchDuration(seconds = 0, language = "pt") {
   const total = Math.max(0, Math.round(Number(seconds || 0)));
   const minutes = Math.floor(total / 60);
   const rest = total % 60;
-  if (!minutes) return language === "en" ? `${rest}s` : `${rest}s`;
+  if (!minutes) return language === "ja" ? `${rest}秒` : `${rest}s`;
   return `${minutes}:${String(rest).padStart(2, "0")}`;
 }
 

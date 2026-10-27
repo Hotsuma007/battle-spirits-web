@@ -1,3 +1,6 @@
+import { japaneseText as ___bsJa, isJapaneseDisplay as ___bsJapanese } from "../../../../localization/displayLanguage.js";
+import { japaneseGameLog, japanesePhase } from "../../../../localization/gameLog.js";
+import { cardIndex } from "../../../../services/cards/cardRepository.js";
 import { useEffect, useState } from "react";
 import { useLanguage } from "../../../../localization/i18n.jsx";
 
@@ -95,9 +98,9 @@ function InspectorPanel({ card }) {
   if (!card) {
     return (
       <div className="arena-visual-utility-empty">
-        <span>{ja ? "カード詳細" : "Card Inspector"}</span>
-        <strong>{ja ? "カードを選択" : "Select a card"}</strong>
-        <p>{ja ? "手札やフィールドのカードを選ぶと、詳細を確認できます。" : "Click a card in your hand or on either Battlefield to inspect its information and effects."}</p>
+        <span>{ja ? "カード詳細" : ___bsJa("Card Inspector", "カード詳細")}</span>
+        <strong>{ja ? "カードを選択" : ___bsJa("Select a card", "カードを選択してください")}</strong>
+        <p>{ja ? "手札やフィールドのカードを選ぶと、詳細を確認できます。" : ___bsJa("Click a card in your hand or on either Battlefield to inspect its information and effects.", "手札または戦場のいずれかのカードをクリックして、その情報と効果を確認します。")}</p>
       </div>
     );
   }
@@ -115,15 +118,15 @@ function InspectorPanel({ card }) {
       }}
     >
       <div className="arena-visual-inspector-artwork">
-        <img src={card.image || "/images/card-back.webp"} alt={card.name || "Card"} draggable="false" />
+        <img src={card.image || "/images/card-back.webp"} alt={card.name || ___bsJa("Card", "カード")} draggable="false" />
       </div>
 
       <div className="arena-visual-inspector-identity">
-        <span className="arena-visual-inspector-type">{ja ? ({ spirit: "スピリット", nexus: "ネクサス", magic: "マジック", brave: "ブレイヴ", ultimate: "アルティメット" }[card.cardType || card.type] || "カード") : (card.cardType || card.type || "Card")}</span>
-        <h2>{card.name || "Card"}</h2>
+        <span className="arena-visual-inspector-type">{ja ? ({ spirit: "スピリット", nexus: "ネクサス", magic: "マジック", brave: "ブレイヴ", ultimate: "アルティメット" }[card.cardType || card.type] || "カード") : (card.cardType || card.type || ___bsJa("Card", "カード"))}</span>
+        <h2>{card.name || ___bsJa("Card", "カード")}</h2>
         <div className="arena-visual-inspector-tags">
           {card.cardId ? <b>{card.cardId}</b> : null}
-          {Number.isFinite(card.cost) ? <b>{ja ? "コスト" : "Cost"} {card.cost}</b> : null}
+          {Number.isFinite(card.cost) ? <b>{ja ? "コスト" : ___bsJa("Cost", "コスト")} {card.cost}</b> : null}
           {Number.isFinite(card.level) ? <b>Lv{card.level}</b> : null}
           {Number.isFinite(card.bp) ? <b>{card.bp} BP</b> : null}
           {card.rarity ? <b>{card.rarity}</b> : null}
@@ -131,19 +134,20 @@ function InspectorPanel({ card }) {
       </div>
 
       <div className="arena-visual-inspector-section">
-        <span>{ja ? "効果" : "Effects & Keywords"}</span>
+        <span>{ja ? "効果" : ___bsJa("Effects & Keywords", "効果とキーワード")}</span>
+        {ja && effectParagraphs.length ? <small>効果文は参考訳です。正確な内容はカード画像をご確認ください。</small> : null}
         {effectParagraphs.length ? effectParagraphs.map((effect, index) => (
           <article className="arena-visual-effect-block" key={`${index}-${effect.slice(0, 24)}`}>
-            <b>{ja ? "効果" : "Effect"} {String(index + 1).padStart(2, "0")}</b>
+            <b>{ja ? "効果" : ___bsJa("Effect", "効果")} {String(index + 1).padStart(2, "0")}</b>
             <p><HighlightedRulesText card={card} text={effect} /></p>
           </article>
-        )) : <p className="is-muted">{ja ? "効果テキストがありません。" : "No card text available."}</p>}
+        )) : <p className="is-muted">{ja ? "効果テキストがありません。" : ___bsJa("No card text available.", "カードテキストはありません。")}</p>}
       </div>
 
       <div className="arena-visual-inspector-stats">
-        <div><span>{ja ? "コア" : "Cores"}</span><strong>{card.coreCount || 0}</strong></div>
-        <div><span>{ja ? "ソウルコア" : "Soul Core"}</span><strong>{card.soulCoreCount || 0}</strong></div>
-        <div><span>{ja ? "状態" : "Status"}</span><strong>{card.exhausted ? (ja ? "疲労" : "Exhausted") : (ja ? "回復" : "Ready")}</strong></div>
+        <div><span>{ja ? "コア" : ___bsJa("Cores", "コア")}</span><strong>{card.coreCount || 0}</strong></div>
+        <div><span>{ja ? "ソウルコア" : ___bsJa("Soul Core", "ソウルコア")}</span><strong>{card.soulCoreCount || 0}</strong></div>
+        <div><span>{ja ? "状態" : ___bsJa("Status", "状態")}</span><strong>{card.exhausted ? (ja ? "疲労" : ___bsJa("Exhausted", "疲れ果てた")) : (ja ? "回復" : ___bsJa("Ready", "準備ができて"))}</strong></div>
       </div>
     </div>
   );
@@ -155,19 +159,19 @@ function MatchPanel({ utility }) {
   return (
     <div className="arena-visual-match-panel">
       <div className="arena-visual-turn-card">
-        <span>Turn</span><strong>{utility?.turnNumber || 1}</strong>
-        <small>{utility?.activePlayerName || "Current player"}</small>
+        <span>{___bsJa("Turn", "ターン")}</span><strong>{utility?.turnNumber || 1}</strong>
+        <small>{utility?.activePlayerName || ___bsJa("Current player", "現在のプレイヤー")}</small>
       </div>
       <div className="arena-visual-phase-track">
         {PHASES.map((phase, index) => (
           <div key={phase} className={`arena-visual-phase-step${index === currentPhaseIndex ? " is-current" : ""}${index < currentPhaseIndex ? " is-complete" : ""}`}>
             <i />
-            <span>{phase}</span>
+            <span>{___bsJapanese() ? japanesePhase(phase) : phase}</span>
           </div>
         ))}
       </div>
       <div className="arena-visual-match-status">
-        <span>Priority</span><strong>{utility?.priorityLabel || "Waiting"}</strong>
+        <span>{___bsJa("Priority", "優先度")}</span><strong>{utility?.priorityLabel || ___bsJa("Waiting", "待っている")}</strong>
       </div>
       <BattleStatusBanner battle={utility?.battle} />
     </div>
@@ -203,81 +207,82 @@ function ManualPanel({ selectedCard, utility, onActionRequest }) {
   return (
     <div className="arena-visual-manual-panel">
       <header>
-        <span>Manual Resolution</span>
-        <strong>Developer-safe fallback</strong>
-        <p>Use these controls only for unresolved card text or tabletop corrections. Rule-driven actions must use their normal gameplay flow.</p>
+        <span>{___bsJa("Manual Resolution", "手動解決")}</span>
+        <strong>{___bsJa("Developer-safe fallback", "開発者にとって安全なフォールバック")}</strong>
+        <p>{___bsJa("Use these controls only for unresolved card text or tabletop corrections. Rule-driven actions must use their normal gameplay flow.", "これらのコントロールは、未解決のカード テキストまたはテーブルトップの修正にのみ使用してください。ルール主導のアクションは、通常のゲームプレイ フローを使用する必要があります。")}</p>
       </header>
 
       <div className={`arena-visual-manual-policy${disabled ? " is-disabled" : " is-enabled"}`}>
-        <b>{disabled ? "Manual tools locked" : "Manual tools available"}</b>
-        <span>{manual.reason || "Manual fallback policy unavailable."}</span>
+        <b>{disabled ? ___bsJa("Manual tools locked", "手動ツールがロックされています") : ___bsJa("Manual tools available", "手動ツールが利用可能")}</b>
+        <span>{manual.reason || ___bsJa("Manual fallback policy unavailable.", "手動フォールバック ポリシーは使用できません。")}</span>
       </div>
 
       <div className="arena-visual-manual-section">
-        <span>Player State</span>
+        <span>{___bsJa("Player State", "プレイヤーの状態")}</span>
         <div className="arena-visual-manual-grid">
-          <button disabled={disabled} onClick={() => manualAction({ type: "draw", playerId: actorId, count: 1 })}>Draw 1</button>
-          <button disabled={disabled} onClick={() => manualAction({ type: "topDeckToTrash", playerId: actorId })}>Top → Trash</button>
-          <button disabled={disabled} onClick={() => manualAction({ type: "revealTop", playerId: actorId })}>Reveal Top</button>
-          <button disabled={disabled} onClick={() => manualAction({ type: "adjustLife", playerId: actorId, delta: -1 })}>−1 Life</button>
-          <button disabled={disabled} onClick={() => manualAction({ type: "adjustLife", playerId: actorId, delta: 1 })}>+1 Life</button>
-          <button disabled={disabled} onClick={() => manualAction({ type: "voidToReserve", playerId: actorId })}>Void → Core</button>
+          <button disabled={disabled} onClick={() => manualAction({ type: "draw", playerId: actorId, count: 1 })}>{___bsJa("Draw 1", "1枚ドロー")}</button>
+          <button disabled={disabled} onClick={() => manualAction({ type: "topDeckToTrash", playerId: actorId })}>{___bsJa("Top → Trash", "デッキ上→トラッシュ")}</button>
+          <button disabled={disabled} onClick={() => manualAction({ type: "revealTop", playerId: actorId })}>{___bsJa("Reveal Top", "トップを明らかにする")}</button>
+          <button disabled={disabled} onClick={() => manualAction({ type: "adjustLife", playerId: actorId, delta: -1 })}>{___bsJa("−1 Life", "−1ライフ")}</button>
+          <button disabled={disabled} onClick={() => manualAction({ type: "adjustLife", playerId: actorId, delta: 1 })}>{___bsJa("+1 Life", "+1ライフ")}</button>
+          <button disabled={disabled} onClick={() => manualAction({ type: "voidToReserve", playerId: actorId })}>{___bsJa("Void → Core", "ボイド→コア")}</button>
         </div>
-        <small>Core and Soul Core corrections remain available through the physical Core click/drag system.</small>
+        <small>{___bsJa("Core and Soul Core corrections remain available through the physical Core click/drag system.", "Core および Soul Core の修正は、物理的な Core クリック/ドラッグ システムを通じて引き続き利用できます。")}</small>
       </div>
 
       <div className="arena-visual-manual-section arena-visual-manual-selected">
-        <span>Selected Card</span>
-        <strong>{selectedCard?.name || "Select one of your cards"}</strong>
-        {selectedZone ? <small>Current zone: {selectedZone}</small> : null}
+        <span>{___bsJa("Selected Card", "選択したカード")}</span>
+        <strong>{selectedCard?.name || ___bsJa("Select one of your cards", "いずれかのカードを選択してください")}</strong>
+        {selectedZone ? <small>{___bsJa("Current zone: ", "現在のゾーン: ")}{selectedZone}</small> : null}
         <div className="arena-visual-manual-grid">
-          <button disabled={disabled || !selectedInstanceId} onClick={() => manualAction({ type: "temporaryBP", instanceId: selectedInstanceId, amount: 1000 })}>+1000 BP</button>
-          <button disabled={disabled || !selectedInstanceId} onClick={() => manualAction({ type: "temporaryBP", instanceId: selectedInstanceId, amount: -1000 })}>−1000 BP</button>
-          <button disabled={disabled || !selectedInstanceId} onClick={() => manualAction({ type: "refresh", instanceId: selectedInstanceId })}>Refresh</button>
-          <button disabled={disabled || !selectedInstanceId} onClick={() => manualAction({ type: "exhaust", instanceId: selectedInstanceId })}>Exhaust</button>
-          <button disabled={disabled || !selectedInstanceId} onClick={() => manualAction({ type: "destroy", instanceId: selectedInstanceId })}>Destroy</button>
-          <button disabled={disabled || !selectedInstanceId} onClick={() => manualAction({ type: "returnHand", instanceId: selectedInstanceId })}>→ Hand</button>
+          <button disabled={disabled || !selectedInstanceId} onClick={() => manualAction({ type: "temporaryBP", instanceId: selectedInstanceId, amount: 1000 })}>{___bsJa("+1000 BP", "+1000BP")}</button>
+          <button disabled={disabled || !selectedInstanceId} onClick={() => manualAction({ type: "temporaryBP", instanceId: selectedInstanceId, amount: -1000 })}>{___bsJa("−1000 BP", "−1000BP")}</button>
+          <button disabled={disabled || !selectedInstanceId} onClick={() => manualAction({ type: "refresh", instanceId: selectedInstanceId })}>{___bsJa("Refresh", "回復")}</button>
+          <button disabled={disabled || !selectedInstanceId} onClick={() => manualAction({ type: "exhaust", instanceId: selectedInstanceId })}>{___bsJa("Exhaust", "疲労")}</button>
+          <button disabled={disabled || !selectedInstanceId} onClick={() => manualAction({ type: "destroy", instanceId: selectedInstanceId })}>{___bsJa("Destroy", "破壊")}</button>
+          <button disabled={disabled || !selectedInstanceId} onClick={() => manualAction({ type: "returnHand", instanceId: selectedInstanceId })}>{___bsJa("→ Hand", "→手札")}</button>
         </div>
         <div className="arena-visual-manual-move-grid">
-          <button disabled={disabled || !selectedInstanceId} onClick={() => moveSelected("hand")}>Move → Hand</button>
-          <button disabled={disabled || !selectedInstanceId} onClick={() => moveSelected("trash")}>Move → Trash</button>
-          <button disabled={disabled || !selectedInstanceId} onClick={() => moveSelected("deck", "top")}>Move → Deck Top</button>
-          <button disabled={disabled || !selectedInstanceId} onClick={() => moveSelected("deck", "bottom")}>Move → Deck Bottom</button>
+          <button disabled={disabled || !selectedInstanceId} onClick={() => moveSelected("hand")}>{___bsJa("Move → Hand", "移動→手")}</button>
+          <button disabled={disabled || !selectedInstanceId} onClick={() => moveSelected("trash")}>{___bsJa("Move → Trash", "移動 → トラッシュ")}</button>
+          <button disabled={disabled || !selectedInstanceId} onClick={() => moveSelected("deck", "top")}>{___bsJa("Move → Deck Top", "移動 → デッキトップ")}</button>
+          <button disabled={disabled || !selectedInstanceId} onClick={() => moveSelected("deck", "bottom")}>{___bsJa("Move → Deck Bottom", "移動 → デッキ下")}</button>
         </div>
       </div>
 
       <div className="arena-visual-manual-section">
-        <span>Revealed Cards</span>
+        <span>{___bsJa("Revealed Cards", "公開されたカード")}</span>
         {revealed.length ? (
           <div className="arena-visual-manual-revealed">
             {revealed.map((card) => (
               <article key={card.instanceId || card.id}>
                 {card.image ? <img src={card.image} alt="" draggable="false" /> : null}
-                <span><strong>{card.name || card.cardId || "Revealed Card"}</strong><small>{card.cardId || ""}</small></span>
+                <span><strong>{card.name || card.cardId || ___bsJa("Revealed Card", "公開されたカード")}</strong><small>{card.cardId || ""}</small></span>
                 <div>
-                  <button disabled={disabled} onClick={() => manualAction({ type: "revealedToHand", playerId: actorId, instanceId: card.instanceId })}>Hand</button>
-                  <button disabled={disabled} onClick={() => manualAction({ type: "revealedToTop", playerId: actorId, instanceId: card.instanceId })}>Top</button>
-                  <button disabled={disabled} onClick={() => manualAction({ type: "revealedToBottom", playerId: actorId, instanceId: card.instanceId })}>Bottom</button>
+                  <button disabled={disabled} onClick={() => manualAction({ type: "revealedToHand", playerId: actorId, instanceId: card.instanceId })}>{___bsJa("Hand", "手札")}</button>
+                  <button disabled={disabled} onClick={() => manualAction({ type: "revealedToTop", playerId: actorId, instanceId: card.instanceId })}>{___bsJa("Top", "上")}</button>
+                  <button disabled={disabled} onClick={() => manualAction({ type: "revealedToBottom", playerId: actorId, instanceId: card.instanceId })}>{___bsJa("Bottom", "下")}</button>
                 </div>
               </article>
             ))}
           </div>
-        ) : <p className="is-muted">No cards are currently revealed.</p>}
+        ) : <p className="is-muted">{___bsJa("No cards are currently revealed.", "現在公開されているカードはありません。")}</p>}
       </div>
     </div>
   );
 }
 
 function LogPanel({ entries = [] }) {
+  const { language } = useLanguage();
   const visible = [...entries].slice(-80).reverse();
   return (
     <div className="arena-visual-log-panel">
       {visible.length ? visible.map((entry, index) => (
         <article key={entry?.id || index}>
-          <span>{entry?.turn ? `T${entry.turn}` : "EVENT"}{entry?.phase ? ` • ${String(entry.phase).toUpperCase()}` : ""}</span>
-          <p>{entry?.text || String(entry)}</p>
+          <span>{entry?.turn ? (language === "ja" ? `ターン${entry.turn}` : `T${entry.turn}`) : ___bsJa("EVENT", "イベント")}{entry?.phase ? ` • ${language === "ja" ? japanesePhase(entry.phase) : String(entry.phase).toUpperCase()}` : ""}</span>
+          <p>{language === "ja" ? japaneseGameLog(entry?.text || String(entry), cardIndex) : entry?.text || String(entry)}</p>
         </article>
-      )) : <div className="arena-visual-utility-empty is-compact"><strong>No match events yet</strong></div>}
+      )) : <div className="arena-visual-utility-empty is-compact"><strong>{___bsJa("No match events yet", "まだ試合イベントはありません")}</strong></div>}
     </div>
   );
 }
@@ -288,13 +293,13 @@ function ChatPanel({ messages = [] }) {
       <div className="arena-visual-chat-messages">
         {messages.length ? messages.slice(-80).map((message, index) => (
           <div key={message?.id || index} className={`arena-visual-chat-message${message?.self ? " is-self" : ""}`}>
-            <span>{message?.author || "Player"}</span>
+            <span>{message?.author || ___bsJa("Player", "プレイヤー")}</span>
             <p>{message?.text || String(message)}</p>
           </div>
-        )) : <div className="arena-visual-utility-empty is-compact"><strong>No messages yet</strong></div>}
+        )) : <div className="arena-visual-utility-empty is-compact"><strong>{___bsJa("No messages yet", "まだメッセージはありません")}</strong></div>}
       </div>
       <div className="arena-visual-chat-compose" aria-hidden="true">
-        <span>Message…</span><button type="button" tabIndex={-1}>Send</button>
+        <span>{___bsJa("Message…", "メッセージ…")}</span><button type="button" tabIndex={-1}>{___bsJa("Send", "送信")}</button>
       </div>
     </div>
   );
@@ -377,9 +382,9 @@ function EffectDecisionPanel({ decision, onActionRequest }) {
   return (
     <section className="arena-visual-effect-decision" aria-live="polite">
       <header>
-        <span>Effect Resolution</span>
-        <strong>{decision.title || "Effect Resolution"}</strong>
-        {waiting ? <small>Waiting for the other player</small> : null}
+        <span>{___bsJa("Effect Resolution", "効果の解決")}</span>
+        <strong>{decision.title || ___bsJa("Effect Resolution", "効果の解決")}</strong>
+        {waiting ? <small>{___bsJa("Waiting for the other player", "他のプレイヤーを待っています")}</small> : null}
       </header>
       {decision.instruction ? <p>{decision.instruction}</p> : null}
 
@@ -400,16 +405,16 @@ function EffectDecisionPanel({ decision, onActionRequest }) {
               return (
                 <button key={candidate.id || id} type="button" className={selected ? "is-selected" : ""} onClick={() => toggleCandidate(candidate)}>
                   {candidate.image ? <img src={candidate.image} alt="" draggable="false" /> : null}
-                  <span><strong>{candidate.name || candidate.label || "Choice"}</strong>{candidate.cardId ? <small>{candidate.cardId}</small> : null}</span>
+                  <span><strong>{candidate.name || candidate.label || ___bsJa("Choice", "選択")}</strong>{candidate.cardId ? <small>{candidate.cardId}</small> : null}</span>
                 </button>
               );
             })}
           </div>
           <footer className="arena-visual-decision-footer">
-            <span>{selectedIds.length}/{maximum}{decision.maxTotalBP != null ? ` • ${selectedBP}/${decision.maxTotalBP} BP` : ""}</span>
+            <span>{selectedIds.length}/{maximum}{decision.maxTotalBP != null ? (___bsJapanese() ? `• ${selectedBP}/${decision.maxTotalBP} BP` : ` • ${selectedBP}/${decision.maxTotalBP} BP`) : ""}</span>
             <div>
-              {minimum === 0 ? <button type="button" className="is-quiet" onClick={() => resolve({ selectedInstanceIds: [] })}>Choose none</button> : null}
-              <button type="button" disabled={!selectionReady} onClick={() => resolve({ selectedInstanceIds: selectedIds })}>Confirm</button>
+              {minimum === 0 ? <button type="button" className="is-quiet" onClick={() => resolve({ selectedInstanceIds: [] })}>{___bsJa("Choose none", "何も選択しない")}</button> : null}
+              <button type="button" disabled={!selectionReady} onClick={() => resolve({ selectedInstanceIds: selectedIds })}>{___bsJa("Confirm", "確定")}</button>
             </div>
           </footer>
         </>
@@ -428,7 +433,7 @@ function EffectDecisionPanel({ decision, onActionRequest }) {
               </div>
             );
           })}
-          <button type="button" className="arena-visual-decision-confirm" onClick={() => resolve(decision.kind === "chooseTriggerOrder" ? { orderedTriggerIds: order } : { orderedInstanceIds: order })}>Confirm order</button>
+          <button type="button" className="arena-visual-decision-confirm" onClick={() => resolve(decision.kind === "chooseTriggerOrder" ? { orderedTriggerIds: order } : { orderedInstanceIds: order })}>{___bsJa("Confirm order", "順番を確定")}</button>
         </div>
       ) : null}
 
@@ -447,8 +452,8 @@ function EffectDecisionPanel({ decision, onActionRequest }) {
             );
           })}
           <footer className="arena-visual-decision-footer">
-            <span>{assigned}/{required} Cores</span>
-            <button type="button" disabled={!distributionReady} onClick={() => resolve({ coreDistribution: distribution })}>Confirm Cores</button>
+            <span>{assigned}/{required}{___bsJa(" Cores", " コア")}</span>
+            <button type="button" disabled={!distributionReady} onClick={() => resolve({ coreDistribution: distribution })}>{___bsJa("Confirm Cores", "コアを確定")}</button>
           </footer>
         </div>
       ) : null}
@@ -460,9 +465,9 @@ function BattleStatusBanner({ battle }) {
   if (!battle) return null;
   return (
     <div className="arena-visual-battle-status">
-      <span>Battle</span>
+      <span>{___bsJa("Battle", "戦い")}</span>
       <strong>{String(battle.stage || "battle").replaceAll("-", " ")}</strong>
-      <small>{battle.blockerInstanceId ? "Attacker vs Blocker" : (battle.attackerInstanceId ? "Direct attack / awaiting defense" : "Battle timing")}</small>
+      <small>{battle.blockerInstanceId ? ___bsJa("Attacker vs Blocker", "アタッカー vs ブロッカー") : (battle.attackerInstanceId ? ___bsJa("Direct attack / awaiting defense", "直接攻撃/待機防御") : ___bsJa("Battle timing", "バトルタイミング"))}</small>
     </div>
   );
 }
@@ -473,10 +478,10 @@ function PendingActionBanner({ pending }) {
     <div className="arena-visual-pending-action" aria-live="polite">
       <div>
         <span>{pending.label}</span>
-        <strong>{pending.paid} / {pending.payableCost} Cores</strong>
+        <strong>{pending.paid} / {pending.payableCost}{___bsJa(" Cores", " コア")}</strong>
       </div>
       {Number(pending.minimumCores || 0) > 0 ? (
-        <small>Minimum on card: {pending.minimumCores}</small>
+        <small>{___bsJa("Minimum on card: ", "カードの最低金額: ")}{pending.minimumCores}</small>
       ) : null}
     </div>
   );
@@ -488,13 +493,13 @@ export default function ArenaVisualUtilityPanel({ selectedCard = null, utility =
   const [showGameSettings, setShowGameSettings] = useState(false);
   if (collapsed) {
     return (
-      <aside className="arena-visual-utility is-collapsed" aria-label={language === "ja" ? "操作パネルを閉じています" : "Arena utility panel collapsed"}>
+      <aside className="arena-visual-utility is-collapsed" aria-label={language === "ja" ? "操作パネルを閉じています" : ___bsJa("Arena utility panel collapsed", "アリーナユーティリティパネルが崩壊")}>
         <button
           type="button"
           className="arena-visual-utility-collapse-toggle is-collapsed"
           onClick={onToggleCollapsed}
-          aria-label={language === "ja" ? "操作パネルを開く" : "Open utility panel"}
-          title={language === "ja" ? "パネルを開く" : "Open panel"}
+          aria-label={language === "ja" ? "操作パネルを開く" : ___bsJa("Open utility panel", "ユーティリティパネルを開く")}
+          title={language === "ja" ? "パネルを開く" : ___bsJa("Open panel", "オープンパネル")}
         >
           <span aria-hidden="true">‹</span>
         </button>
@@ -503,17 +508,17 @@ export default function ArenaVisualUtilityPanel({ selectedCard = null, utility =
   }
 
   return (
-    <aside className="arena-visual-utility" aria-label={language === "ja" ? "操作パネル" : "Arena utility panel"}>
+    <aside className="arena-visual-utility" aria-label={language === "ja" ? "操作パネル" : ___bsJa("Arena utility panel", "アリーナユーティリティパネル")}>
       <button
         type="button"
         className="arena-visual-utility-collapse-toggle"
         onClick={onToggleCollapsed}
-        aria-label={language === "ja" ? "操作パネルを閉じる" : "Hide utility panel"}
-        title={language === "ja" ? "パネルを閉じる" : "Hide panel"}
+        aria-label={language === "ja" ? "操作パネルを閉じる" : ___bsJa("Hide utility panel", "ユーティリティパネルを非表示にする")}
+        title={language === "ja" ? "パネルを閉じる" : ___bsJa("Hide panel", "パネルを非表示にする")}
       >
         <span aria-hidden="true">›</span>
       </button>
-      <nav className="arena-visual-utility-tabs" aria-label={language === "ja" ? "操作パネルのメニュー" : "Utility navigation"}>
+      <nav className="arena-visual-utility-tabs" aria-label={language === "ja" ? "操作パネルのメニュー" : ___bsJa("Utility navigation", "ユーティリティナビゲーション")}>
         {TABS.map(([id, label]) => (
           <button key={id} type="button" className={activeTab === id ? "is-active" : ""} onClick={() => setActiveTab(id)}>
             {language === "ja" ? ({ inspector: "カード", manual: "手動", log: "履歴", chat: "チャット" }[id] || label) : label}
@@ -524,10 +529,10 @@ export default function ArenaVisualUtilityPanel({ selectedCard = null, utility =
       <div className="arena-visual-utility-main" data-active-tab={showGameSettings ? "settings" : activeTab}>
         {showGameSettings ? (
           <section className="arena-visual-game-settings">
-            <span>{language === "ja" ? "対戦画面" : "Game Settings"}</span>
-            <strong>{language === "ja" ? "表示設定" : "Match interface"}</strong>
-            <button type="button" onClick={onToggleCollapsed}>{language === "ja" ? "パネルを閉じる" : "Hide Utility Panel"}</button>
-            <button type="button" className="is-quiet" onClick={() => setShowGameSettings(false)}>{language === "ja" ? "戻る" : "Close Settings"}</button>
+            <span>{language === "ja" ? "対戦画面" : ___bsJa("Game Settings", "ゲーム設定")}</span>
+            <strong>{language === "ja" ? "表示設定" : ___bsJa("Match interface", "インターフェースの一致")}</strong>
+            <button type="button" onClick={onToggleCollapsed}>{language === "ja" ? "パネルを閉じる" : ___bsJa("Hide Utility Panel", "ユーティリティパネルを隠す")}</button>
+            <button type="button" className="is-quiet" onClick={() => setShowGameSettings(false)}>{language === "ja" ? "戻る" : ___bsJa("Close Settings", "設定を閉じる")}</button>
           </section>
         ) : null}
         {!showGameSettings && activeTab === "inspector" ? <InspectorPanel card={selectedCard} /> : null}
@@ -536,19 +541,19 @@ export default function ArenaVisualUtilityPanel({ selectedCard = null, utility =
         {!showGameSettings && activeTab === "chat" ? <ChatPanel messages={utility?.chatMessages || []} /> : null}
       </div>
 
-      <div className="arena-visual-system-actions" aria-label={language === "ja" ? "対戦の設定と終了" : "Game system actions"}>
+      <div className="arena-visual-system-actions" aria-label={language === "ja" ? "対戦の設定と終了" : ___bsJa("Game system actions", "ゲームシステムのアクション")}>
         <button
           type="button"
           onClick={() => setShowGameSettings((value) => !value)}
         >
-          {language === "ja" ? "表示設定" : "Game Settings"}
+          {language === "ja" ? "表示設定" : ___bsJa("Game Settings", "ゲーム設定")}
         </button>
         <button
           type="button"
           className="is-danger"
           onClick={() => onActionRequest?.({ id: "surrender-match", type: "SURRENDER_MATCH", label: "Surrender" })}
         >
-          {language === "ja" ? "降参" : "Surrender"}
+          {language === "ja" ? "降参" : ___bsJa("Surrender", "降伏")}
         </button>
       </div>
     </aside>

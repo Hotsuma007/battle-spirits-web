@@ -1,6 +1,31 @@
+import { japaneseGameError } from "../../localization/japaneseGameErrors.js";
 import { OnlineErrorCode } from "../domain/onlineErrors.js";
 
 const COPY = Object.freeze({
+  ja: {
+    [OnlineErrorCode.QUEUE_FAILED]: "対戦待ちに参加できませんでした。",
+    [OnlineErrorCode.MATCH_NOT_FOUND]: "対戦を準備できませんでした。もう一度お試しください。",
+    [OnlineErrorCode.MATCH_FULL]: "このルームは満員です。",
+    [OnlineErrorCode.INVALID_ACTION]: "現在、この操作はできません。",
+    [OnlineErrorCode.STALE_STATE]: "対戦状態が更新されました。同期しています。",
+    [OnlineErrorCode.RECONNECT_FAILED]: "制限時間内に対戦を再開できませんでした。",
+    [OnlineErrorCode.READY_CHECK_EXPIRED]: "対戦開始の確認期限が切れました。",
+    [OnlineErrorCode.DECK_INVALID]: "選択したデッキはこの対戦形式では使用できません。",
+    [OnlineErrorCode.SERVER_UNAVAILABLE]: "オンライン対戦サーバーを利用できません。",
+    [OnlineErrorCode.UNAUTHORIZED]: "ログインしてください。",
+    [OnlineErrorCode.INVALID_SESSION]: "オンライン対戦のセッションが無効になりました。",
+    AUTH_REQUIRED: "ログインしてください。",
+    FRIEND_REQUIRED: "この操作はフレンド同士でのみ利用できます。",
+    CHALLENGE_UNAVAILABLE: "現在、このプレイヤーに対戦を申し込めません。",
+    CHALLENGE_EXPIRED: "対戦の申し込み期限が切れました。",
+    CHALLENGE_CANCELLED: "対戦の申し込みが取り消されました。",
+    DECK_LOCK_FAILED: "対戦用のデッキを確定できませんでした。",
+    RANKED_ACCOUNT_ALREADY_QUEUED: "このアカウントはすでにランク対戦の待機中です。",
+    RATE_LIMITED: "操作が集中しています。少し待ってから再度お試しください。",
+    PAYLOAD_TOO_LARGE: "送信データが許容サイズを超えています。",
+    INVALID_PAYLOAD: "送信内容を確認できませんでした。",
+    ACTIVITY_CONFLICT: "別のオンライン対戦を終了または取り消してからお試しください。"
+  },
   ptBR: {
     [OnlineErrorCode.QUEUE_FAILED]: "Não foi possível entrar na fila agora.",
     [OnlineErrorCode.MATCH_NOT_FOUND]: "Não foi possível preparar a partida. Tente novamente.",
@@ -57,20 +82,22 @@ export function onlineErrorMessage(input, {
   language = "ptBR",
   fallback = null
 } = {}) {
-  const locale = language === "en" ? "en" : "ptBR";
+  const locale = language === "ja" ? "ja" : language === "en" ? "en" : "ptBR";
   const code = String(input?.code || "").trim();
   if (code && COPY[locale][code]) return COPY[locale][code];
 
   const raw = String(input?.error || input?.message || (typeof input === "string" ? input : "")).trim();
-  if (raw && raw.length <= 180 && !UNSAFE_ERROR_PATTERN.test(raw)) return raw;
+  if (raw && raw.length <= 180 && !UNSAFE_ERROR_PATTERN.test(raw)) return locale === "ja" ? japaneseGameError(raw) : raw;
 
-  return fallback || (locale === "en"
+  return fallback || (locale === "ja" ? "オンライン対戦の操作を完了できませんでした。" : locale === "en"
     ? "Could not complete this Online action."
     : "Não foi possível concluir esta ação no Online.");
 }
 
 export function onlineConnectionErrorMessage(language = "ptBR") {
-  return language === "en"
+  return language === "ja"
+    ? "オンライン対戦サーバーに接続できませんでした。"
+    : language === "en"
     ? "Could not connect to the Online server right now."
     : "Não foi possível conectar ao servidor Online agora.";
 }

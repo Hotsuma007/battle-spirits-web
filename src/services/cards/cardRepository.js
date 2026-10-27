@@ -1,4 +1,5 @@
-import { resolveCardImage } from "../../game/cardAdapter.js";
+import { getCardName, resolveCardImage } from "../../game/cardAdapter.js";
+import { getJapaneseCardText, getJapaneseFamily } from "../../localization/cardText.js";
 import { buildCardCatalog } from "../../game/cardCatalog.js";
 import { officialRestrictionForCard } from "../../game/eternalDeckRules.js";
 
@@ -43,11 +44,14 @@ const searchIndex = new Map(cards.map((card) => [
     card.name,
     card.namePT,
     card.nameEN,
+    getCardName(card, "ja"),
     card.set,
     card.rarity,
     ...(card.families || []),
+    ...(card.families || []).map(getJapaneseFamily),
     ...(card.subtypes || []),
-    localizedEffectText(card)
+    localizedEffectText(card),
+    getJapaneseCardText(card.effectText)
   ].filter(Boolean).join(" "))
 ]));
 

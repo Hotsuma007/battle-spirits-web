@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../../../localization/displayLanguage.js";
 import {
   PlayerBattlePreview,
   VersusMark,
@@ -34,8 +35,8 @@ export default function PreMatchVersus({ preMatch }) {
 
       <div className="online-pre-match-versus__center">
         <VersusMark />
-        <span>DECKS LOCKED</span>
-        <small>Preparando batalha...</small>
+        <span>{___bsJa("DECKS LOCKED", "デッキがロックされました")}</span>
+        <small>{___bsJa("Preparando batalha...", "戦闘の準備中...")}</small>
       </div>
 
       <PlayerBattlePreview

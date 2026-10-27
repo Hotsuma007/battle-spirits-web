@@ -1,3 +1,5 @@
+import { isJapaneseDisplay } from "../../../../localization/displayLanguage.js";
+
 export default function ArenaVisualCoreToken({
   kind = "core",
   compact = false,
@@ -9,7 +11,7 @@ export default function ArenaVisualCoreToken({
 }) {
   const isSoulCore = kind === "soul-core";
   const isEmpty = kind === "empty";
-  const ariaLabel = isEmpty ? "Empty core slot" : (isSoulCore ? "Soul Core" : "Core");
+  const ariaLabel = isJapaneseDisplay() ? (isEmpty ? "空のコア置き場" : isSoulCore ? "ソウルコア" : "コア") : isEmpty ? "Empty core slot" : (isSoulCore ? "Soul Core" : "Core");
 
   return (
     <span

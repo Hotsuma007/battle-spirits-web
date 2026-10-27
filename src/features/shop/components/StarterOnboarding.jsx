@@ -1,9 +1,11 @@
+import { getDisplayCardName as getCardName } from "../../../localization/displayCardName.js";
+import { localizeShopText } from "../../../localization/shopText.js";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ONBOARDING_DECK_PRODUCTS } from "../../../data/catalog/shop-catalog.js";
 import { completeStarterOnboarding, getDeckRecipe, loadEconomySnapshot } from "../../../services/economy/economyService.js";
 import { cardIndex } from "../../../services/cards/cardRepository.js";
 import CardDetailsModal from "../../../components/cards/CardDetailsModal.jsx";
-import { getCardName, resolveCardImage } from "../../../game/cardAdapter.js";
+import {  resolveCardImage } from "../../../game/cardAdapter.js";
 import { useLanguage } from "../../../localization/i18n.jsx";
 import { getDecks, saveDecks } from "../../../services/platform/storage.js";
 import { PREBUILT_DECKS } from "../../../data/decks/prebuilt-decks.js";
@@ -102,7 +104,7 @@ export default function StarterOnboarding() {
       if (!template || !recipe?.ready || currentDecks.some((deck) => deck.prebuiltTemplateId === template.id)) return [];
       return [{
         id: `starter-${template.id}`,
-        name: `${template.setCode} · ${template.title}`,
+        name: `${template.setCode} · ${localizeShopText(template.title, language)}`,
         cards: recipe.entries.map((entry) => ({ ...entry })),
         coverCardId: recipe.cover?.id || template.coverCardId || recipe.entries[0]?.cardId || null,
         createdFromPrebuilt: true,
@@ -149,7 +151,7 @@ export default function StarterOnboarding() {
                   </div>
                   <div className="starter-v450-copy">
                     <small>{product.setCode}</small>
-                    <h2>{product.title}</h2>
+                    <h2>{localizeShopText(product.title, language)}</h2>
                     <p>{ready ? text(`${recipe?.totalCards || 0}枚`, `${recipe?.totalCards || 0} cartas na lista`, `${recipe?.totalCards || 0} cards in decklist`) : text("デッキリストを利用できません。", "Lista indisponível na database atual.", "Decklist unavailable in the current database.")}</p>
                   </div>
                   <div className="starter-v450-actions">
@@ -176,9 +178,9 @@ export default function StarterOnboarding() {
 
       {activeDecklistProduct && (
         <div className="starter-v450-decklist-backdrop" role="presentation" onMouseDown={(e) => e.target === e.currentTarget && setDecklistProductId(null)}>
-          <section className="starter-v450-decklist" role="dialog" aria-modal="true" aria-label={`${text("デッキリスト", "Decklist", "Decklist")}: ${activeDecklistProduct.title}`}>
+          <section className="starter-v450-decklist" role="dialog" aria-modal="true" aria-label={`${text("デッキリスト", "Decklist", "Decklist")}: ${localizeShopText(activeDecklistProduct.title, language)}`}>
             <header>
-              <div><small>{activeDecklistProduct.setCode}</small><h2>{activeDecklistProduct.title}</h2><p>{text("カードを選ぶと詳細を確認できます。", "Toque ou clique em qualquer carta para abrir os detalhes completos.", "Tap or click any card to open its complete details.")}</p></div>
+              <div><small>{activeDecklistProduct.setCode}</small><h2>{localizeShopText(activeDecklistProduct.title, language)}</h2><p>{text("カードを選ぶと詳細を確認できます。", "Toque ou clique em qualquer carta para abrir os detalhes completos.", "Tap or click any card to open its complete details.")}</p></div>
               <button type="button" onClick={() => setDecklistProductId(null)} aria-label={text("閉じる", "Fechar", "Close")}>×</button>
             </header>
             <div className="starter-v450-decklist-grid">
@@ -194,7 +196,7 @@ export default function StarterOnboarding() {
       )}
 
       {detailCard && (
-        <CardDetailsModal card={detailCard} initialLanguage={pt ? "ptBR" : "en"} onClose={() => setDetailCard(null)} />
+        <CardDetailsModal card={detailCard} initialLanguage={language} onClose={() => setDetailCard(null)} />
       )}
     </div>
   );

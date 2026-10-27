@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../../../../localization/displayLanguage.js";
 import ArenaVisualCoreToken from "./ArenaVisualCoreToken.jsx";
 import { coreClickIntent } from "../../interactions/arenaIntentFactory.js";
 import { writeArenaVisualCoreDrag } from "../../interactions/coreInteraction.js";
@@ -33,7 +34,7 @@ export default function ArenaVisualCorePool({
   const interactive = Boolean(interaction?.canMoveCores && source);
 
   return (
-    <div className={`arena-visual-core-pool${compact ? " is-compact" : ""} is-layout-${layout}`} aria-label="Core pool">
+    <div className={`arena-visual-core-pool${compact ? " is-compact" : ""} is-layout-${layout}`} aria-label={___bsJa("Core pool", "コアプール")}>
       <div className="arena-visual-core-grid">
         {visibleTokens.map((kind, index) => {
           const coreType = kind === "soul-core" ? "soul" : "regular";

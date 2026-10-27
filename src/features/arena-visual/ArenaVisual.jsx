@@ -21,6 +21,7 @@ export default function ArenaVisual({
   matchResult = null,
   matchResultActions = {},
   feedbackMatch = null,
+  feedbackCardIndex = null,
   feedbackActorId = null,
   feedbackCanControlActor = false,
   feedbackLanguage = "en",
@@ -93,6 +94,7 @@ export default function ArenaVisual({
       <ArenaVisualHoverPreview preview={hoverPreview} />
       <ArenaVisualFeedbackLayer
         match={feedbackMatch}
+        cardIndex={feedbackCardIndex}
         actorId={feedbackActorId}
         canControlActor={feedbackCanControlActor}
         language={feedbackLanguage}

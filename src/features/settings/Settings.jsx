@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa, isJapaneseDisplay as ___bsJapanese } from "../../localization/displayLanguage.js";
 import EternalCinematicBackdrop from "../../components/layout/EternalCinematicBackdrop.jsx";
 import {
   useEffect,
@@ -422,7 +423,7 @@ export default function Settings({
 
 
     showThemeNotice(
-      language === "en"
+      language === "ja" ? `${preset.name.ja}を適用しました。` : language === "en"
         ? `${preset.name.en} applied.`
         : `${preset.name.ptBR} aplicado.`
     );
@@ -436,7 +437,7 @@ export default function Settings({
 
     if (!name) {
       showThemeNotice(
-        language === "en"
+        language === "ja" ? "テーマ名を入力してください。" : language === "en"
           ? "Choose a name for the theme first."
           : "Escolha um nome para o tema primeiro."
       );
@@ -512,7 +513,7 @@ export default function Settings({
 
 
     showThemeNotice(
-      language === "en"
+      language === "ja" ? `「${name}」を保存しました。` : language === "en"
         ? `"${name}" saved.`
         : `"${name}" salvo.`
     );
@@ -529,7 +530,7 @@ export default function Settings({
 
 
     showThemeNotice(
-      language === "en"
+      language === "ja" ? `「${item.name}」を適用しました。` : language === "en"
         ? `${item.name} applied.`
         : `${item.name} aplicado.`
     );
@@ -599,7 +600,7 @@ export default function Settings({
 
 
     showThemeNotice(
-      language === "en"
+      language === "ja" ? "保存済みテーマを更新しました。" : language === "en"
         ? "Saved theme updated."
         : "Tema salvo atualizado."
     );
@@ -642,7 +643,7 @@ export default function Settings({
 
 
     showThemeNotice(
-      language === "en"
+      language === "ja" ? "テーマを削除しました。" : language === "en"
         ? "Theme deleted."
         : "Tema excluído."
     );
@@ -663,11 +664,11 @@ export default function Settings({
   const pt = language !== "en";
 
   const sections = [
-    { id: "general", icon: "⌂", label: pt ? "Geral" : "General", hint: pt ? "Idioma e sistema" : "Language and system" },
-    { id: "display", icon: "▣", label: pt ? "Exibição" : "Display", hint: pt ? "Fundo e aparência" : "Background and appearance" },
-    { id: "audio", icon: "◖", label: pt ? "Áudio" : "Audio", hint: pt ? "Sons do simulador" : "Simulator sounds" },
-    { id: "interface", icon: "◇", label: pt ? "Interface" : "Interface", hint: pt ? "Preferências visuais" : "Visual preferences" },
-    { id: "themes", icon: "✦", label: pt ? "Temas" : "Themes", hint: pt ? "Cores e aparência" : "Colors and appearance" },
+    { id: "general", icon: "⌂", label: language === "ja" ? "一般" : pt ? "Geral" : "General", hint: language === "ja" ? "言語とシステム" : pt ? "Idioma e sistema" : "Language and system" },
+    { id: "display", icon: "▣", label: language === "ja" ? "画面" : pt ? "Exibição" : "Display", hint: language === "ja" ? "背景と外観" : pt ? "Fundo e aparência" : "Background and appearance" },
+    { id: "audio", icon: "◖", label: language === "ja" ? "音声" : pt ? "Áudio" : "Audio", hint: language === "ja" ? "音量と効果音" : pt ? "Sons do simulador" : "Simulator sounds" },
+    { id: "interface", icon: "◇", label: language === "ja" ? "表示" : pt ? "Interface" : "Interface", hint: language === "ja" ? "表示に関する設定" : pt ? "Preferências visuais" : "Visual preferences" },
+    { id: "themes", icon: "✦", label: language === "ja" ? "テーマ" : pt ? "Temas" : "Themes", hint: language === "ja" ? "色と外観" : pt ? "Cores e aparência" : "Colors and appearance" },
   ];
 
   return (
@@ -682,13 +683,13 @@ export default function Settings({
         </button>
 
         <div className="settings-game-heading">
-          <span className="eyebrow">SYSTEM</span>
+          <span className="eyebrow">{___bsJa("SYSTEM", "システム")}</span>
           <h1>{t("settingsTitle")}</h1>
-          <p>{pt ? "Personalize o simulador do seu jeito." : "Customize the simulator your way."}</p>
+          <p>{pt ? ___bsJa("Personalize o simulador do seu jeito.", "シミュレーターを自分好みにカスタマイズします。") : ___bsJa("Customize the simulator your way.", "シミュレーターを自分好みにカスタマイズします。")}</p>
         </div>
 
         <div className="settings-game-version">
-          <small>{pt ? "VERSÃO" : "VERSION"}</small>
+          <small>{pt ? ___bsJa("VERSÃO", "バージョン") : ___bsJa("VERSION", "バージョン")}</small>
           <strong>{APP_VERSION_LABEL}</strong>
         </div>
       </header>
@@ -696,8 +697,8 @@ export default function Settings({
       <div className="settings-game-shell">
         <aside className="settings-game-nav">
           <div className="settings-game-nav-title">
-            <span>{pt ? "CONFIGURAÇÕES" : "SETTINGS"}</span>
-            <small>{pt ? "Selecione uma categoria" : "Choose a category"}</small>
+            <span>{pt ? ___bsJa("CONFIGURAÇÕES", "設定") : ___bsJa("SETTINGS", "設定")}</span>
+            <small>{pt ? ___bsJa("Selecione uma categoria", "カテゴリを選択してください") : ___bsJa("Choose a category", "カテゴリを選択してください")}</small>
           </div>
 
           <nav>
@@ -720,7 +721,7 @@ export default function Settings({
           <div className="settings-game-nav-footer">
             <span className="settings-game-status-dot" />
             <div>
-              <strong>Eternal Simulator</strong>
+              <strong>{___bsJa("Eternal Simulator", "エターナルシミュレーター")}</strong>
               <small>{APP_VERSION_LABEL}</small>
             </div>
           </div>
@@ -731,16 +732,16 @@ export default function Settings({
             <div className="settings-game-panel">
               <div className="settings-game-panel-heading">
                 <div>
-                  <span className="eyebrow">GENERAL</span>
-                  <h2>{pt ? "Configurações gerais" : "General settings"}</h2>
-                  <p>{pt ? "Idioma, preferências básicas e integração do sistema." : "Language, basic preferences and system integration."}</p>
+                  <span className="eyebrow">{___bsJa("GENERAL", "一般")}</span>
+                  <h2>{pt ? ___bsJa("Configurações gerais", "一般設定") : ___bsJa("General settings", "一般設定")}</h2>
+                  <p>{pt ? ___bsJa("Idioma, preferências básicas e integração do sistema.", "言語、基本設定、システム統合。") : ___bsJa("Language, basic preferences and system integration.", "言語、基本設定、システム統合。")}</p>
                 </div>
               </div>
 
               <div className="settings-game-grid two">
                 <label className="settings-game-field">
                   <span>{t("language")}</span>
-                  <small>{pt ? "Idioma usado nos menus e textos do simulador." : "Language used in menus and simulator text."}</small>
+                  <small>{pt ? ___bsJa("Idioma usado nos menus e textos do simulador.", "メニューとシミュレータのテキストで使用される言語。") : ___bsJa("Language used in menus and simulator text.", "メニューとシミュレータのテキストで使用される言語。")}</small>
                   <select
                     value={draft.language}
                     onChange={(e) => setDraft({ ...draft, language: e.target.value })}
@@ -752,9 +753,9 @@ export default function Settings({
                 </label>
 
                 <div className="settings-game-info-card">
-                  <span>{pt ? "PLATAFORMA" : "PLATFORM"}</span>
-                  <strong>Web</strong>
-                  <small>{pt ? "Versão oficial para navegador." : "Official browser version."}</small>
+                  <span>{pt ? ___bsJa("PLATAFORMA", "プラットフォーム") : ___bsJa("PLATFORM", "プラットフォーム")}</span>
+                  <strong>{___bsJa("Web", "ウェブ")}</strong>
+                  <small>{pt ? ___bsJa("Versão oficial para navegador.", "公式ブラウザ版。") : ___bsJa("Official browser version.", "公式ブラウザ版。")}</small>
                 </div>
               </div>
 
@@ -762,10 +763,10 @@ export default function Settings({
                 <div className="settings-game-tip admin-entry-card">
                   <span>◆</span>
                   <div>
-                    <strong>Admin Panel</strong>
-                    <small>{pt ? "Gerencie economia e estados de gameplay das contas autorizadas." : "Manage economy and gameplay states for authorized accounts."}</small>
+                    <strong>{___bsJa("Admin Panel", "管理者パネル")}</strong>
+                    <small>{pt ? ___bsJa("Gerencie economia e estados de gameplay das contas autorizadas.", "承認されたアカウントの経済とゲームプレイの状態を管理します。") : ___bsJa("Manage economy and gameplay states for authorized accounts.", "承認されたアカウントの経済とゲームプレイの状態を管理します。")}</small>
                   </div>
-                  <button type="button" onClick={onAdmin}>{pt ? "Abrir painel" : "Open panel"}</button>
+                  <button type="button" onClick={onAdmin}>{pt ? ___bsJa("Abrir painel", "オープンパネル") : ___bsJa("Open panel", "オープンパネル")}</button>
                 </div>
               )}
 
@@ -776,28 +777,28 @@ export default function Settings({
             <div className="settings-game-panel">
               <div className="settings-game-panel-heading">
                 <div>
-                  <span className="eyebrow">DISPLAY</span>
-                  <h2>{pt ? "Exibição e gráficos" : "Display and graphics"}</h2>
-                  <p>{pt ? "Ajuste como o simulador aparece no seu monitor." : "Adjust how the simulator appears on your display."}</p>
+                  <span className="eyebrow">{___bsJa("DISPLAY", "画面")}</span>
+                  <h2>{pt ? ___bsJa("Exibição e gráficos", "ディスプレイとグラフィックス") : ___bsJa("Display and graphics", "ディスプレイとグラフィックス")}</h2>
+                  <p>{pt ? ___bsJa("Ajuste como o simulador aparece no seu monitor.", "シミュレーターがディスプレイにどのように表示されるかを調整します。") : ___bsJa("Adjust how the simulator appears on your display.", "シミュレーターがディスプレイにどのように表示されるかを調整します。")}</p>
                 </div>
               </div>
 
               <div className="settings-game-grid two settings-background-controls">
                 <label className="settings-game-field">
-                  <span>{pt ? "Fundo do menu" : "Menu background"}</span>
-                  <small>{pt ? "Alterne entre wallpapers estáticos e vídeos em loop." : "Switch between static wallpapers and looping videos."}</small>
+                  <span>{pt ? ___bsJa("Fundo do menu", "メニューの背景") : ___bsJa("Menu background", "メニューの背景")}</span>
+                  <small>{pt ? ___bsJa("Alterne entre wallpapers estáticos e vídeos em loop.", "静止壁紙とループビデオを切り替えます。") : ___bsJa("Switch between static wallpapers and looping videos.", "静止壁紙とループビデオを切り替えます。")}</small>
                   <select
                     value={draft.backgroundMode || "static"}
                     onChange={(e) => setDraft({ ...draft, backgroundMode: e.target.value })}
                   >
-                    <option value="static">{pt ? "Wallpapers estáticos" : "Static wallpapers"}</option>
-                    <option value="video">{pt ? "Vídeo em loop" : "Looping video"}</option>
+                    <option value="static">{pt ? ___bsJa("Wallpapers estáticos", "静的な壁紙") : ___bsJa("Static wallpapers", "静的な壁紙")}</option>
+                    <option value="video">{pt ? ___bsJa("Vídeo em loop", "ビデオをループする") : ___bsJa("Looping video", "ビデオをループする")}</option>
                   </select>
                 </label>
 
                 <label className={`settings-game-field ${draft.backgroundMode !== "video" ? "is-disabled" : ""}`}>
-                  <span>{pt ? "Vídeo de fundo" : "Background video"}</span>
-                  <small>{pt ? "Selecione o vídeo que será usado no fundo." : "Choose the video used as the background."}</small>
+                  <span>{pt ? ___bsJa("Vídeo de fundo", "背景ビデオ") : ___bsJa("Background video", "背景ビデオ")}</span>
+                  <small>{pt ? ___bsJa("Selecione o vídeo que será usado no fundo.", "背景として使用するビデオを選択します。") : ___bsJa("Choose the video used as the background.", "背景として使用するビデオを選択します。")}</small>
                   <select
                     value={draft.backgroundVideo || "background_video_01.mp4"}
                     disabled={draft.backgroundMode !== "video"}
@@ -805,7 +806,7 @@ export default function Settings({
                   >
                     {Array.from({ length: 12 }, (_, index) => {
                       const value = `background_video_${String(index + 1).padStart(2, "0")}.mp4`;
-                      return <option key={value} value={value}>{pt ? `Vídeo ${index + 1}` : `Video ${index + 1}`}</option>;
+                      return <option key={value} value={value}>{pt ? (___bsJapanese() ? `ビデオ ${index + 1}` : `Vídeo ${index + 1}`) : (___bsJapanese() ? `ビデオ ${index + 1}` : `Video ${index + 1}`)}</option>;
                     })}
                   </select>
                 </label>
@@ -814,8 +815,8 @@ export default function Settings({
               <div className="settings-game-tip">
                 <span>i</span>
                 <div>
-                  <strong>{pt ? "Dica de desempenho" : "Performance tip"}</strong>
-                  <small>{pt ? "O simulador agora é focado integralmente na Web. Use o zoom padrão do navegador e prefira tela cheia do próprio navegador quando quiser mais espaço." : "The simulator is now fully focused on the Web. Use the browser default zoom and its own fullscreen mode when you want more space."}</small>
+                  <strong>{pt ? ___bsJa("Dica de desempenho", "パフォーマンスのヒント") : ___bsJa("Performance tip", "パフォーマンスのヒント")}</strong>
+                  <small>{pt ? ___bsJa("O simulador agora é focado integralmente na Web. Use o zoom padrão do navegador e prefira tela cheia do próprio navegador quando quiser mais espaço.", "シミュレーターは現在、Web に完全に焦点を当てています。もっとスペースが必要な場合は、ブラウザのデフォルトのズームと独自の全画面モードを使用してください。") : ___bsJa("The simulator is now fully focused on the Web. Use the browser default zoom and its own fullscreen mode when you want more space.", "シミュレーターは現在、Web に完全に焦点を当てています。もっとスペースが必要な場合は、ブラウザのデフォルトのズームと独自の全画面モードを使用してください。")}</small>
                 </div>
               </div>
             </div>
@@ -825,19 +826,19 @@ export default function Settings({
             <div className="settings-game-panel">
               <div className="settings-game-panel-heading">
                 <div>
-                  <span className="eyebrow">AUDIO</span>
-                  <h2>{pt ? "Áudio" : "Audio"}</h2>
-                  <p>{pt ? "Os controles de áudio serão disponibilizados em uma atualização futura." : "Audio controls will be available in a future update."}</p>
+                  <span className="eyebrow">{___bsJa("AUDIO", "オーディオ")}</span>
+                  <h2>{pt ? ___bsJa("Áudio", "オーディオ") : ___bsJa("Audio", "オーディオ")}</h2>
+                  <p>{pt ? ___bsJa("Os controles de áudio serão disponibilizados em uma atualização futura.", "オーディオ コントロールは将来のアップデートで利用可能になる予定です。") : ___bsJa("Audio controls will be available in a future update.", "オーディオ コントロールは将来のアップデートで利用可能になる予定です。")}</p>
                 </div>
-                <span className="settings-coming-badge">{pt ? "EM PREPARAÇÃO" : "COMING SOON"}</span>
+                <span className="settings-coming-badge">{pt ? ___bsJa("EM PREPARAÇÃO", "近日公開") : ___bsJa("COMING SOON", "近日公開")}</span>
               </div>
 
               <div className="settings-game-audio-list">
                 <div className="settings-audio-row disabled">
                   <span className="settings-audio-icon">◖</span>
                   <div>
-                    <strong>{pt ? "Volume geral" : "Master volume"}</strong>
-                    <small>{pt ? "Controlará todos os sons do simulador." : "Will control all simulator sounds."}</small>
+                    <strong>{pt ? ___bsJa("Volume geral", "マスターボリューム") : ___bsJa("Master volume", "マスターボリューム")}</strong>
+                    <small>{pt ? ___bsJa("Controlará todos os sons do simulador.", "すべてのシミュレーターサウンドをコントロールします。") : ___bsJa("Will control all simulator sounds.", "すべてのシミュレーターサウンドをコントロールします。")}</small>
                   </div>
                   <input type="range" min="0" max="100" value="80" readOnly disabled />
                   <b>80%</b>
@@ -846,8 +847,8 @@ export default function Settings({
                 <div className="settings-audio-row disabled">
                   <span className="settings-audio-icon">✦</span>
                   <div>
-                    <strong>{pt ? "Efeitos da partida" : "Match effects"}</strong>
-                    <small>{pt ? "Ataques, Cores, cartas, fases e notificações." : "Attacks, Cores, cards, phases and notifications."}</small>
+                    <strong>{pt ? ___bsJa("Efeitos da partida", "試合効果") : ___bsJa("Match effects", "試合効果")}</strong>
+                    <small>{pt ? ___bsJa("Ataques, Cores, cartas, fases e notificações.", "攻撃、コア、カード、フェイズ、通知。") : ___bsJa("Attacks, Cores, cards, phases and notifications.", "攻撃、コア、カード、フェイズ、通知。")}</small>
                   </div>
                   <input type="range" min="0" max="100" value="85" readOnly disabled />
                   <b>85%</b>
@@ -856,8 +857,8 @@ export default function Settings({
                 <div className="settings-audio-row disabled">
                   <span className="settings-audio-icon">⌁</span>
                   <div>
-                    <strong>{pt ? "Sons da interface" : "Interface sounds"}</strong>
-                    <small>{pt ? "Botões, menus e confirmações." : "Buttons, menus and confirmations."}</small>
+                    <strong>{pt ? ___bsJa("Sons da interface", "インターフェイスサウンド") : ___bsJa("Interface sounds", "インターフェイスサウンド")}</strong>
+                    <small>{pt ? ___bsJa("Botões, menus e confirmações.", "ボタン、メニュー、確認。") : ___bsJa("Buttons, menus and confirmations.", "ボタン、メニュー、確認。")}</small>
                   </div>
                   <input type="range" min="0" max="100" value="65" readOnly disabled />
                   <b>65%</b>
@@ -867,8 +868,8 @@ export default function Settings({
               <div className="settings-game-tip muted-tip">
                 <span>!</span>
                 <div>
-                  <strong>{pt ? "Áudio em breve" : "Audio coming soon"}</strong>
-                  <small>{pt ? "As opções de áudio serão habilitadas em uma atualização futura." : "Audio options will be enabled in a future update."}</small>
+                  <strong>{pt ? ___bsJa("Áudio em breve", "オーディオは近日公開予定") : ___bsJa("Audio coming soon", "オーディオは近日公開予定")}</strong>
+                  <small>{pt ? ___bsJa("As opções de áudio serão habilitadas em uma atualização futura.", "音声オプションは将来のアップデートで有効になる予定です。") : ___bsJa("Audio options will be enabled in a future update.", "音声オプションは将来のアップデートで有効になる予定です。")}</small>
                 </div>
               </div>
             </div>
@@ -878,16 +879,16 @@ export default function Settings({
             <div className="settings-game-panel">
               <div className="settings-game-panel-heading">
                 <div>
-                  <span className="eyebrow">INTERFACE</span>
-                  <h2>{pt ? "Interface e jogador" : "Interface and player"}</h2>
-                  <p>{pt ? "Preferências visuais usadas dentro das partidas." : "Visual preferences used during matches."}</p>
+                  <span className="eyebrow">{___bsJa("INTERFACE", "インタフェース")}</span>
+                  <h2>{pt ? ___bsJa("Interface e jogador", "インターフェイスとプレーヤー") : ___bsJa("Interface and player", "インターフェイスとプレーヤー")}</h2>
+                  <p>{pt ? ___bsJa("Preferências visuais usadas dentro das partidas.", "試合中に使用されるビジュアル設定。") : ___bsJa("Visual preferences used during matches.", "試合中に使用されるビジュアル設定。")}</p>
                 </div>
               </div>
 
               <div className="settings-game-grid two">
                 <label className="settings-game-field">
-                  <span>{pt ? "Cor preferida do jogador" : "Preferred player color"}</span>
-                  <small>{pt ? "Usada como referência visual nas telas compatíveis." : "Used as a visual reference on compatible screens."}</small>
+                  <span>{pt ? ___bsJa("Cor preferida do jogador", "プレイヤーの好みの色") : ___bsJa("Preferred player color", "プレイヤーの好みの色")}</span>
+                  <small>{pt ? ___bsJa("Usada como referência visual nas telas compatíveis.", "互換性のある画面の視覚的な参照として使用されます。") : ___bsJa("Used as a visual reference on compatible screens.", "互換性のある画面の視覚的な参照として使用されます。")}</small>
                   <div className="settings-color-row">
                     <input
                       type="color"
@@ -899,8 +900,8 @@ export default function Settings({
                 </label>
 
                 <div className="settings-game-info-card">
-                  <span>{pt ? "ESTILO ATIVO" : "ACTIVE STYLE"}</span>
-                  <strong>{activeCustomTheme?.name || RECOMMENDED_THEMES.find((preset) => `recommended:${preset.id}` === draft.activeThemeId)?.name?.[language] || "Eternal"}</strong>
+                  <span>{pt ? ___bsJa("ESTILO ATIVO", "アクティブなスタイル") : ___bsJa("ACTIVE STYLE", "アクティブなスタイル")}</span>
+                  <strong>{activeCustomTheme?.name || RECOMMENDED_THEMES.find((preset) => `recommended:${preset.id}` === draft.activeThemeId)?.name?.[language] || ___bsJa("Eternal", "エターナル")}</strong>
                   <ThemeSwatches theme={draft.theme} />
                 </div>
               </div>
@@ -908,8 +909,8 @@ export default function Settings({
               <div className="settings-game-tip">
                 <span>◇</span>
                 <div>
-                  <strong>{pt ? "Mais opções virão aqui" : "More options will live here"}</strong>
-                  <small>{pt ? "Escala da interface, animações, zoom das cartas e outros ajustes podem ser adicionados nesta categoria sem misturar com gráficos ou temas." : "UI scale, animations, card zoom and other adjustments can be added here without mixing them with display or themes."}</small>
+                  <strong>{pt ? ___bsJa("Mais opções virão aqui", "より多くのオプションがここに存在します") : ___bsJa("More options will live here", "より多くのオプションがここに存在します")}</strong>
+                  <small>{pt ? ___bsJa("Escala da interface, animações, zoom das cartas e outros ajustes podem ser adicionados nesta categoria sem misturar com gráficos ou temas.", "UI スケール、アニメーション、カード ズーム、その他の調整を、表示やテーマと混ぜることなくここに追加できます。") : ___bsJa("UI scale, animations, card zoom and other adjustments can be added here without mixing them with display or themes.", "UI スケール、アニメーション、カード ズーム、その他の調整を、表示やテーマと混ぜることなくここに追加できます。")}</small>
                 </div>
               </div>
             </div>
@@ -920,18 +921,18 @@ export default function Settings({
               <div className="theme-library settings-theme-library">
                 <div className="settings-section-heading settings-game-panel-heading">
                   <div>
-                    <span className="eyebrow">THEME</span>
-                    <h2>{pt ? "Temas do simulador" : "Simulator themes"}</h2>
-                    <p className="theme-library-subtitle">{pt ? "Use um tema recomendado ou crie e salve o seu próprio." : "Use a recommended theme or create and save your own."}</p>
+                    <span className="eyebrow">{___bsJa("THEME", "テーマ")}</span>
+                    <h2>{pt ? ___bsJa("Temas do simulador", "シミュレーターのテーマ") : ___bsJa("Simulator themes", "シミュレーターのテーマ")}</h2>
+                    <p className="theme-library-subtitle">{pt ? ___bsJa("Use um tema recomendado ou crie e salve o seu próprio.", "推奨されたテーマを使用するか、独自のテーマを作成して保存します。") : ___bsJa("Use a recommended theme or create and save your own.", "推奨されたテーマを使用するか、独自のテーマを作成して保存します。")}</p>
                   </div>
-                  <button className="ghost" onClick={resetTheme}>{pt ? "Restaurar" : "Reset"}</button>
+                  <button className="ghost" onClick={resetTheme}>{pt ? ___bsJa("Restaurar", "リセット") : ___bsJa("Reset", "リセット")}</button>
                 </div>
 
                 <section className="theme-library-section">
                   <div className="theme-library-section-heading">
                     <div>
-                      <span>{pt ? "Recomendados" : "Recommended"}</span>
-                      <strong>{pt ? "Temas prontos para usar" : "Ready-to-use themes"}</strong>
+                      <span>{pt ? ___bsJa("Recomendados", "推奨") : ___bsJa("Recommended", "推奨")}</span>
+                      <strong>{pt ? ___bsJa("Temas prontos para usar", "すぐに使えるテーマ") : ___bsJa("Ready-to-use themes", "すぐに使えるテーマ")}</strong>
                     </div>
                   </div>
 
@@ -958,12 +959,12 @@ export default function Settings({
                           <div className="theme-preset-copy">
                             <div className="theme-preset-title">
                               <strong>{preset.name[language] || preset.name.ptBR}</strong>
-                              {active && <span className="theme-active-badge">✓ {pt ? "Ativo" : "Active"}</span>}
+                              {active && <span className="theme-active-badge">✓ {pt ? ___bsJa("Ativo", "アクティブ") : ___bsJa("Active", "アクティブ")}</span>}
                             </div>
                             <p>{preset.description[language] || preset.description.ptBR}</p>
                             <ThemeSwatches theme={preset.theme} />
                             <button className={active ? "ghost" : "theme-apply-button"} onClick={() => applyRecommendedTheme(preset)}>
-                              {active ? (pt ? "Aplicado" : "Applied") : (pt ? "Aplicar tema" : "Apply theme")}
+                              {active ? (pt ? ___bsJa("Aplicado", "適用済み") : ___bsJa("Applied", "適用済み")) : (pt ? ___bsJa("Aplicar tema", "テーマを適用する") : ___bsJa("Apply theme", "テーマを適用する"))}
                             </button>
                           </div>
                         </article>
@@ -975,18 +976,18 @@ export default function Settings({
                 <section className="theme-library-section theme-customizer">
                   <div className="theme-library-section-heading">
                     <div>
-                      <span>{pt ? "Criar" : "Create"}</span>
-                      <strong>{pt ? "Monte seu próprio tema" : "Build your own theme"}</strong>
+                      <span>{pt ? ___bsJa("Criar", "作成する") : ___bsJa("Create", "作成する")}</span>
+                      <strong>{pt ? ___bsJa("Monte seu próprio tema", "独自のテーマを構築する") : ___bsJa("Build your own theme", "独自のテーマを構築する")}</strong>
                     </div>
                     {activeCustomTheme && (
-                      <button className="ghost" onClick={updateActiveCustomTheme}>{pt ? "Atualizar tema ativo" : "Update active theme"}</button>
+                      <button className="ghost" onClick={updateActiveCustomTheme}>{pt ? ___bsJa("Atualizar tema ativo", "アクティブなテーマを更新する") : ___bsJa("Update active theme", "アクティブなテーマを更新する")}</button>
                     )}
                   </div>
 
                   <div className="theme-color-grid">
                     {THEME_FIELDS.map(([key, labelPT, labelEN]) => (
                       <label key={key}>
-                        {pt ? labelPT : labelEN}
+                        {language === "ja" ? ({ bg: "背景", panel: "パネル", panel2: "補助パネル", text: "文字", muted: "補助文字", accent: "アクセント", accent2: "アクセント2", danger: "警告", ok: "成功" }[key]) : pt ? labelPT : labelEN}
                         <div className="color-input-row">
                           <input type="color" value={normalizeTheme(draft.theme)[key]} onChange={(e) => setTheme(key, e.target.value)} />
                           <code>{normalizeTheme(draft.theme)[key]}</code>
@@ -997,12 +998,12 @@ export default function Settings({
 
                   <div className="save-theme-row">
                     <label>
-                      {pt ? "Nome do tema" : "Theme name"}
+                      {pt ? ___bsJa("Nome do tema", "テーマ名") : ___bsJa("Theme name", "テーマ名")}
                       <input
                         value={themeName}
                         maxLength={32}
                         onChange={(e) => setThemeName(e.target.value)}
-                        placeholder={pt ? "Meu tema Battle Spirits" : "My Battle Spirits theme"}
+                        placeholder={pt ? ___bsJa("Meu tema Battle Spirits", "私のバトルスピリッツのテーマ") : ___bsJa("My Battle Spirits theme", "私のバトルスピリッツのテーマ")}
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
                             e.preventDefault();
@@ -1011,23 +1012,23 @@ export default function Settings({
                         }}
                       />
                     </label>
-                    <button className="primary-btn" onClick={saveCurrentTheme}>{pt ? "Salvar tema" : "Save theme"}</button>
+                    <button className="primary-btn" onClick={saveCurrentTheme}>{pt ? ___bsJa("Salvar tema", "テーマの保存") : ___bsJa("Save theme", "テーマの保存")}</button>
                   </div>
                 </section>
 
                 <section className="theme-library-section">
                   <div className="theme-library-section-heading">
                     <div>
-                      <span>{pt ? "Biblioteca" : "Library"}</span>
-                      <strong>{pt ? "Meus temas" : "My themes"}</strong>
+                      <span>{pt ? ___bsJa("Biblioteca", "一覧") : ___bsJa("Library", "一覧")}</span>
+                      <strong>{pt ? ___bsJa("Meus temas", "私のテーマ") : ___bsJa("My themes", "私のテーマ")}</strong>
                     </div>
-                    <small>{normalizeSavedThemes(draft.savedThemes).length} {pt ? "salvos" : "saved"}</small>
+                    <small>{normalizeSavedThemes(draft.savedThemes).length}{language === "ja" ? "件保存" : pt ? " salvos" : " saved"}</small>
                   </div>
 
                   {normalizeSavedThemes(draft.savedThemes).length === 0 ? (
                     <div className="theme-library-empty">
-                      <strong>{pt ? "Nenhum tema personalizado ainda" : "No custom themes yet"}</strong>
-                      <span>{pt ? "Ajuste as cores acima e salve seu primeiro tema." : "Adjust the colors above and save your first theme."}</span>
+                      <strong>{pt ? ___bsJa("Nenhum tema personalizado ainda", "カスタムテーマはまだありません") : ___bsJa("No custom themes yet", "カスタムテーマはまだありません")}</strong>
+                      <span>{pt ? ___bsJa("Ajuste as cores acima e salve seu primeiro tema.", "上記の色を調整し、最初のテーマを保存します。") : ___bsJa("Adjust the colors above and save your first theme.", "上記の色を調整し、最初のテーマを保存します。")}</span>
                     </div>
                   ) : (
                     <div className="saved-theme-list">
@@ -1038,13 +1039,13 @@ export default function Settings({
                             <div className="saved-theme-info">
                               <div className="saved-theme-title">
                                 <strong>{item.name}</strong>
-                                {active && <span className="theme-active-badge">✓ {pt ? "Ativo" : "Active"}</span>}
+                                {active && <span className="theme-active-badge">✓ {pt ? ___bsJa("Ativo", "アクティブ") : ___bsJa("Active", "アクティブ")}</span>}
                               </div>
                               <ThemeSwatches theme={item.theme} />
                             </div>
                             <div className="saved-theme-actions">
-                              <button className={active ? "ghost" : ""} onClick={() => applyCustomTheme(item)}>{active ? (pt ? "Aplicado" : "Applied") : (pt ? "Aplicar" : "Apply")}</button>
-                              <button className="ghost danger" onClick={() => deleteCustomTheme(item.id)}>{pt ? "Excluir" : "Delete"}</button>
+                              <button className={active ? "ghost" : ""} onClick={() => applyCustomTheme(item)}>{active ? (pt ? ___bsJa("Aplicado", "適用済み") : ___bsJa("Applied", "適用済み")) : (pt ? ___bsJa("Aplicar", "適用する") : ___bsJa("Apply", "適用する"))}</button>
+                              <button className="ghost danger" onClick={() => deleteCustomTheme(item.id)}>{pt ? ___bsJa("Excluir", "消去") : ___bsJa("Delete", "消去")}</button>
                             </div>
                           </article>
                         );

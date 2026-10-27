@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../../../../localization/displayLanguage.js";
 import ArenaOverlayLayer from "../../../arena/components/ArenaOverlayLayer.jsx";
 import BattleExperienceLayer, { classifyBattleLogEntry } from "../../../arena/components/BattleExperienceLayer.jsx";
 import BattleLinkOverlay from "../../../arena/components/BattleLinkOverlay.jsx";
@@ -7,6 +8,7 @@ import TargetingUX from "../../../arena/components/TargetingUX.jsx";
 
 export default function ArenaVisualFeedbackLayer({
   match,
+  cardIndex,
   actorId,
   canControlActor,
   language = "en",
@@ -45,6 +47,7 @@ export default function ArenaVisualFeedbackLayer({
       />
 
       <GameEventToast
+        cardIndex={cardIndex}
         entries={match.log || []}
         classifyEntry={classifyBattleLogEntry}
         language={language}
@@ -53,7 +56,7 @@ export default function ArenaVisualFeedbackLayer({
       <TargetingUX
         active={Boolean(effectDecision && targetableCount)}
         mode={effectDecision?.kind || "effect"}
-        label={effectDecision?.instruction || effectDecision?.title || (language === "en" ? "Choose a valid target" : "Escolha um alvo válido")}
+        label={effectDecision?.instruction || effectDecision?.title || (language === "en" ? ___bsJa("Choose a valid target", "有効なターゲットを選択してください") : ___bsJa("Escolha um alvo válido", "有効なターゲットを選択してください"))}
         targetableCount={targetableCount}
         selectedCount={0}
         className="arena-visual-targeting-feedback"

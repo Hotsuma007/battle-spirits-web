@@ -1,3 +1,5 @@
+import { japaneseResultReason } from "../../../localization/matchResult.js";
+import { japaneseText as ___bsJa, isJapaneseDisplay as ___bsJapanese } from "../../../localization/displayLanguage.js";
 import { formatMatchDuration } from "../../../services/player/postMatchService.js";
 
 function initials(name) {
@@ -11,6 +13,7 @@ function initials(name) {
 }
 
 function reasonCopy(reason, defeatedName, language) {
+  if (language === "ja") return japaneseResultReason(reason, defeatedName);
   const en = language === "en";
   if (reason === "life") return {
     title: en ? "Life depleted" : "Life reduzida a 0",
@@ -69,51 +72,51 @@ export default function MatchResultScreen({
       className={`game-result-overlay ${isDefeat ? "is-defeat" : "is-victory"}`}
       role="dialog"
       aria-modal="true"
-      aria-label={en ? "Match result" : "Resultado da partida"}
+      aria-label={en ? ___bsJa("Match result", "試合結果") : ___bsJa("Resultado da partida", "試合結果")}
     >
       <section className="game-result-card">
         <div className="game-result-ambient" />
 
         <header className="game-result-header">
-          <span className="game-result-kicker">{en ? "MATCH COMPLETE" : "PARTIDA ENCERRADA"}</span>
-          {serverVerified && <span className="game-result-server-verified">{en ? "SERVER VERIFIED" : "VALIDADO PELO SERVIDOR"}</span>}
-          <div className="game-result-badge"><span>{isDefeat ? (en ? "DEFEAT" : "DERROTA") : (en ? "VICTORY" : "VITÓRIA")}</span></div>
+          <span className="game-result-kicker">{en ? ___bsJa("MATCH COMPLETE", "試合が完了しました") : ___bsJa("PARTIDA ENCERRADA", "試合終了")}</span>
+          {serverVerified && <span className="game-result-server-verified">{en ? ___bsJa("SERVER VERIFIED", "サーバー認証済み") : ___bsJa("VALIDADO PELO SERVIDOR", "サーバーによる検証済み")}</span>}
+          <div className="game-result-badge"><span>{isDefeat ? (en ? ___bsJa("DEFEAT", "敗北") : ___bsJa("DERROTA", "敗北")) : (en ? ___bsJa("VICTORY", "勝利") : ___bsJa("VITÓRIA", "勝利"))}</span></div>
           <h2>{isDefeat
-            ? (en ? `${winner?.name || "Opponent"} won the match` : `${winner?.name || "Oponente"} venceu a partida`)
-            : (en ? `${winner?.name || "Player"} is victorious` : `${winner?.name || "Jogador"} venceu!`)}</h2>
+            ? (en ? (___bsJapanese() ? `${winner?.name || "Opponent"} が試合に勝ちました` : `${winner?.name || "Opponent"} won the match`) : (___bsJapanese() ? `${winner?.name || "Oponente"} が試合に勝ちました` : `${winner?.name || "Oponente"} venceu a partida`))
+            : (en ? (___bsJapanese() ? `${winner?.name || "Player"} が勝利しました` : `${winner?.name || "Player"} is victorious`) : (___bsJapanese() ? `${winner?.name || "Jogador"}が勝ちました！` : `${winner?.name || "Jogador"} venceu!`))}</h2>
           <p>{isDefeat
-            ? (en ? "The duel is over. Review the result and prepare for the next battle." : "O duelo terminou. Confira o resultado e prepare-se para a próxima batalha.")
-            : (en ? "The final blow was dealt. The duel belongs to the winner." : "O golpe final foi dado. O duelo pertence ao vencedor.")}</p>
+            ? (en ? ___bsJa("The duel is over. Review the result and prepare for the next battle.", "決闘は終わりました。結果を確認し、次の戦いに備えます。") : ___bsJa("O duelo terminou. Confira o resultado e prepare-se para a próxima batalha.", "決闘は終わりました。結果を確認して次の戦いに備えましょう。"))
+            : (en ? ___bsJa("The final blow was dealt. The duel belongs to the winner.", "最後の一撃が与えられた。決闘は勝者のものです。") : ___bsJa("O golpe final foi dado. O duelo pertence ao vencedor.", "最後の一撃が与えられた。決闘は勝者のものです。"))}</p>
         </header>
 
         <div className="game-result-versus">
           <article className="game-result-player winner" style={{ "--result-player-color": winner?.playerColor || "#d8d8d8" }}>
-            <span className="game-result-player-label">{en ? "WINNER" : "VENCEDOR"}</span>
+            <span className="game-result-player-label">{en ? ___bsJa("WINNER", "勝者") : ___bsJa("VENCEDOR", "勝者")}</span>
             <div className="game-result-avatar">{winner?.avatar ? <img src={winner.avatar} alt="" /> : <span>{initials(winner?.name)}</span>}</div>
-            <strong>{winner?.name || (en ? "Player" : "Jogador")}</strong>
-            <small>{en ? "Victory" : "Vitória"}</small>
+            <strong>{winner?.name || (en ? ___bsJa("Player", "プレイヤー") : ___bsJa("Jogador", "プレーヤー"))}</strong>
+            <small>{en ? ___bsJa("Victory", "勝利") : ___bsJa("Vitória", "勝利")}</small>
           </article>
 
-          <div className="game-result-vs-mark">VS</div>
+          <div className="game-result-vs-mark">{"VS"}</div>
 
           <article className="game-result-player defeated" style={{ "--result-player-color": defeated?.playerColor || "#929292" }}>
-            <span className="game-result-player-label">{en ? "DEFEATED" : "DERROTADO"}</span>
+            <span className="game-result-player-label">{en ? ___bsJa("DEFEATED", "敗北") : ___bsJa("DERROTADO", "敗北")}</span>
             <div className="game-result-avatar">{defeated?.avatar ? <img src={defeated.avatar} alt="" /> : <span>{initials(defeated?.name)}</span>}</div>
-            <strong>{defeated?.name || (en ? "Player" : "Jogador")}</strong>
-            <small>{en ? "Defeat" : "Derrota"}</small>
+            <strong>{defeated?.name || (en ? ___bsJa("Player", "プレイヤー") : ___bsJa("Jogador", "プレーヤー"))}</strong>
+            <small>{en ? ___bsJa("Defeat", "敗北") : ___bsJa("Derrota", "敗北")}</small>
           </article>
         </div>
 
         <div className="game-result-summary">
-          <div><span>{en ? "RESULT" : "RESULTADO"}</span><strong>{copy.title}</strong><p>{copy.text}</p></div>
-          <div className="game-result-turn"><span>{en ? "FINAL TURN" : "TURNO FINAL"}</span><strong>{turnNumber || "-"}</strong></div>
+          <div><span>{en ? ___bsJa("RESULT", "結果") : ___bsJa("RESULTADO", "結果")}</span><strong>{copy.title}</strong><p>{copy.text}</p></div>
+          <div className="game-result-turn"><span>{en ? ___bsJa("FINAL TURN", "最終ターン") : ___bsJa("TURNO FINAL", "最終ターン")}</span><strong>{turnNumber || "-"}</strong></div>
         </div>
 
-        <section className="post-match-v380-grid" aria-label={en ? "Match details" : "Detalhes da partida"}>
-          <article><span>{en ? "DURATION" : "DURAÇÃO"}</span><strong>{formatMatchDuration(summary?.durationSeconds || 0, language)}</strong><small>{summary?.turns || turnNumber || 1} {en ? "turns" : "turnos"}</small></article>
-          <article><span>DECK</span><strong>{summary?.deck?.name || (en ? "Unidentified" : "Não identificado")}</strong><small>{summary?.deck?.cardIds?.length ? `${summary.deck.cardIds.length} ${en ? "cards" : "cartas"}` : (en ? "Match snapshot" : "Snapshot da partida")}</small></article>
-          <article><span>{en ? "LIFE REMAINING" : "LIFE RESTANTE"}</span><strong>{summary?.lifeRemaining ?? "—"}</strong><small>{summary?.result === "win" ? (en ? "Your final Life" : "Seu Life final") : (en ? "At match end" : "Ao encerrar")}</small></article>
-          <article className="post-match-mastery-stat"><span>CARD MASTERY</span><strong>+{summary?.mastery?.totalXp || 0} XP</strong><small>{summary?.mastery?.trackedCards || 0} {en ? "cards progressed" : "cartas progrediram"}</small></article>
+        <section className="post-match-v380-grid" aria-label={en ? ___bsJa("Match details", "試合詳細") : ___bsJa("Detalhes da partida", "試合詳細")}>
+          <article><span>{en ? ___bsJa("DURATION", "対戦時間") : ___bsJa("DURAÇÃO", "対戦時間")}</span><strong>{formatMatchDuration(summary?.durationSeconds || 0, language)}</strong><small>{summary?.turns || turnNumber || 1} {en ? ___bsJa("turns", "ターン") : ___bsJa("turnos", "ターン")}</small></article>
+          <article><span>{___bsJa("DECK", "デッキ")}</span><strong>{summary?.deck?.name || (en ? ___bsJa("Unidentified", "不明") : ___bsJa("Não identificado", "不明"))}</strong><small>{summary?.deck?.cardIds?.length ? (language === "ja" ? `${summary.deck.cardIds.length}枚` : `${summary.deck.cardIds.length} ${en ? "cards" : "cartas"}`) : (en ? ___bsJa("Match snapshot", "対戦時のデッキ") : ___bsJa("Snapshot da partida", "対戦時のデッキ"))}</small></article>
+          <article><span>{en ? ___bsJa("LIFE REMAINING", "残りのライフ") : ___bsJa("LIFE RESTANTE", "残りライフ")}</span><strong>{summary?.lifeRemaining ?? "—"}</strong><small>{summary?.result === "win" ? (en ? ___bsJa("Your final Life", "対戦終了時のライフ") : ___bsJa("Seu Life final", "対戦終了時のライフ")) : (en ? ___bsJa("At match end", "試合終了時") : ___bsJa("Ao encerrar", "対戦終了時"))}</small></article>
+          <article className="post-match-mastery-stat"><span>{___bsJa("CARD MASTERY", "カードマスタリー")}</span><strong>+{summary?.mastery?.totalXp || 0}{___bsJa(" XP", " 経験値")}</strong><small>{summary?.mastery?.trackedCards || 0} {en ? ___bsJa("cards progressed", "枚のカードに経験値を獲得") : ___bsJa("cartas progrediram", "枚のカードに経験値を獲得")}</small></article>
         </section>
 
         {(masteryImageSrc || summary?.ranked) && (
@@ -121,12 +124,12 @@ export default function MatchResultScreen({
             {masteryImageSrc && (
               <article className="post-match-featured-mastery">
                 <div className="post-match-featured-card"><img src={masteryImageSrc} alt={masteryCardName} /></div>
-                <div><span>{en ? "MASTERY HIGHLIGHT" : "DESTAQUE DE MAESTRIA"}</span><strong>{masteryCardName}</strong><small>+{summary?.mastery?.featuredXp || 0} XP · {summary?.deck?.coverCardId === summary?.mastery?.featuredCardId ? (en ? "Deck cover bonus" : "Bônus de carta de capa") : (en ? "Used in this duel" : "Utilizada neste duelo")}</small></div>
+                <div><span>{en ? ___bsJa("MASTERY HIGHLIGHT", "マスタリーハイライト") : ___bsJa("DESTAQUE DE MAESTRIA", "マスタリーハイライト")}</span><strong>{masteryCardName}</strong><small>+{summary?.mastery?.featuredXp || 0}{___bsJa(" XP · ", " XP・ ")}{summary?.deck?.coverCardId === summary?.mastery?.featuredCardId ? (en ? ___bsJa("Deck cover bonus", "デッキカバー特典") : ___bsJa("Bônus de carta de capa", "カバーカードのボーナス")) : (en ? ___bsJa("Used in this duel", "今回の決闘で使用した") : ___bsJa("Utilizada neste duelo", "今回の決闘で使用した"))}</small></div>
               </article>
             )}
             {summary?.ranked && (
               <article className={`post-match-ranked-change ${rankedDelta >= 0 ? "positive" : "negative"}`}>
-                <span>RANKED / SEASON 0</span><strong>{rankedDelta >= 0 ? "+" : ""}{rankedDelta} RP</strong><small>{summary.ranked.rpBefore} → {summary.ranked.rpAfter} RP</small><b>{summary.ranked.rank || "—"}</b>
+                <span>{___bsJa("RANKED / SEASON 0", "ランク戦 / シーズン0")}</span><strong>{rankedDelta >= 0 ? "+" : ""}{rankedDelta} RP</strong><small>{summary.ranked.rpBefore} → {summary.ranked.rpAfter} RP</small><b>{summary.ranked.rank || "—"}</b>
               </article>
             )}
           </section>
@@ -136,12 +139,12 @@ export default function MatchResultScreen({
 
         <footer className="game-result-actions post-match-v380-actions">
           <div className="post-match-secondary-actions">
-            {mode === "online" && <button type="button" onClick={onRequestRematch} disabled={rematchPending}>{rematchPending ? (en ? "Waiting…" : "Aguardando…") : (en ? "Request rematch" : "Pedir revanche")}</button>}
-            {mode !== "online" && <button type="button" onClick={onPlayAgain}>{mode === "ranked" ? (en ? "Return to Ranked queue" : "Voltar à fila Ranked") : (en ? "Play again" : "Jogar novamente")}</button>}
+            {mode === "online" && <button type="button" onClick={onRequestRematch} disabled={rematchPending}>{rematchPending ? (en ? ___bsJa("Waiting…", "待っている…") : ___bsJa("Aguardando…", "待っている…")) : (en ? ___bsJa("Request rematch", "再戦をリクエストする") : ___bsJa("Pedir revanche", "再戦を申し込む"))}</button>}
+            {mode !== "online" && <button type="button" onClick={onPlayAgain}>{mode === "ranked" ? (en ? ___bsJa("Return to Ranked queue", "ランク戦の待機列に戻る") : ___bsJa("Voltar à fila Ranked", "ランク戦の待機列に戻る")) : (en ? ___bsJa("Play again", "もう一度対戦する") : ___bsJa("Jogar novamente", "もう一度対戦する"))}</button>}
             {opponentUsername && (mode === "online" || mode === "ranked") && (
               <>
-                <button type="button" onClick={onAddOpponent}>{en ? "Add opponent" : "Adicionar adversário"}</button>
-                <button type="button" onClick={() => onOpenProfile?.(opponentUsername)}>{en ? "Open profile" : "Abrir perfil"}</button>
+                <button type="button" onClick={onAddOpponent}>{en ? ___bsJa("Add opponent", "対戦相手を追加") : ___bsJa("Adicionar adversário", "対戦相手を追加")}</button>
+                <button type="button" onClick={() => onOpenProfile?.(opponentUsername)}>{en ? ___bsJa("Open profile", "プロフィールを開く") : ___bsJa("Abrir perfil", "プロフィールを開く")}</button>
               </>
             )}
           </div>

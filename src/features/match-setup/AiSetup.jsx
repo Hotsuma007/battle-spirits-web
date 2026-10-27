@@ -154,8 +154,8 @@ export default function AiSetup({ onBack, onStart, onDeckBuilder }) {
 
           <PlayerBattlePreview
             side="right"
-            kicker="ETERNAL CPU"
-            name="ETERNAL CPU"
+            kicker={text("エターナルCPU", "ETERNAL CPU")}
+            name={text("エターナルCPU", "ETERNAL CPU")}
             rank={text(difficultyName(difficulty, language), `${difficultyName(difficulty, language)} · ${cpuStyle}`)}
             avatarSrc={null}
             bannerSrc={getDeckPortrait(cpuDeck)}

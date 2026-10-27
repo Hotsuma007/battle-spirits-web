@@ -1,14 +1,15 @@
+import { japaneseText as ___bsJa } from "../../../../localization/displayLanguage.js";
 export default function ArenaVisualTriggerCounterPrompt({ trigger, onActionRequest }) {
   if (!trigger || trigger.status !== "counterWindow") return null;
 
   if (trigger.waiting) {
-    return <div className="arena-visual-trigger-waiting">Waiting for the opponent's Trigger Counter response.</div>;
+    return <div className="arena-visual-trigger-waiting">{___bsJa("Waiting for the opponent's Trigger Counter response.", "相手のトリガーカウンターの反応を待ちます。")}</div>;
   }
 
   return (
     <section className="arena-visual-trigger-counter">
-      <header><span>Trigger Counter</span><strong>Respond before the HIT effect resolves</strong></header>
-      <p>Use a valid Trigger Counter Magic now, or pass this response window.</p>
+      <header><span>{___bsJa("Trigger Counter", "トリガーカウンター")}</span><strong>{___bsJa("Respond before the HIT effect resolves", "ヒット効果の解決前に対応")}</strong></header>
+      <p>{___bsJa("Use a valid Trigger Counter Magic now, or pass this response window.", "今すぐ有効なトリガーカウンターマジックを使用するか、この応答ウィンドウを渡してください。")}</p>
       <div>
         {(trigger.counterCards || []).map((card) => (
           <button
@@ -23,16 +24,14 @@ export default function ArenaVisualTriggerCounterPrompt({ trigger, onActionReque
             })}
           >
             {card.image ? <img src={card.image} alt="" /> : null}
-            <span><strong>{card.name}</strong><small>Cost {card.cost ?? "—"}</small></span>
+            <span><strong>{card.name}</strong><small>{___bsJa("Cost ", "コスト ")}{card.cost ?? "—"}</small></span>
           </button>
         ))}
         <button
           type="button"
           className="is-quiet"
           onClick={() => onActionRequest?.({ id: "pass-trigger-counter", type: "PASS_TRIGGER_COUNTER", actorId: trigger.counterPlayerId })}
-        >
-          Do Not Use Trigger Counter
-        </button>
+        >{___bsJa("Do Not Use Trigger Counter", "トリガーカウンターを使用しないでください")}</button>
       </div>
     </section>
   );

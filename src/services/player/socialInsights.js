@@ -113,5 +113,5 @@ export function buildPlayerSocialInsights(decks = [], cardIndex = new Map()) {
 
 export function formatMasteryLabel(level, language = "ptBR") {
   const roman = ["I", "II", "III", "IV", "V", "VI", "VII"][Math.max(0, Math.min(6, Number(level || 1) - 1))];
-  return language === "en" ? `Mastery ${roman}` : `Maestria ${roman}`;
+  return language === "ja" ? `マスタリー ${roman}` : language === "en" ? `Mastery ${roman}` : `Maestria ${roman}`;
 }

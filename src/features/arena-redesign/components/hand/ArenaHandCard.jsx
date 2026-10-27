@@ -1,3 +1,4 @@
+import { getDisplayCardName } from "../../../../localization/displayCardName.js";
 import { useRef } from "react";
 import { getCardArtworkUrl, getCardById } from "../../../../services/cards/cardRepository.js";
 import {
@@ -8,7 +9,7 @@ import {
 import { getHandCardInteractionState } from "../cards/cardInteractionPresentation.js";
 
 function getCardName(card, fallback) {
-  return card?.namePT || card?.nameEN || card?.name || fallback || "Card";
+  return card ? getDisplayCardName(card) : fallback || "カード";
 }
 
 export default function ArenaHandCard({
@@ -22,7 +23,7 @@ export default function ArenaHandCard({
   const suppressClickRef = useRef(false);
   const hidden = Boolean(physical?.hidden || side === "opponent");
   const card = hidden ? null : getCardById(physical?.cardId);
-  const title = hidden ? "Hidden card" : getCardName(card, physical?.cardId);
+  const title = hidden ? "伏せたカード" : getCardName(card, physical?.cardId);
   const artwork = hidden ? "/images/card-back.webp" : getCardArtworkUrl(card || physical?.cardId);
   const cardInteractionState = getHandCardInteractionState(physical?.instanceId, interaction);
   const selected = !hidden && cardInteractionState.selected;

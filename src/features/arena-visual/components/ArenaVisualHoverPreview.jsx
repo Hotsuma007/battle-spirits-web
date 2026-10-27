@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../../../localization/displayLanguage.js";
 const VIEWPORT_MARGIN = 18;
 const PREVIEW_WIDTH = 240;
 const PREVIEW_HEIGHT = 350;
@@ -21,8 +22,8 @@ export default function ArenaVisualHoverPreview({ preview }) {
     >
       <img src={preview.card.image || "/images/card-back.webp"} alt="" draggable="false" />
       <div>
-        <span>{preview.card.cardType || preview.card.type || "Card"}</span>
-        <strong>{preview.card.name || "Card"}</strong>
+        <span>{preview.card.cardType || preview.card.type || ___bsJa("Card", "カード")}</span>
+        <strong>{preview.card.name || ___bsJa("Card", "カード")}</strong>
         <small>{preview.card.cardId || preview.card.id || ""}</small>
       </div>
     </aside>

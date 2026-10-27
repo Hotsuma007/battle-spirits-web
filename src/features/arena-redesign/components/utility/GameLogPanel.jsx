@@ -1,7 +1,8 @@
+import { japaneseText as ___bsJa } from "../../../../localization/displayLanguage.js";
 export default function GameLogPanel({ entries = [] }) {
   return (
-    <section className="arena-redesign-utility-section arena-redesign-game-log" aria-label="Game log">
-      <header className="arena-redesign-utility-title">Game Log</header>
+    <section className="arena-redesign-utility-section arena-redesign-game-log" aria-label={___bsJa("Game log", "ゲームログ")}>
+      <header className="arena-redesign-utility-title">{___bsJa("Game Log", "ゲームログ")}</header>
       {entries.length ? (
         <ol className="arena-redesign-utility-feed">
           {entries.map((entry) => (
@@ -12,7 +13,7 @@ export default function GameLogPanel({ entries = [] }) {
           ))}
         </ol>
       ) : (
-        <div className="arena-redesign-utility-empty">No log entries</div>
+        <div className="arena-redesign-utility-empty">{___bsJa("No log entries", "ログエントリがありません")}</div>
       )}
     </section>
   );

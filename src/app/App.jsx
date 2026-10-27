@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../localization/displayLanguage.js";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { getSettings } from "../services/platform/storage.js";
 import { applyTheme } from "../services/platform/theme.js";
@@ -30,8 +31,8 @@ function LoadingScreen() {
   return (
     <main className="route-loading" aria-live="polite">
       <div className="route-loading-mark" />
-      <strong>Battle Spirits: KAIHOU! Simulator</strong>
-      <span>{language === "ja" ? "読み込み中…" : language === "en" ? "Loading…" : "Carregando…"}</span>
+      <strong>{___bsJa("Battle Spirits: KAIHOU! Simulator", "バトルスピリッツ 界放シミュレーター")}</strong>
+      <span>{language === "ja" ? "読み込み中…" : language === "en" ? ___bsJa("Loading…", "読み込み中…") : ___bsJa("Carregando…", "読み込み中…")}</span>
     </main>
   );
 }

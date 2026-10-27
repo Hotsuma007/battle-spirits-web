@@ -1,3 +1,7 @@
+import { getDisplayCardName as getCardName } from "../../localization/displayCardName.js";
+
+import { localizeShopText } from "../../localization/shopText.js";
+import { japaneseText as ___bsJa, isJapaneseDisplay as ___bsJapanese } from "../../localization/displayLanguage.js";
 import { useEffect, useMemo, useState } from "react";
 import EternalCinematicBackdrop from "../../components/layout/EternalCinematicBackdrop.jsx";
 import CardDetailsModal from "../../components/cards/CardDetailsModal.jsx";
@@ -24,8 +28,8 @@ function CurrencyChip({ kind, amount, pt }) {
   return (
     <div className={`store-v420-currency ${craft ? "craft" : "spirit"}`}>
       <span className="store-v420-currency-mark">{craft ? "CC" : "SC"}</span>
-      <span className="store-v420-currency-copy"><strong>{formatCoins(amount)}</strong><small>{craft ? "Craft Coins" : "Spirit Coins"}</small></span>
-      <span className="store-v420-currency-purpose">{craft ? "Crafting" : (pt ? "Loja" : "Store")}</span>
+      <span className="store-v420-currency-copy"><strong>{formatCoins(amount)}</strong><small>{craft ? ___bsJa("Craft Coins", "クラフトコイン") : ___bsJa("Spirit Coins", "スピリットコイン")}</small></span>
+      <span className="store-v420-currency-purpose">{craft ? ___bsJa("Crafting", "クラフト") : (pt ? ___bsJa("Loja", "ショップ") : ___bsJa("Store", "ショップ"))}</span>
     </div>
   );
 }
@@ -46,11 +50,11 @@ function ProductCard({ product, selected, onSelect, pt }) {
     <button type="button" className={`store-v420-product ${selected ? "selected" : ""} ${unavailable ? "unavailable" : ""}`} onClick={() => onSelect(product)}>
       <div className="store-v420-product-art"><Artwork product={product} /></div>
       <div className="store-v420-product-meta">
-        <small>{pt ? product.subtitlePT : product.subtitleEN}</small>
-        <strong>{product.title}</strong>
-        <em className="store-v422-product-saga">{pt ? saga.labelPT : saga.labelEN}</em>
-        {product.spiritPrice != null ? <span><b>SC</b>{formatCoins(product.spiritPrice)}</span> : <span className="store-v420-unavailable-label">{pt ? "INDISPONÍVEL" : "UNAVAILABLE"}</span>}
-        {product.status === "catalog-only" && <span className="store-v421-data-pending">{pt ? "DADOS PENDENTES" : "DATA PENDING"}</span>}
+        <small>{localizeShopText(pt ? product.subtitlePT : product.subtitleEN)}</small>
+        <strong>{localizeShopText(product.title)}</strong>
+        <em className="store-v422-product-saga">{localizeShopText(pt ? saga.labelPT : saga.labelEN)}</em>
+        {product.spiritPrice != null ? <span><b>SC</b>{formatCoins(product.spiritPrice)}</span> : <span className="store-v420-unavailable-label">{pt ? ___bsJa("INDISPONÍVEL", "利用不可") : ___bsJa("UNAVAILABLE", "利用不可")}</span>}
+        {product.status === "catalog-only" && <span className="store-v421-data-pending">{pt ? ___bsJa("DADOS PENDENTES", "データ保留中") : ___bsJa("DATA PENDING", "データ保留中")}</span>}
       </div>
     </button>
   );
@@ -63,23 +67,29 @@ function CollectionPanel({ collection, pt }) {
   return (
     <section className="store-v420-collection">
       <div className="store-v420-collection-summary">
-        <article><small>{pt ? "Cartas diferentes" : "Unique cards"}</small><strong>{summary.uniqueCards}</strong></article>
-        <article><small>{pt ? "Total de cópias" : "Total copies"}</small><strong>{summary.totalCopies}</strong></article>
-        <article><small>{pt ? "Cópias repetidas" : "Duplicate copies"}</small><strong>{summary.duplicateCopies}</strong></article>
+        <article><small>{pt ? ___bsJa("Cartas diferentes", "ユニークなカード") : ___bsJa("Unique cards", "ユニークなカード")}</small><strong>{summary.uniqueCards}</strong></article>
+        <article><small>{pt ? ___bsJa("Total de cópias", "総部数") : ___bsJa("Total copies", "総部数")}</small><strong>{summary.totalCopies}</strong></article>
+        <article><small>{pt ? ___bsJa("Cópias repetidas", "複製コピー") : ___bsJa("Duplicate copies", "複製コピー")}</small><strong>{summary.duplicateCopies}</strong></article>
       </div>
       {entries.length ? <div className="store-v420-collection-grid">{entries.map((entry) => (
         <article className="store-v420-owned-card" key={entry.cardId}>
           <div className="store-v420-owned-art">{entry.card?.image ? <img src={entry.card.image} alt="" loading="lazy" /> : <span>{entry.cardId}</span>}</div>
-          <div><strong>{entry.card?.namePT || entry.card?.nameEN || entry.card?.name || entry.cardId}</strong><small>{entry.cardId}</small></div>
+          <div><strong>{entry.card ? getCardName(entry.card) : entry.cardId}</strong><small>{entry.cardId}</small></div>
           <b>{entry.quantity}/{MAX_OWNED_COPIES}</b>
         </article>
-      ))}</div> : <div className="store-v420-empty"><span className="store-v420-empty-mark">◇</span><strong>{pt ? "Sua coleção começa aqui" : "Your collection starts here"}</strong><p>{pt ? "Escolha seus 3 Starter Decks e abra produtos da Loja para preencher sua coleção." : "Choose your 3 Starter Decks and open Store products to build your collection."}</p></div>}
+      ))}</div> : <div className="store-v420-empty"><span className="store-v420-empty-mark">◇</span><strong>{pt ? ___bsJa("Sua coleção começa aqui", "あなたのコレクションはここから始まります") : ___bsJa("Your collection starts here", "あなたのコレクションはここから始まります")}</strong><p>{pt ? ___bsJa("Escolha seus 3 Starter Decks e abra produtos da Loja para preencher sua coleção.", "3 つのスターター デッキを選択し、ストア製品を開いてコレクションを構築します。") : ___bsJa("Choose your 3 Starter Decks and open Store products to build your collection.", "3 つのスターター デッキを選択し、ストア製品を開いてコレクションを構築します。")}</p></div>}
     </section>
   );
 }
 
 function purchaseError(error, pt) {
   const value = String(error || "");
+  if (___bsJapanese()) {
+    if (value.includes("INSUFFICIENT_SPIRIT_COINS")) return "スピリットコインが足りません。";
+    if (value.includes("DECK_DATA_INCOMPLETE")) return "このデッキのカードリストはまだ利用できません。";
+    if (value.includes("EMPTY_PRODUCT_POOL")) return "この商品には利用できるカードがまだありません。";
+    return "購入を完了できませんでした。";
+  }
   if (value.includes("INSUFFICIENT_SPIRIT_COINS")) return pt ? "Spirit Coins insuficientes." : "Not enough Spirit Coins.";
   if (value.includes("DECK_DATA_INCOMPLETE")) return pt ? "A lista completa deste deck ainda não está disponível." : "This deck's complete list is not available yet.";
   if (value.includes("EMPTY_PRODUCT_POOL")) return pt ? "Este produto ainda não possui um pool de cartas válido." : "This product does not have a valid card pool yet.";
@@ -87,6 +97,12 @@ function purchaseError(error, pt) {
 }
 
 function productDescription(product, pt) {
+  if (___bsJapanese()) {
+    if (product.status === "catalog-only") return "この商品のカードデータは準備中です。";
+    if (product.productType === "booster") return `1パック${product.packSize}枚入りです。カード一覧で収録カードを確認できます。`;
+    if (product.productType === "card-set") return "固定内容のカードセットです。購入すると、記載された各カードを1枚ずつ獲得できます。";
+    if (product.productType === "deck") return "購入するとデッキのカードとデッキレシピを獲得します。再購入時もカードを獲得できます。";
+  }
   if (product.status === "catalog-only") return pt ? product.dataNotePT : product.dataNoteEN;
   if (product.productType === "booster") return pt
     ? `${product.packSize} cartas por pacote. O Card Preview mostra o pool completo deste produto.`
@@ -149,10 +165,10 @@ function ProductModal({ product, snapshot, pt, onClose, onPurchased, onReveal, o
 
   return (
     <div className="store-v421-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-      <section className="store-v421-modal store-v422-preview-modal" role="dialog" aria-modal="true" aria-label={product.title}>
+      <section className="store-v421-modal store-v422-preview-modal" role="dialog" aria-modal="true" aria-label={localizeShopText(product.title)}>
         <header className="store-v421-modal-head">
-          <div><span>{pt ? product.subtitlePT : product.subtitleEN}</span><h2>{product.title}</h2><small>{pt ? sagaForProduct(product).labelPT : sagaForProduct(product).labelEN}</small></div>
-          <button type="button" onClick={onClose} aria-label={pt ? "Fechar" : "Close"}>×</button>
+          <div><span>{localizeShopText(pt ? product.subtitlePT : product.subtitleEN)}</span><h2>{localizeShopText(product.title)}</h2><small>{localizeShopText(pt ? sagaForProduct(product).labelPT : sagaForProduct(product).labelEN)}</small></div>
+          <button type="button" onClick={onClose} aria-label={pt ? ___bsJa("Fechar", "閉じる") : ___bsJa("Close", "閉じる")}>×</button>
         </header>
         <div className="store-v421-modal-body">
           <aside className="store-v421-modal-product">
@@ -160,8 +176,8 @@ function ProductModal({ product, snapshot, pt, onClose, onPurchased, onReveal, o
             <p>{productDescription(product, pt)}</p>
           </aside>
           <div className="store-v421-preview-panel">
-            <div className="store-v421-preview-head"><div><strong>CARD PREVIEW</strong><small>{pt ? "Pool completo do produto" : "Complete product card pool"}</small></div><span>{preview.length} {pt ? "cartas" : "cards"}</span></div>
-            {loading ? <div className="store-v421-preview-empty">{pt ? "Carregando pool…" : "Loading pool…"}</div> : preview.length ? (
+            <div className="store-v421-preview-head"><div><strong>{___bsJa("CARD PREVIEW", "カードのプレビュー")}</strong><small>{pt ? ___bsJa("Pool completo do produto", "収録カード一覧") : ___bsJa("Complete product card pool", "収録カード一覧")}</small></div><span>{___bsJapanese() ? `${preview.length}種類` : <>{preview.length} {pt ? "cartas" : "cards"}</>}</span></div>
+            {loading ? <div className="store-v421-preview-empty">{pt ? ___bsJa("Carregando pool…", "プールを読み込み中…") : ___bsJa("Loading pool…", "プールを読み込み中…")}</div> : preview.length ? (
               <div className="store-v422-card-preview-grid">{preview.map((entry) => {
                 const count = owned.get(entry.cardId) || 0;
                 return <article
@@ -173,18 +189,18 @@ function ProductModal({ product, snapshot, pt, onClose, onPurchased, onReveal, o
                   onKeyDown={(event) => { if (entry.card && (event.key === "Enter" || event.key === " ")) onOpenCard(entry.card); }}
                 >
                   <div className="store-v422-preview-card-art">{entry.card?.image ? <img src={entry.card.image} alt="" loading="lazy" /> : <span>{entry.cardId}</span>}</div>
-                  <strong title={entry.card?.namePT || entry.card?.nameEN || entry.card?.name || entry.cardId}>{entry.card?.namePT || entry.card?.nameEN || entry.card?.name || entry.cardId}</strong>
+                  <strong title={entry.card ? getCardName(entry.card) : entry.cardId}>{entry.card ? getCardName(entry.card) : entry.cardId}</strong>
                   <small>{entry.cardId} · {entry.card?.rarity || "—"}{entry.included ? ` · ×${entry.included}` : ""}</small>
-                  <b className="store-v422-ownership"><span>OWNED</span>{count}/{MAX_OWNED_COPIES}</b>
+                  <b className="store-v422-ownership"><span>{___bsJa("OWNED", "所有")}</span>{count}/{MAX_OWNED_COPIES}</b>
                 </article>;
               })}</div>
-            ) : <div className="store-v421-preview-empty">{pt ? "A lista deste produto ainda não está disponível." : "This product list is not available yet."}</div>}
+            ) : <div className="store-v421-preview-empty">{pt ? ___bsJa("A lista deste produto ainda não está disponível.", "この製品リストはまだ公開されていません。") : ___bsJa("This product list is not available yet.", "この製品リストはまだ公開されていません。")}</div>}
           </div>
         </div>
         <footer className="store-v421-modal-footer">
-          <div className="store-v421-quantity"><span>{pt ? "Quantidade" : "Quantity"}</span><button type="button" onClick={() => setQuantity((value) => Math.max(1, value - 1))}>−</button><b>{quantity}</b><button type="button" onClick={() => setQuantity((value) => Math.min(20, value + 1))}>+</button></div>
-          <div className="store-v421-price"><small>Total</small><strong><b>SC</b>{formatCoins(totalPrice)}</strong></div>
-          <div className="store-v421-actions"><button type="button" className="cancel" onClick={onClose}>{pt ? "Cancelar" : "Cancel"}</button><button type="button" className="confirm" disabled={!canBuy} onClick={confirm}>{buying ? (pt ? "Processando…" : "Processing…") : (pt ? "Confirmar compra" : "Confirm Purchase")}</button></div>
+          <div className="store-v421-quantity"><span>{pt ? ___bsJa("Quantidade", "数量") : ___bsJa("Quantity", "数量")}</span><button type="button" onClick={() => setQuantity((value) => Math.max(1, value - 1))}>−</button><b>{quantity}</b><button type="button" onClick={() => setQuantity((value) => Math.min(20, value + 1))}>+</button></div>
+          <div className="store-v421-price"><small>{___bsJa("Total", "合計")}</small><strong><b>SC</b>{formatCoins(totalPrice)}</strong></div>
+          <div className="store-v421-actions"><button type="button" className="cancel" onClick={onClose}>{pt ? ___bsJa("Cancelar", "キャンセル") : ___bsJa("Cancel", "キャンセル")}</button><button type="button" className="confirm" disabled={!canBuy} onClick={confirm}>{buying ? (pt ? ___bsJa("Processando…", "処理…") : ___bsJa("Processing…", "処理…")) : (pt ? ___bsJa("Confirmar compra", "購入の確認") : ___bsJa("Confirm Purchase", "購入の確認"))}</button></div>
           {message && <p className="store-v421-purchase-message">{message}</p>}
         </footer>
       </section>
@@ -234,7 +250,7 @@ function PackOpeningSequence({ opening, pt, onClose, onOpenCard }) {
 
   const done = revealed >= group.grants.length;
   const lastPage = page >= groups.length - 1;
-  const unitLabel = opening.product.productType === "booster" ? (pt ? "BOOSTER" : "BOOSTER")
+  const unitLabel = ___bsJapanese() ? (opening.product.productType === "booster" ? "ブースター" : opening.product.productType === "card-set" ? "カードセット" : "デッキを開封") : opening.product.productType === "booster" ? (pt ? "BOOSTER" : "BOOSTER")
     : opening.product.productType === "card-set" ? (pt ? "CARD SET" : "CARD SET")
       : (pt ? "DECK REVEAL" : "DECK REVEAL");
 
@@ -246,9 +262,9 @@ function PackOpeningSequence({ opening, pt, onClose, onOpenCard }) {
 
   return (
     <div className="store-v422-opening-backdrop">
-      <section className="store-v422-opening" role="dialog" aria-modal="true" aria-label={pt ? "Abertura do produto" : "Product opening"}>
+      <section className="store-v422-opening" role="dialog" aria-modal="true" aria-label={pt ? ___bsJa("Abertura do produto", "商品開封口") : ___bsJa("Product opening", "商品開封口")}>
         <header>
-          <div><span>{unitLabel}</span><h2>{opening.product.title}</h2><small>{pt ? sagaForProduct(opening.product).labelPT : sagaForProduct(opening.product).labelEN}</small></div>
+          <div><span>{unitLabel}</span><h2>{localizeShopText(opening.product.title)}</h2><small>{localizeShopText(pt ? sagaForProduct(opening.product).labelPT : sagaForProduct(opening.product).labelEN)}</small></div>
           <div className="store-v422-opening-progress"><b>{page + 1}</b><span>/</span><small>{groups.length}</small></div>
         </header>
         <div className="store-v422-reveal-grid">{group.grants.map((grant, index) => {
@@ -266,17 +282,17 @@ function PackOpeningSequence({ opening, pt, onClose, onOpenCard }) {
           >
             <div className="store-v422-reveal-card">
               {card?.image ? <img src={card.image} alt="" /> : <span>{grant.cardId}</span>}
-              {isNew && <em className="store-v422-new-tag">NEW!</em>}
+              {isNew && <em className="store-v422-new-tag">{"NEW!"}</em>}
             </div>
-            <strong>{card?.namePT || card?.nameEN || card?.name || grant.cardId}</strong>
+            <strong>{card ? getCardName(card) : grant.cardId}</strong>
             <small>{grant.cardId} · {grant.rarity || card?.rarity || "—"}</small>
-            {isNew ? <b className="store-v422-get-tag">GET ×1</b> : <b className="store-v422-cc-tag">+{formatCoins(craft)} CC</b>}
-            {overflow && <span className="store-v422-overflow-tag">{pt ? "6/6 · EXTRA CONVERTIDA" : "6/6 · EXTRA CONVERTED"}</span>}
+            {isNew ? <b className="store-v422-get-tag">{___bsJa("GET ×1", "×1ゲット")}</b> : <b className="store-v422-cc-tag">+{formatCoins(craft)} CC</b>}
+            {overflow && <span className="store-v422-overflow-tag">{pt ? ___bsJa("6/6 · EXTRA CONVERTIDA", "6/6 · 追加変換") : ___bsJa("6/6 · EXTRA CONVERTED", "6/6 · 追加変換")}</span>}
           </article>;
         })}</div>
         <footer>
-          <p>{pt ? "Cartas repetidas geram Craft Coins automaticamente. Cópias acima de 6/6 são convertidas em CC." : "Duplicate cards automatically generate Craft Coins. Copies above 6/6 are converted into CC."}</p>
-          <button type="button" onClick={advance}>{!done ? (pt ? "Revelar tudo" : "Reveal All") : lastPage ? (pt ? "Concluir" : "Finish") : (pt ? "Próximo" : "Next")}</button>
+          <p>{pt ? ___bsJa("Cartas repetidas geram Craft Coins automaticamente. Cópias acima de 6/6 são convertidas em CC.", "カードが重複するとクラフトコインが自動的に生成されます。 6/6 を超えるコピーは CC に変換されます。") : ___bsJa("Duplicate cards automatically generate Craft Coins. Copies above 6/6 are converted into CC.", "カードが重複するとクラフトコインが自動的に生成されます。 6/6 を超えるコピーは CC に変換されます。")}</p>
+          <button type="button" onClick={advance}>{!done ? (pt ? ___bsJa("Revelar tudo", "すべて開く") : ___bsJa("Reveal All", "すべて開く")) : lastPage ? (pt ? ___bsJa("Concluir", "完了") : ___bsJa("Finish", "完了")) : (pt ? ___bsJa("Próximo", "次") : ___bsJa("Next", "次"))}</button>
         </footer>
       </section>
     </div>
@@ -340,54 +356,54 @@ export default function Store({ onBack }) {
     const result = await craftCard(detailCard);
     if (result.ok) {
       await refresh(result.snapshot || null);
-      setCraftMessage(pt ? "Carta forjada e adicionada à coleção." : "Card crafted and added to your collection.");
+      setCraftMessage(language === "ja" ? "カードを作成し、コレクションに追加しました。" : pt ? "Carta forjada e adicionada à coleção." : "Card crafted and added to your collection.");
     } else {
       const error = String(result.error || "");
       setCraftMessage(
-        error.includes("INSUFFICIENT_CRAFT_COINS") ? (pt ? "Craft Coins insuficientes." : "Not enough Craft Coins.") :
-        error.includes("MAX_OWNED_COPIES") ? (pt ? "Você já possui 6/6 cópias desta carta." : "You already own 6/6 copies of this card.") :
-        (pt ? "Não foi possível forjar esta carta." : "Could not craft this card.")
+        error.includes("INSUFFICIENT_CRAFT_COINS") ? (language === "ja" ? "クラフトコインが足りません。" : pt ? "Craft Coins insuficientes." : "Not enough Craft Coins.") :
+        error.includes("MAX_OWNED_COPIES") ? (language === "ja" ? "このカードはすでに上限の6枚を所持しています。" : pt ? "Você já possui 6/6 cópias desta carta." : "You already own 6/6 copies of this card.") :
+        (language === "ja" ? "カードを作成できませんでした。" : pt ? "Não foi possível forjar esta carta." : "Could not craft this card.")
       );
     }
     setCraftBusy(false);
   }
 
-  const sectionTitle = activeCategory === "boosters" ? "Card Packs" : activeCategory === "decks" ? "Decks" : (pt ? "Acessórios" : "Accessories");
+  const sectionTitle = ___bsJapanese() ? (activeCategory === "boosters" ? "カードパック" : activeCategory === "decks" ? "デッキ" : "アクセサリー") : activeCategory === "boosters" ? "Card Packs" : activeCategory === "decks" ? "Decks" : (pt ? "Acessórios" : "Accessories");
 
   return (
     <main className="store-v420-page">
       <EternalCinematicBackdrop /><div className="store-v420-shade" aria-hidden="true" />
       <header className="store-v420-topbar">
-        <button type="button" className="store-v420-back" onClick={onBack}>← <span>{pt ? "Voltar" : "Back"}</span></button>
-        <div className="store-v420-title"><span>BATTLE SPIRITS ETERNAL</span><strong>{pt ? "LOJA" : "STORE"}</strong></div>
+        <button type="button" className="store-v420-back" onClick={onBack}>← <span>{pt ? ___bsJa("Voltar", "戻る") : ___bsJa("Back", "戻る")}</span></button>
+        <div className="store-v420-title"><span>{___bsJa("BATTLE SPIRITS ETERNAL", "バトルスピリッツエターナル")}</span><strong>{pt ? ___bsJa("LOJA", "ショップ") : ___bsJa("STORE", "ショップ")}</strong></div>
         <div className="store-v420-wallet" aria-busy={loading}><CurrencyChip kind="spirit" amount={snapshot.wallet.spiritCoins} pt={pt} /><CurrencyChip kind="craft" amount={snapshot.wallet.craftCoins} pt={pt} /></div>
       </header>
       <section className="store-v420-shell">
-        <nav className="store-v420-tabs">{SHOP_CATEGORIES.map((category) => <button type="button" key={category.id} className={activeCategory === category.id ? "active" : ""} onClick={() => setActiveCategory(category.id)}>{pt ? category.labelPT : category.labelEN}{category.id === "accessories" && <small>{pt ? "EM BREVE" : "COMING SOON"}</small>}</button>)}</nav>
+        <nav className="store-v420-tabs">{SHOP_CATEGORIES.map((category) => <button type="button" key={category.id} className={activeCategory === category.id ? "active" : ""} onClick={() => setActiveCategory(category.id)}>{localizeShopText(pt ? category.labelPT : category.labelEN)}{category.id === "accessories" && <small>{pt ? ___bsJa("EM BREVE", "近日公開") : ___bsJa("COMING SOON", "近日公開")}</small>}</button>)}</nav>
         {activeCategory === "collection" ? <CollectionPanel collection={snapshot.collection} pt={pt} /> : (
           <div className="store-v420-content">
             <aside className="store-v420-series">
-              <span>{pt ? "CATÁLOGO" : "CATALOG"}</span>
-              <button type="button" className={activeSaga === "all" ? "active" : ""} onClick={() => setActiveSaga("all")}><b>{pt ? "Todos" : "All"}</b><small>{categoryProducts.length}</small></button>
-              {sagaGroups.map((saga) => <button type="button" key={saga.id} className={activeSaga === saga.id ? "active" : ""} onClick={() => setActiveSaga(saga.id)} title={pt ? saga.descriptionPT : saga.descriptionEN}><b>{pt ? saga.labelPT : saga.labelEN}</b><small>{saga.count}</small></button>)}
+              <span>{pt ? ___bsJa("CATÁLOGO", "カタログ") : ___bsJa("CATALOG", "カタログ")}</span>
+              <button type="button" className={activeSaga === "all" ? "active" : ""} onClick={() => setActiveSaga("all")}><b>{pt ? ___bsJa("Todos", "すべて") : ___bsJa("All", "すべて")}</b><small>{categoryProducts.length}</small></button>
+              {sagaGroups.map((saga) => <button type="button" key={saga.id} className={activeSaga === saga.id ? "active" : ""} onClick={() => setActiveSaga(saga.id)} title={localizeShopText(pt ? saga.descriptionPT : saga.descriptionEN)}><b>{localizeShopText(pt ? saga.labelPT : saga.labelEN)}</b><small>{saga.count}</small></button>)}
               {!sagaGroups.length && <button type="button" className="active"><b>{sectionTitle}</b><small>{categoryProducts.length}</small></button>}
-              <div className="store-v420-craft-note"><b>CC</b><div><strong>Craft Coins</strong><p>{pt ? "Duplicatas geram CC. Cartas acima de 6 cópias são convertidas diretamente em CC." : "Duplicates grant CC. Cards above 6 copies are converted directly into CC."}</p></div></div>
+              <div className="store-v420-craft-note"><b>CC</b><div><strong>{___bsJa("Craft Coins", "クラフトコイン")}</strong><p>{pt ? ___bsJa("Duplicatas geram CC. Cartas acima de 6 cópias são convertidas diretamente em CC.", "重複カードの獲得時にCCを受け取れます。同じカードは6枚まで所持でき、超過分はCCに変換されます。") : ___bsJa("Duplicates grant CC. Cards above 6 copies are converted directly into CC.", "重複カードの獲得時にCCを受け取れます。同じカードは6枚まで所持でき、超過分はCCに変換されます。")}</p></div></div>
             </aside>
             <section className="store-v420-products">
-              <div className="store-v420-section-heading"><div><span>{pt ? "ECONOMIA 100% GAMEPLAY" : "100% GAMEPLAY ECONOMY"}</span><h2>{activeSaga === "all" ? sectionTitle : (pt ? sagaForProduct(products[0]).labelPT : sagaForProduct(products[0]).labelEN)}</h2></div><small>{pt ? `${products.length} produtos` : `${products.length} products`}</small></div>
+              <div className="store-v420-section-heading"><div><span>{pt ? ___bsJa("ECONOMIA 100% GAMEPLAY", "ゲーム内通貨で購入") : ___bsJa("100% GAMEPLAY ECONOMY", "ゲーム内通貨で購入")}</span><h2>{activeSaga === "all" ? sectionTitle : localizeShopText(pt ? sagaForProduct(products[0]).labelPT : sagaForProduct(products[0]).labelEN)}</h2></div><small>{pt ? (___bsJapanese() ? `${products.length}商品` : `${products.length} produtos`) : (___bsJapanese() ? `${products.length}商品` : `${products.length} products`)}</small></div>
               <div className="store-v420-product-grid">{products.map((product) => <ProductCard key={product.id} product={product} selected={selected?.id === product.id} onSelect={chooseProduct} pt={pt} />)}</div>
-              {selected && <article className={`store-v420-detail ${selected.status !== "active" ? "unavailable" : ""}`}><div className="store-v420-detail-art"><Artwork product={selected} /></div><div className="store-v420-detail-copy"><span>{pt ? sagaForProduct(selected).labelPT : sagaForProduct(selected).labelEN}</span><h3>{selected.title}</h3><p>{selected.status === "active" ? (pt ? "Abra o produto para consultar o Card Preview completo, ownership x/6 e quantidade da compra." : "Open the product to check the complete Card Preview, x/6 ownership and purchase quantity.") : (pt ? selected.dataNotePT || "Este item ainda não pode ser comprado." : selected.dataNoteEN || "This item cannot be purchased yet.")}</p><div className="store-v420-detail-footer">{selected.spiritPrice != null ? <strong><b>SC</b>{formatCoins(selected.spiritPrice)}</strong> : <strong>{pt ? "INDISPONÍVEL" : "UNAVAILABLE"}</strong>}<button type="button" disabled={selected.status === "unavailable"} onClick={() => setModalProduct(selected)}>{pt ? "Ver produto" : "View Product"}</button></div></div></article>}
+              {selected && <article className={`store-v420-detail ${selected.status !== "active" ? "unavailable" : ""}`}><div className="store-v420-detail-art"><Artwork product={selected} /></div><div className="store-v420-detail-copy"><span>{localizeShopText(pt ? sagaForProduct(selected).labelPT : sagaForProduct(selected).labelEN)}</span><h3>{localizeShopText(selected.title)}</h3><p>{selected.status === "active" ? (pt ? ___bsJa("Abra o produto para consultar o Card Preview completo, ownership x/6 e quantidade da compra.", "商品を開くと、収録カードや所持枚数、購入数量を確認できます。") : ___bsJa("Open the product to check the complete Card Preview, x/6 ownership and purchase quantity.", "商品を開くと、収録カードや所持枚数、購入数量を確認できます。")) : (pt ? (___bsJapanese() ? "この商品のカードデータは準備中です。" : selected.dataNotePT) || ___bsJa("Este item ainda não pode ser comprado.", "この商品はまだ購入できません。") : selected.dataNoteEN || ___bsJa("This item cannot be purchased yet.", "この商品はまだ購入できません。"))}</p><div className="store-v420-detail-footer">{selected.spiritPrice != null ? <strong><b>SC</b>{formatCoins(selected.spiritPrice)}</strong> : <strong>{pt ? ___bsJa("INDISPONÍVEL", "利用不可") : ___bsJa("UNAVAILABLE", "利用不可")}</strong>}<button type="button" disabled={selected.status === "unavailable"} onClick={() => setModalProduct(selected)}>{pt ? ___bsJa("Ver produto", "商品を見る") : ___bsJa("View Product", "商品を見る")}</button></div></div></article>}
             </section>
           </div>
         )}
-        <footer className="store-v420-footnote"><span>{snapshot.signedIn ? (pt ? "Economia vinculada à sua conta" : "Economy linked to your account") : (pt ? "Modo Guest · progresso apagado ao fechar o simulador" : "Guest Mode · progress is wiped when the simulator closes")}</span></footer>
+        <footer className="store-v420-footnote"><span>{snapshot.signedIn ? (pt ? ___bsJa("Economia vinculada à sua conta", "アカウントにリンクされた経済") : ___bsJa("Economy linked to your account", "アカウントにリンクされた経済")) : (pt ? ___bsJa("Modo Guest · progresso apagado ao fechar o simulador", "ゲスト モード · シミュレーターが閉じると進行状況が消去されます") : ___bsJa("Guest Mode · progress is wiped when the simulator closes", "ゲスト モード · シミュレーターが閉じると進行状況が消去されます"))}</span></footer>
       </section>
       {modalProduct && <ProductModal product={modalProduct} snapshot={snapshot} pt={pt} onClose={() => setModalProduct(null)} onPurchased={refresh} onReveal={setOpening} onOpenCard={(card) => { setCraftMessage(""); setDetailCard(card); }} />}
       {opening && <PackOpeningSequence opening={opening} pt={pt} onClose={() => setOpening(null)} onOpenCard={(card) => { setCraftMessage(""); setDetailCard(card); }} />}
       {detailCard && detailPricing && <CardDetailsModal
         card={detailCard}
         onClose={() => { setDetailCard(null); setCraftMessage(""); }}
-        initialLanguage={pt ? "ptBR" : "en"}
+        initialLanguage={language}
         crafting={{
           cost: detailPricing.cost,
           discount: detailPricing.discount,

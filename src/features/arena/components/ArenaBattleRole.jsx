@@ -9,8 +9,8 @@ export default function ArenaBattleRole({ role, language = "ptBR" }) {
   if (!role) return null;
 
   const labels = {
-    attacker: language === "en" ? "ATTACKER" : "ATACANTE",
-    blocker: language === "en" ? "BLOCKER" : "BLOQUEADOR"
+    attacker: language === "ja" ? "アタック" : language === "en" ? "ATTACKER" : "ATACANTE",
+    blocker: language === "ja" ? "ブロック" : language === "en" ? "BLOCKER" : "BLOQUEADOR"
   };
 
   const label = labels[role];

@@ -1,7 +1,8 @@
+import { japaneseText as ___bsJa } from "../../../../localization/displayLanguage.js";
 export default function PhaseTracker({ phases = [] }) {
   return (
-    <section className="arena-redesign-utility-section" aria-label="Phase tracker">
-      <header className="arena-redesign-utility-title">Phase Tracker</header>
+    <section className="arena-redesign-utility-section" aria-label={___bsJa("Phase tracker", "位相トラッカー")}>
+      <header className="arena-redesign-utility-title">{___bsJa("Phase Tracker", "フェーズトラッカー")}</header>
       <ol className="arena-redesign-phase-tracker">
         {phases.map((phase) => (
           <li

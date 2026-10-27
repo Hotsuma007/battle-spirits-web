@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../../../localization/displayLanguage.js";
 import { memo, useEffect, useRef, useState } from "react";
 import { useLanguage } from "../../../localization/i18n.jsx";
 import "../../../styles/arena/arenaHudV490.css";
@@ -40,7 +41,7 @@ function ArenaHUDComponent({ player, active, actor, opponent = false, dataLifeTa
       <div className="arena-hud-identity">
         <div className="avatar-wrap">
           {player?.avatar ? (
-            <img src={player.avatar} alt="Avatar" />
+            <img src={player.avatar} alt={___bsJa("Avatar", "アバター")} />
           ) : (
             <span>{(player?.name || "J").slice(0, 1).toUpperCase()}</span>
           )}
@@ -59,7 +60,7 @@ function ArenaHUDComponent({ player, active, actor, opponent = false, dataLifeTa
         <div
           className="arena-hud-life"
           data-life-target={dataLifeTarget || undefined}
-          title="Life"
+          title={___bsJa("Life", "ライフ")}
           data-life-count={lifeCount}
         >
           <div className="arena-life-slots" aria-hidden="true">
@@ -71,27 +72,27 @@ function ArenaHUDComponent({ player, active, actor, opponent = false, dataLifeTa
             ))}
           </div>
           <b className="arena-life-value">{lifeCount}</b>
-          <span className="arena-life-label">LIFE</span>
+          <span className="arena-life-label">{___bsJa("LIFE", "ライフ")}</span>
         </div>
 
-        <div className="arena-hud-stat arena-hud-deck" title="Deck">
+        <div className="arena-hud-stat arena-hud-deck" title={___bsJa("Deck", "デッキ")}>
           <b>{deckCount}</b>
-          <span>Deck</span>
+          <span>{___bsJa("Deck", "デッキ")}</span>
         </div>
 
-        <div className={`arena-hud-stat arena-hud-reserve ${resourcePulse === "reserve" ? "resource-pulse" : ""}`} title="Reserve">
+        <div className={`arena-hud-stat arena-hud-reserve ${resourcePulse === "reserve" ? "resource-pulse" : ""}`} title={___bsJa("Reserve", "リザーブ")}>
           <b>{reserveCount}</b>
-          <span>Reserve</span>
+          <span>{___bsJa("Reserve", "リザーブ")}</span>
         </div>
 
-        <div className={`arena-hud-stat arena-hud-core-trash ${resourcePulse === "trash" ? "resource-pulse" : ""}`} title="Core Trash">
+        <div className={`arena-hud-stat arena-hud-core-trash ${resourcePulse === "trash" ? "resource-pulse" : ""}`} title={___bsJa("Core Trash", "コアトラッシュ")}>
           <b>{coreTrashCount}</b>
-          <span>Core Trash</span>
+          <span>{___bsJa("Core Trash", "コアトラッシュ")}</span>
         </div>
 
-        <div className="arena-hud-secondary" aria-label="Secondary match counters">
-          <span>Hand <b>{handCount}</b></span>
-          <span className={player?.burst ? "is-set" : ""}>Burst {player?.burst ? "●" : "○"}</span>
+        <div className="arena-hud-secondary" aria-label={___bsJa("Secondary match counters", "二次マッチカウンター")}>
+          <span>{___bsJa("Hand ", "手札 ")}<b>{handCount}</b></span>
+          <span className={player?.burst ? "is-set" : ""}>{___bsJa("Burst ", "バースト ")}{player?.burst ? "●" : "○"}</span>
         </div>
       </div>
     </div>

@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { japanesePatchNotes } from "../../localization/japanesePatchNotes.js";
+import { japaneseText as ___bsJa } from "../../localization/displayLanguage.js";
+import { useEffect, useState } from "react";
 import { useLanguage } from "../../localization/i18n.jsx";
 import "../../styles/theme/v230.css";
 
@@ -1466,8 +1468,10 @@ export default function ProjectInfoButtons() {
   const pt = language !== "en";
   const locale = pt ? "pt" : "en";
   const [modal, setModal] = useState(null);
-  const [selectedVersion, setSelectedVersion] = useState(PATCHES[0].version);
-  const selectedPatch = useMemo(() => PATCHES.find((patch) => patch.version === selectedVersion) || PATCHES[0], [selectedVersion]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const selectedPatch = PATCHES[selectedIndex] || PATCHES[0];
+  const patchText = (entry) => language === "ja" ? japanesePatchNotes[entry.en] || entry.en : entry[locale];
+  const patchDate = (entry) => language === "ja" ? entry.pt.split("/").reverse().join("/") : entry[locale];
 
   useEffect(() => {
     if (!modal) return undefined;
@@ -1485,54 +1489,55 @@ export default function ProjectInfoButtons() {
       <div className="project-info-buttons">
         <button type="button" className="project-menu-card project-menu-about" onClick={() => setModal("about")}>
           <span className="project-menu-icon">i</span>
-          <span className="project-menu-copy"><b>{pt ? "Sobre o projeto" : "About the project"}</b><small>{pt ? "Conheça mais" : "Learn more"}</small></span>
+          <span className="project-menu-copy"><b>{pt ? ___bsJa("Sobre o projeto", "プロジェクトについて") : ___bsJa("About the project", "プロジェクトについて")}</b><small>{pt ? ___bsJa("Conheça mais", "もっと詳しく知る") : ___bsJa("Learn more", "もっと詳しく知る")}</small></span>
           <i className="project-menu-arrow">›</i>
         </button>
-        <button type="button" className="project-menu-card project-menu-patch" onClick={() => { setSelectedVersion(PATCHES[0].version); setModal("patch"); }}>
+        <button type="button" className="project-menu-card project-menu-patch" onClick={() => { setSelectedIndex(0); setModal("patch"); }}>
           <span className="project-menu-icon">▤</span>
-          <span className="project-menu-copy"><b>Patch Notes</b><small>{pt ? "Novidades do jogo" : "What's new"}</small></span>
+          <span className="project-menu-copy"><b>{___bsJa("Patch Notes", "パッチノート")}</b><small>{pt ? ___bsJa("Novidades do jogo", "新着情報") : ___bsJa("What's new", "新着情報")}</small></span>
           <i className="project-menu-arrow">›</i>
         </button>
       </div>
 
       {modal && (
         <div className="project-modal-backdrop" role="presentation" onMouseDown={closeOnBackdrop}>
-          <section className="project-modal" role="dialog" aria-modal="true" aria-label={modal === "patch" ? "Patch Notes" : (pt ? "Sobre o projeto" : "About the project")}>
+          <section className="project-modal" role="dialog" aria-modal="true" aria-label={modal === "patch" ? ___bsJa("Patch Notes", "パッチノート") : (pt ? ___bsJa("Sobre o projeto", "プロジェクトについて") : ___bsJa("About the project", "プロジェクトについて"))}>
             <header>
-              <div><span className="eyebrow">BATTLE SPIRITS</span><h2>{modal === "patch" ? "Patch Notes" : (pt ? "Sobre o projeto" : "About the project")}</h2></div>
-              <button type="button" className="ghost" onClick={() => setModal(null)}>{pt ? "Fechar" : "Close"}</button>
+              <div><span className="eyebrow">{___bsJa("BATTLE SPIRITS", "バトルスピリッツ")}</span><h2>{modal === "patch" ? ___bsJa("Patch Notes", "パッチノート") : (pt ? ___bsJa("Sobre o projeto", "プロジェクトについて") : ___bsJa("About the project", "プロジェクトについて"))}</h2></div>
+              <button type="button" className="ghost" onClick={() => setModal(null)}>{pt ? ___bsJa("Fechar", "閉じる") : ___bsJa("Close", "閉じる")}</button>
             </header>
 
             {modal === "about" ? (
               <div className="about-content">
-                <div className="project-version-badge">Battle Spirits: KAIHOU! Simulator v{PATCHES[0].version}</div>
-                <p>{pt ? "Battle Spirits: KAIHOU! Simulator é um projeto de fã não oficial criado para jogar, testar decks e explorar diferentes gerações do Battle Spirits original." : "Battle Spirits: KAIHOU! Simulator is an unofficial fan project created to play, test decks and explore different generations of the original Battle Spirits game."}</p>
-                <h3>{pt ? "O que você encontra aqui" : "What you'll find here"}</h3>
-                <p>{pt ? "Partidas locais e Online, Eternal CPU, Deck Builder, coleção de cartas, perfis sociais, Maestria e modos competitivos em uma única experiência." : "Local and Online matches, Eternal CPU, Deck Builder, card collection, social profiles, Mastery and competitive modes in one experience."}</p>
-                <h3>{pt ? "Em evolução" : "Always evolving"}</h3>
-                <p>{pt ? "Novas cartas, recursos e melhorias de experiência chegam ao simulador por meio das atualizações." : "New cards, features and experience improvements are added over time."}</p>
-                <strong className="about-thanks">{pt ? "Obrigado por jogar e acompanhar o projeto." : "Thank you for playing and following the project."}</strong>
-                <small className="about-disclaimer">Battle Spirits é propriedade da BANDAI. {pt ? "Este é um projeto de fã não oficial e sem afiliação com a BANDAI." : "This is an unofficial fan project and is not affiliated with BANDAI."}</small>
+                <div className="project-version-badge">{___bsJa("Battle Spirits: KAIHOU! Simulator v", "バトルスピリッツ 界放シミュレーター v")}{PATCHES[0].version}</div>
+                <p>{pt ? ___bsJa("Battle Spirits: KAIHOU! Simulator é um projeto de fã não oficial criado para jogar, testar decks e explorar diferentes gerações do Battle Spirits original.", "バトルスピリッツ 界放シミュレーターは、オリジナルのバトルスピリッツ ゲームをプレイ、テストし、さまざまな世代を探索するために作成された非公式のファン プロジェクトです。") : ___bsJa("Battle Spirits: KAIHOU! Simulator is an unofficial fan project created to play, test decks and explore different generations of the original Battle Spirits game.", "バトルスピリッツ 界放シミュレーターは、オリジナルのバトルスピリッツ ゲームをプレイ、テストし、さまざまな世代を探索するために作成された非公式のファン プロジェクトです。")}</p>
+                <h3>{pt ? ___bsJa("O que você encontra aqui", "ここで見つかるもの") : ___bsJa("What you'll find here", "ここで見つかるもの")}</h3>
+                <p>{pt ? ___bsJa("Partidas locais e Online, Eternal CPU, Deck Builder, coleção de cartas, perfis sociais, Maestria e modos competitivos em uma única experiência.", "ローカルおよびオンライン マッチ、エターナル CPU、デッキ ビルダー、カード コレクション、ソーシャル プロフィール、マスタリー モードと対戦モードを 1 つのエクスペリエンスで体験できます。") : ___bsJa("Local and Online matches, Eternal CPU, Deck Builder, card collection, social profiles, Mastery and competitive modes in one experience.", "ローカルおよびオンライン マッチ、エターナル CPU、デッキ ビルダー、カード コレクション、ソーシャル プロフィール、マスタリー モードと対戦モードを 1 つのエクスペリエンスで体験できます。")}</p>
+                <h3>{pt ? ___bsJa("Em evolução", "常に進化する") : ___bsJa("Always evolving", "常に進化する")}</h3>
+                <p>{pt ? ___bsJa("Novas cartas, recursos e melhorias de experiência chegam ao simulador por meio das atualizações.", "新しいカード、機能、エクスペリエンスは時間の経過とともに追加されます。") : ___bsJa("New cards, features and experience improvements are added over time.", "新しいカード、機能、エクスペリエンスは時間の経過とともに追加されます。")}</p>
+                <strong className="about-thanks">{pt ? ___bsJa("Obrigado por jogar e acompanhar o projeto.", "プロジェクトをプレイしてフォローしていただきありがとうございます。") : ___bsJa("Thank you for playing and following the project.", "プロジェクトをプレイしてフォローしていただきありがとうございます。")}</strong>
+                <small className="about-disclaimer">{___bsJa("Battle Spirits é propriedade da BANDAI. ", "バトルスピリッツはバンダイの所有物です。 ")}{pt ? ___bsJa("Este é um projeto de fã não oficial e sem afiliação com a BANDAI.", "これは非公式のファンプロジェクトであり、バンダイとは関係ありません。") : ___bsJa("This is an unofficial fan project and is not affiliated with BANDAI.", "これは非公式のファンプロジェクトであり、バンダイとは関係ありません。")}</small>
               </div>
             ) : (
               <div className="patch-notes-layout">
                 <aside className="patch-version-list">
-                  {PATCHES.map((patch) => (
-                    <button type="button" key={patch.version} className={selectedPatch.version === patch.version ? "active" : ""} onClick={() => setSelectedVersion(patch.version)}>
-                      <b>v{patch.version}</b><span>{patch.title[locale]}</span>
+                  {PATCHES.map((patch, index) => (
+                    <button type="button" key={`${patch.version}-${index}`} className={selectedIndex === index ? "active" : ""} onClick={() => setSelectedIndex(index)}>
+                      <b>v{patch.version}</b><span>{patchText(patch.title)}</span>
                     </button>
                   ))}
                 </aside>
                 <article className="patch-content">
-                  <span className="eyebrow">{selectedPatch.version === PATCHES[0].version ? (pt ? "ATUALIZAÇÃO ATUAL" : "CURRENT UPDATE") : (pt ? "HISTÓRICO" : "HISTORY")}</span>
+                  <span className="eyebrow">{selectedIndex === 0 ? (pt ? ___bsJa("ATUALIZAÇÃO ATUAL", "現在のアップデート") : ___bsJa("CURRENT UPDATE", "現在のアップデート")) : (pt ? ___bsJa("HISTÓRICO", "過去の更新") : ___bsJa("HISTORY", "過去の更新"))}</span>
+                  {language === "ja" && <small>更新履歴には参考訳が含まれます。</small>}
                   <h2>v{selectedPatch.version}</h2>
-                  <h3>{selectedPatch.title[locale]}</h3>
-                  <small>{selectedPatch.date[locale]}</small>
-                  <p>{selectedPatch.summary[locale]}</p>
+                  <h3>{patchText(selectedPatch.title)}</h3>
+                  <small>{patchDate(selectedPatch.date)}</small>
+                  <p>{patchText(selectedPatch.summary)}</p>
                   {selectedPatch.sections.map((section) => (
-                    <section className="patch-section" key={section.title[locale]}>
-                      <h3>{section.title[locale]}</h3>
-                      <ul>{section.items[locale].map((item) => <li key={item}>{item}</li>)}</ul>
+                    <section className="patch-section" key={section.title.en}>
+                      <h3>{patchText(section.title)}</h3>
+                      <ul>{section.items[language === "ja" ? "en" : locale].map((item) => <li key={item}>{language === "ja" ? japanesePatchNotes[item] || item : item}</li>)}</ul>
                     </section>
                   ))}
                 </article>

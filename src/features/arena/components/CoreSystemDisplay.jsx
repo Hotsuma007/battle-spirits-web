@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../../../localization/displayLanguage.js";
 import CoreArea from "../../../components/cards/CoreArea.jsx";
 import "../../../styles/arena/coreSystemV490.css";
 
@@ -5,11 +6,11 @@ function SoulCoreDisplay({ active = false }) {
   return (
     <span
       className={`arena-soul-core-indicator ${active ? "is-present" : ""}`}
-      aria-label={active ? "Soul Core present" : "Soul Core absent"}
-      title="Soul Core"
+      aria-label={active ? ___bsJa("Soul Core present", "ソウルコアプレゼント") : ___bsJa("Soul Core absent", "ソウルコアが存在しない")}
+      title={___bsJa("Soul Core", "ソウルコア")}
     >
       <i aria-hidden="true">S</i>
-      <small>Soul Core</small>
+      <small>{___bsJa("Soul Core", "ソウルコア")}</small>
     </span>
   );
 }
@@ -69,9 +70,9 @@ export function CoreTrashDisplay(props) {
 
 export function VoidCoreDisplay() {
   return (
-    <div className="arena-void-core-display" data-arena-component="VoidCoreDisplay" title="Void">
+    <div className="arena-void-core-display" data-arena-component="VoidCoreDisplay" title={___bsJa("Void", "ボイド")}>
       <span aria-hidden="true">∞</span>
-      <small>Void</small>
+      <small>{___bsJa("Void", "ボイド")}</small>
     </div>
   );
 }

@@ -1,3 +1,7 @@
+import { japaneseDeckIssue } from "../../localization/deckIssues.js";
+import { getDisplayCardName as getCardName } from "../../localization/displayCardName.js";
+import { japaneseText as ___bsJa } from "../../localization/displayLanguage.js";
+import { getJapaneseFamily } from "../../localization/cardText.js";
 import PointerTiltSurface from "../../components/layout/PointerTiltSurface.jsx";
 import EternalCinematicBackdrop from "../../components/layout/EternalCinematicBackdrop.jsx";
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
@@ -9,7 +13,7 @@ import { searchCards, cardIndex, catalogMeta, getRelatedCards } from "../../serv
 import { analyzeDeck, COLOR_ORDER, TYPE_ORDER } from "./services/deckAnalytics.js";
 import { deleteDeck, getDecks, upsertDeck } from "../../services/platform/storage.js";
 import { validateDeck } from "../../game/state.js";
-import { getCardName, resolveCardImage, resolveCardThumbnail } from "../../game/cardAdapter.js";
+import {  resolveCardImage, resolveCardThumbnail } from "../../game/cardAdapter.js";
 import {
   ETERNAL_OFFICIAL_LIST_DATE,
   copyLimitForCard,
@@ -26,6 +30,8 @@ import "../../styles/deckbuilder/deckBuilderV398.css";
 import "../../styles/pages/eternalInterfaceV350.css";
 
 const CARDS_PER_PAGE = 21;
+const JAPANESE_COLORS = { red: "赤", purple: "紫", green: "緑", white: "白", yellow: "黄", blue: "青" };
+const JAPANESE_TYPES = { spirit: "スピリット", brave: "ブレイヴ", ultimate: "アルティメット", nexus: "ネクサス", magic: "マジック" };
 const DECK_FILE_FORMAT = "battle-spirits-eternal-deck";
 const DECK_FILE_VERSION = 1;
 
@@ -265,7 +271,7 @@ export default function DeckBuilder({ onBack, deckId = null }) {
     const next = getDecks();
     setDecks(next);
     setDraft(next.find((d) => d.id === id));
-    setTransferNotice({ type: "success", text: pt ? "Deck salvo." : "Deck saved." });
+    setTransferNotice({ type: "success", text: language === "ja" ? "デッキを保存しました。" : pt ? "Deck salvo." : "Deck saved." });
   }
 
   function fresh() {
@@ -284,7 +290,7 @@ export default function DeckBuilder({ onBack, deckId = null }) {
     if (!draft.cards.length) {
       setTransferNotice({
         type: "error",
-        text: pt ? "Adicione pelo menos uma carta antes de exportar." : "Add at least one card before exporting."
+        text: language === "ja" ? "書き出す前にカードを1枚以上追加してください。" : pt ? "Adicione pelo menos uma carta antes de exportar." : "Add at least one card before exporting."
       });
       return;
     }
@@ -296,7 +302,7 @@ export default function DeckBuilder({ onBack, deckId = null }) {
       simulatorVersion: "4.2.2",
       exportedAt: new Date().toISOString(),
       deck: {
-        name: String(draft.name || "").trim() || (pt ? "Deck Importado" : "Imported Deck"),
+        name: String(draft.name || "").trim() || (language === "ja" ? "読み込んだデッキ" : pt ? "Deck Importado" : "Imported Deck"),
         coverCardId: draft.coverCardId || draft.cards[0]?.cardId || null,
         cards: draft.cards.map((entry) => ({
           cardId: entry.cardId || entry.id,
@@ -315,7 +321,7 @@ export default function DeckBuilder({ onBack, deckId = null }) {
     anchor.remove();
     setTimeout(() => URL.revokeObjectURL(url), 0);
 
-    setTransferNotice({ type: "success", text: pt ? "Deck exportado com sucesso." : "Deck exported successfully." });
+    setTransferNotice({ type: "success", text: language === "ja" ? "デッキを書き出しました。" : pt ? "Deck exportado com sucesso." : "Deck exported successfully." });
   }
 
   async function importDeckFile(file) {
@@ -327,7 +333,7 @@ export default function DeckBuilder({ onBack, deckId = null }) {
       const imported = parsed?.deck && (parsed.format === DECK_FILE_FORMAT || parsed.deck.cards) ? parsed.deck : parsed;
 
       if (!imported || !Array.isArray(imported.cards)) {
-        throw new Error(pt ? "Este arquivo não contém um deck válido." : "This file does not contain a valid deck.");
+        throw new Error(language === "ja" ? "このファイルに有効なデッキがありません。" : pt ? "Este arquivo não contém um deck válido." : "This file does not contain a valid deck.");
       }
 
       const normalized = normalizeImportedCards(imported.cards);
@@ -341,7 +347,7 @@ export default function DeckBuilder({ onBack, deckId = null }) {
         .filter(Boolean);
 
       if (!cards.length) {
-        throw new Error(pt ? "Nenhuma carta compatível foi encontrada neste arquivo." : "No compatible cards were found in this file.");
+        throw new Error(language === "ja" ? "このファイルに対応するカードが見つかりませんでした。" : pt ? "Nenhuma carta compatível foi encontrada neste arquivo." : "No compatible cards were found in this file.");
       }
 
       const importedCoverId = String(imported.coverCardId || "").trim();
@@ -349,7 +355,7 @@ export default function DeckBuilder({ onBack, deckId = null }) {
         ? importedCoverId
         : cards[0]?.cardId || null;
 
-      const name = String(imported.name || "").trim() || (pt ? "Deck Importado" : "Imported Deck");
+      const name = String(imported.name || "").trim() || (language === "ja" ? "読み込んだデッキ" : pt ? "Deck Importado" : "Imported Deck");
 
       setDraft({ id: null, name, cards, coverCardId });
       setQuery("");
@@ -367,7 +373,9 @@ export default function DeckBuilder({ onBack, deckId = null }) {
 
       setTransferNotice({
         type: ignored > 0 ? "warning" : "success",
-        text: pt
+        text: language === "ja"
+          ? (ignored > 0 ? `デッキを読み込みました。${ignored}件の無効または未対応の項目を除外しました。内容を確認して保存してください。` : "デッキを読み込みました。内容を確認して保存してください。")
+          : pt
           ? (ignored > 0
             ? `Deck importado. ${ignored} entrada${ignored === 1 ? "" : "s"} inválida${ignored === 1 ? "" : "s"} ou sem suporte ${ignored === 1 ? "foi ignorada" : "foram ignoradas"}. Revise e clique em Salvar.`
             : "Deck importado. Revise e clique em Salvar.")
@@ -379,7 +387,7 @@ export default function DeckBuilder({ onBack, deckId = null }) {
       console.error("Falha ao importar deck:", error);
       setTransferNotice({
         type: "error",
-        text: pt ? "Não foi possível importar este deck. Verifique o arquivo e tente novamente." : "Could not import this deck. Check the file and try again."
+        text: language === "ja" ? "デッキを読み込めませんでした。ファイルを確認して再度お試しください。" : pt ? "Não foi possível importar este deck. Verifique o arquivo e tente novamente." : "Could not import this deck. Check the file and try again."
       });
     } finally {
       if (importInputRef.current) importInputRef.current.value = "";
@@ -441,7 +449,7 @@ export default function DeckBuilder({ onBack, deckId = null }) {
         <div className="deck-builder-v3-title">
           <span className="eyebrow">{t("deckBuilder")}</span>
           <h1>{t("eternalFormat")}</h1>
-          <p>{pt ? "Monte, edite e organize seus decks com mais clareza." : "Build, edit and organize your decks more clearly."}</p>
+          <p>{pt ? ___bsJa("Monte, edite e organize seus decks com mais clareza.", "デッキをより明確に構築、編集、整理します。") : ___bsJa("Build, edit and organize your decks more clearly.", "デッキをより明確に構築、編集、整理します。")}</p>
         </div>
 
         <div className="row-actions deck-builder-actions deck-builder-v3-actions">
@@ -455,11 +463,11 @@ export default function DeckBuilder({ onBack, deckId = null }) {
           />
 
           <button className="ghost deck-transfer-btn" onClick={() => importInputRef.current?.click()}>
-            {pt ? "Importar Deck" : "Import Deck"}
+            {pt ? ___bsJa("Importar Deck", "インポートデッキ") : ___bsJa("Import Deck", "インポートデッキ")}
           </button>
 
           <button className="ghost deck-transfer-btn" disabled={!draft.cards.length} onClick={exportDeck}>
-            {pt ? "Exportar Deck" : "Export Deck"}
+            {pt ? ___bsJa("Exportar Deck", "デッキのエクスポート") : ___bsJa("Export Deck", "デッキのエクスポート")}
           </button>
 
           <button className="ghost eternal-menu-action compact" onClick={fresh}>{t("newDeck")}</button>
@@ -470,7 +478,7 @@ export default function DeckBuilder({ onBack, deckId = null }) {
       {transferNotice && (
         <div className={`deck-transfer-notice ${transferNotice.type}`}>
           <span>{transferNotice.text}</span>
-          <button type="button" aria-label={pt ? "Fechar" : "Close"} onClick={() => setTransferNotice(null)}>×</button>
+          <button type="button" aria-label={pt ? ___bsJa("Fechar", "閉じる") : ___bsJa("Close", "閉じる")} onClick={() => setTransferNotice(null)}>×</button>
         </div>
       )}
 
@@ -496,17 +504,17 @@ export default function DeckBuilder({ onBack, deckId = null }) {
               ) : (
                 <div className="deck-builder-v3-cover-empty">
                   <span>◇</span>
-                  <b>{pt ? "Sem capa" : "No cover"}</b>
-                  <small>{pt ? "Adicione cartas para escolher uma capa." : "Add cards to choose a cover."}</small>
+                  <b>{pt ? ___bsJa("Sem capa", "カバーなし") : ___bsJa("No cover", "カバーなし")}</b>
+                  <small>{pt ? ___bsJa("Adicione cartas para escolher uma capa.", "カードを追加して表紙を選択します。") : ___bsJa("Add cards to choose a cover.", "カードを追加して表紙を選択します。")}</small>
                 </div>
               )}
               </div>
             </PointerTiltSurface>
 
             <div className="deck-builder-v3-cover-copy">
-              <span>{pt ? "Deck atual" : "Current deck"}</span>
+              <span>{pt ? ___bsJa("Deck atual", "現在のデッキ") : ___bsJa("Current deck", "現在のデッキ")}</span>
               <strong>{String(draft.name || "").trim() || t("newDeck")}</strong>
-              <small>{coverCard ? getCardName(coverCard) : (pt ? "Nenhuma carta de capa definida" : "No cover card selected")}</small>
+              <small>{coverCard ? getCardName(coverCard) : (pt ? ___bsJa("Nenhuma carta de capa definida", "カバーカードが選択されていません") : ___bsJa("No cover card selected", "カバーカードが選択されていません"))}</small>
             </div>
           </div>
 
@@ -517,17 +525,17 @@ export default function DeckBuilder({ onBack, deckId = null }) {
             </div>
             <div>
               <strong>{uniqueCards}</strong>
-              <span>{pt ? "Únicas" : "Unique"}</span>
+              <span>{pt ? ___bsJa("Únicas", "種類") : ___bsJa("Unique", "種類")}</span>
             </div>
             <div className={validation.ok ? "ok" : "warn"}>
-              <strong>{validation.ok ? (pt ? "OK" : "OK") : (pt ? "REV" : "REV")}</strong>
-              <span>{validation.ok ? t("validDeck") : (pt ? "Revisar" : "Review")}</span>
+              <strong>{validation.ok ? (pt ? "OK" : "OK") : (pt ? ___bsJa("REV", "要確認") : ___bsJa("REV", "要確認"))}</strong>
+              <span>{validation.ok ? t("validDeck") : (pt ? ___bsJa("Revisar", "確認") : ___bsJa("Review", "確認"))}</span>
             </div>
           </div>
 
           <section className="deck-builder-v3-section">
             <div className="deck-builder-v3-section-head">
-              <h3>{pt ? "Configuração do deck" : "Deck setup"}</h3>
+              <h3>{pt ? ___bsJa("Configuração do deck", "デッキセットアップ") : ___bsJa("Deck setup", "デッキセットアップ")}</h3>
             </div>
 
             <label>
@@ -554,19 +562,19 @@ export default function DeckBuilder({ onBack, deckId = null }) {
             <div className="deck-validation deck-builder-v3-validation">
               <strong>{validation.size} {t("cards")}</strong>
               {validation.ok ? (
-                <span className="success-text">✓ Válido no formato Eternal</span>
+                <span className="success-text">{___bsJa("✓ Válido no formato Eternal", "✓ エターナルフォーマットで有効")}</span>
               ) : (
-                validation.errors.map((e) => (
-                  <span className="error-text" key={e}>{e}</span>
+                validation.issues.filter((issue) => issue.severity === "error").map((issue, index) => (
+                  <span className="error-text" key={`${issue.code}-${index}`}>{language === "ja" ? japaneseDeckIssue(issue, cardIndex) : issue.message}</span>
                 ))
               )}
               {validation.ok && (
                 <div className={`deck-regulation-status ${officialValidation.ok ? "is-valid" : "is-warning"}`}>
-                  <b>{officialValidation.ok ? "✓ Apto ao regulamento oficial" : "Regulamento oficial · revisar"}</b>
+                  <b>{officialValidation.ok ? ___bsJa("✓ Apto ao regulamento oficial", "✓ 公的規制に準拠") : ___bsJa("Regulamento oficial · revisar", "公式レギュレーション・見直し")}</b>
                   {!officialValidation.ok && (
                     <>
-                      <small>Lista vigente em {ETERNAL_OFFICIAL_LIST_DATE.split("-").reverse().join("/")}</small>
-                      {officialValidation.errors.map((error) => <span key={error}>{error}</span>)}
+                      <small>{___bsJa("Lista vigente em ", "現在のリスト ")}{ETERNAL_OFFICIAL_LIST_DATE.split("-").reverse().join("/")}</small>
+                      {officialValidation.issues.filter((issue) => issue.severity === "error").map((issue, index) => <span key={`${issue.code}-${index}`}>{language === "ja" ? japaneseDeckIssue(issue, cardIndex) : issue.message}</span>)}
                     </>
                   )}
                 </div>
@@ -576,11 +584,11 @@ export default function DeckBuilder({ onBack, deckId = null }) {
 
           <section className="deck-builder-v3-section deck-builder-v398-analytics">
             <div className="deck-builder-v3-section-head deck-builder-v3-section-head-inline">
-              <h3>{pt ? "Análise do deck" : "Deck analysis"}</h3>
-              <small>{analytics.averageCost.toFixed(1)} {pt ? "custo médio" : "avg cost"}</small>
+              <h3>{pt ? ___bsJa("Análise do deck", "デッキ分析") : ___bsJa("Deck analysis", "デッキ分析")}</h3>
+              <small>{analytics.averageCost.toFixed(1)} {pt ? ___bsJa("custo médio", "平均コスト") : ___bsJa("avg cost", "平均コスト")}</small>
             </div>
 
-            <div className="deck-v398-curve" aria-label={pt ? "Curva de custo" : "Cost curve"}>
+            <div className="deck-v398-curve" aria-label={pt ? ___bsJa("Curva de custo", "コストカーブ") : ___bsJa("Cost curve", "コストカーブ")}>
               {analytics.costCurve.map((count, index) => (
                 <div className="deck-v398-curve-col" key={index}>
                   <span className="deck-v398-curve-value">{count}</span>
@@ -592,10 +600,10 @@ export default function DeckBuilder({ onBack, deckId = null }) {
 
             <div className="deck-v398-breakdown">
               <div>
-                <span>{pt ? "Cores" : "Colors"}</span>
+                <span>{pt ? ___bsJa("Cores", "色") : ___bsJa("Colors", "色")}</span>
                 <div className="deck-v398-color-row">
                   {COLOR_ORDER.filter((entry) => analytics.colors[entry] > 0).map((entry) => (
-                    <i key={entry} className={`deck-v398-color-dot ${entry}`} title={`${entry}: ${analytics.colors[entry]}`}>
+                    <i key={entry} className={`deck-v398-color-dot ${entry}`} title={`${language === "ja" ? JAPANESE_COLORS[entry] : entry}: ${analytics.colors[entry]}`}>
                       {analytics.colors[entry]}
                     </i>
                   ))}
@@ -603,10 +611,10 @@ export default function DeckBuilder({ onBack, deckId = null }) {
                 </div>
               </div>
               <div>
-                <span>{pt ? "Tipos" : "Types"}</span>
+                <span>{pt ? ___bsJa("Tipos", "種類") : ___bsJa("Types", "種類")}</span>
                 <div className="deck-v398-type-row">
                   {TYPE_ORDER.filter((entry) => analytics.types[entry] > 0).map((entry) => (
-                    <small key={entry}><b>{analytics.types[entry]}</b> {entry}</small>
+                    <small key={entry}><b>{analytics.types[entry]}</b> {language === "ja" ? JAPANESE_TYPES[entry] : entry}</small>
                   ))}
                   {!analytics.total && <small>—</small>}
                 </div>
@@ -634,7 +642,7 @@ export default function DeckBuilder({ onBack, deckId = null }) {
                   <em>{d.cards.length}</em>
                 </button>
               )) : (
-                <div className="deck-builder-v3-empty-list">{pt ? "Nenhum deck salvo ainda." : "No saved decks yet."}</div>
+                <div className="deck-builder-v3-empty-list">{pt ? ___bsJa("Nenhum deck salvo ainda.", "まだ保存されたデッキはありません。") : ___bsJa("No saved decks yet.", "まだ保存されたデッキはありません。")}</div>
               )}
             </div>
 
@@ -665,7 +673,7 @@ export default function DeckBuilder({ onBack, deckId = null }) {
                   </button>
                 );
               }) : (
-                <div className="deck-builder-v3-empty-list">{pt ? "Adicione cartas para começar seu deck." : "Add cards to start your deck."}</div>
+                <div className="deck-builder-v3-empty-list">{pt ? ___bsJa("Adicione cartas para começar seu deck.", "カードを追加してデッキを開始します。") : ___bsJa("Add cards to start your deck.", "カードを追加してデッキを開始します。")}</div>
               )}
             </div>
           </section>
@@ -677,25 +685,25 @@ export default function DeckBuilder({ onBack, deckId = null }) {
               <label className="deck-v398-search">
                 <span className="sr-only">{t("searchCards")}</span>
                 <input
-                  placeholder={pt ? "Buscar por nome, código, família ou efeito..." : "Search name, code, family or effect..."}
+                  placeholder={pt ? ___bsJa("Buscar por nome, código, família ou efeito...", "名前、コード、ファミリー、効果を検索...") : ___bsJa("Search name, code, family or effect...", "名前、コード、ファミリー、効果を検索...")}
                   value={query}
                   onChange={(e) => changeQuery(e.target.value)}
                 />
               </label>
 
-              <select value={type} onChange={(e) => changeType(e.target.value)} aria-label={pt ? "Tipo" : "Type"}>
+              <select value={type} onChange={(e) => changeType(e.target.value)} aria-label={pt ? ___bsJa("Tipo", "種類") : ___bsJa("Type", "種類")}>
                 <option value="">{t("allTypes")}</option>
-                <option value="spirit">Spirit</option>
-                <option value="brave">Brave</option>
-                <option value="ultimate">Ultimate</option>
-                <option value="nexus">Nexus</option>
-                <option value="magic">Magic</option>
+                <option value="spirit">{___bsJa("Spirit", "スピリット")}</option>
+                <option value="brave">{___bsJa("Brave", "ブレイヴ")}</option>
+                <option value="ultimate">{___bsJa("Ultimate", "アルティメット")}</option>
+                <option value="nexus">{___bsJa("Nexus", "ネクサス")}</option>
+                <option value="magic">{___bsJa("Magic", "マジック")}</option>
               </select>
 
-              <select value={color} onChange={(e) => changeColor(e.target.value)} aria-label={pt ? "Cor" : "Color"}>
+              <select value={color} onChange={(e) => changeColor(e.target.value)} aria-label={pt ? ___bsJa("Cor", "色") : ___bsJa("Color", "色")}>
                 <option value="">{t("allColors")}</option>
                 {["red", "purple", "green", "white", "yellow", "blue"].map((c) => (
-                  <option key={c} value={c}>{c}</option>
+                  <option key={c} value={c}>{language === "ja" ? JAPANESE_COLORS[c] : c}</option>
                 ))}
               </select>
 
@@ -705,7 +713,7 @@ export default function DeckBuilder({ onBack, deckId = null }) {
                 onClick={() => setAdvancedOpen((value) => !value)}
                 aria-expanded={advancedOpen}
               >
-                {pt ? "Filtros" : "Filters"}
+                {pt ? ___bsJa("Filtros", "フィルター") : ___bsJa("Filters", "フィルター")}
                 {activeAdvancedFilters > 0 && <b>{activeAdvancedFilters}</b>}
               </button>
             </div>
@@ -713,61 +721,63 @@ export default function DeckBuilder({ onBack, deckId = null }) {
             {advancedOpen && (
               <div className="deck-v398-advanced">
                 <select value={setCode} onChange={(e) => changeFilter(setSetCode, e.target.value)}>
-                  <option value="">{pt ? "Todos os sets" : "All sets"}</option>
+                  <option value="">{pt ? ___bsJa("Todos os sets", "すべてのセット") : ___bsJa("All sets", "すべてのセット")}</option>
                   {catalogMeta.sets.map((value) => <option key={value} value={value}>{value}</option>)}
                 </select>
                 <select value={rarity} onChange={(e) => changeFilter(setRarity, e.target.value)}>
-                  <option value="">{pt ? "Todas as raridades" : "All rarities"}</option>
+                  <option value="">{pt ? ___bsJa("Todas as raridades", "すべてのレアリティ") : ___bsJa("All rarities", "すべてのレアリティ")}</option>
                   {catalogMeta.rarities.map((value) => <option key={value} value={value}>{value}</option>)}
                 </select>
                 <select value={family} onChange={(e) => changeFilter(setFamily, e.target.value)}>
-                  <option value="">{pt ? "Todas as famílias" : "All families"}</option>
-                  {catalogMeta.families.map((value) => <option key={value} value={value}>{value}</option>)}
+                  <option value="">{pt ? ___bsJa("Todas as famílias", "すべての系統") : ___bsJa("All families", "すべての系統")}</option>
+                  {catalogMeta.families.map((value) => <option key={value} value={value}>{language === "ja" ? getJapaneseFamily(value) : value}</option>)}
                 </select>
                 <select value={reduction} onChange={(e) => changeFilter(setReduction, e.target.value)}>
-                  <option value="">{pt ? "Qualquer redução" : "Any reduction"}</option>
-                  {catalogMeta.reductions.map((value) => <option key={value} value={value}>{value}</option>)}
+                  <option value="">{pt ? ___bsJa("Qualquer redução", "すべての軽減") : ___bsJa("Any reduction", "すべての軽減")}</option>
+                  {catalogMeta.reductions.map((value) => <option key={value} value={value}>{language === "ja" ? JAPANESE_COLORS[value] || value : value}</option>)}
                 </select>
                 <select value={symbol} onChange={(e) => changeFilter(setSymbol, e.target.value)}>
-                  <option value="">{pt ? "Qualquer símbolo" : "Any symbol"}</option>
-                  {catalogMeta.symbols.map((value) => <option key={value} value={value}>{value}</option>)}
+                  <option value="">{pt ? ___bsJa("Qualquer símbolo", "すべてのシンボル") : ___bsJa("Any symbol", "すべてのシンボル")}</option>
+                  {catalogMeta.symbols.map((value) => <option key={value} value={value}>{language === "ja" ? JAPANESE_COLORS[value] || value : value}</option>)}
                 </select>
                 <select value={restriction} onChange={(e) => changeFilter(setRestriction, e.target.value)}>
-                  <option value="">{pt ? "Qualquer legalidade" : "Any legality"}</option>
-                  <option value="clean">{pt ? "Sem restrição" : "Unrestricted"}</option>
-                  <option value="restricted">{pt ? "Proibidas / limitadas" : "Banned / limited"}</option>
-                  <option value="banned">{pt ? "Somente proibidas" : "Banned only"}</option>
+                  <option value="">{pt ? ___bsJa("Qualquer legalidade", "すべての制限") : ___bsJa("Any legality", "すべての制限")}</option>
+                  <option value="clean">{pt ? ___bsJa("Sem restrição", "無制限") : ___bsJa("Unrestricted", "無制限")}</option>
+                  <option value="restricted">{pt ? ___bsJa("Proibidas / limitadas", "禁止・制限あり") : ___bsJa("Banned / limited", "禁止・制限あり")}</option>
+                  <option value="banned">{pt ? ___bsJa("Somente proibidas", "禁止のみ") : ___bsJa("Banned only", "禁止のみ")}</option>
                 </select>
                 <div className="deck-v398-cost-range">
-                  <span>{pt ? "Custo" : "Cost"}</span>
-                  <input type="number" min="0" max="99" placeholder="Min" value={costMin} onChange={(e) => changeFilter(setCostMin, e.target.value)} />
+                  <span>{pt ? ___bsJa("Custo", "コスト") : ___bsJa("Cost", "コスト")}</span>
+                  <input type="number" min="0" max="99" placeholder={___bsJa("Min", "最小")} value={costMin} onChange={(e) => changeFilter(setCostMin, e.target.value)} />
                   <em>—</em>
-                  <input type="number" min="0" max="99" placeholder="Max" value={costMax} onChange={(e) => changeFilter(setCostMax, e.target.value)} />
+                  <input type="number" min="0" max="99" placeholder={___bsJa("Max", "最大")} value={costMax} onChange={(e) => changeFilter(setCostMax, e.target.value)} />
                 </div>
                 <select value={sort} onChange={(e) => changeFilter(setSort, e.target.value)}>
-                  <option value="code">{pt ? "Ordenar por código" : "Sort by code"}</option>
-                  <option value="name">{pt ? "Ordenar por nome" : "Sort by name"}</option>
-                  <option value="cost">{pt ? "Ordenar por custo" : "Sort by cost"}</option>
-                  <option value="rarity">{pt ? "Ordenar por raridade" : "Sort by rarity"}</option>
+                  <option value="code">{pt ? ___bsJa("Ordenar por código", "コードで並べ替える") : ___bsJa("Sort by code", "コードで並べ替える")}</option>
+                  <option value="name">{pt ? ___bsJa("Ordenar por nome", "名前順に並べ替える") : ___bsJa("Sort by name", "名前順に並べ替える")}</option>
+                  <option value="cost">{pt ? ___bsJa("Ordenar por custo", "コスト順に並べ替える") : ___bsJa("Sort by cost", "コスト順に並べ替える")}</option>
+                  <option value="rarity">{pt ? ___bsJa("Ordenar por raridade", "レアリティ順に並べ替える") : ___bsJa("Sort by rarity", "レアリティ順に並べ替える")}</option>
                 </select>
-                <button type="button" className="ghost deck-v398-clear" onClick={clearFilters}>{pt ? "Limpar filtros" : "Clear filters"}</button>
+                <button type="button" className="ghost deck-v398-clear" onClick={clearFilters}>{pt ? ___bsJa("Limpar filtros", "フィルターをクリアする") : ___bsJa("Clear filters", "フィルターをクリアする")}</button>
               </div>
             )}
 
             <div className="deck-browser-meta deck-builder-v3-meta">
               <span>
-                {pt ? (
-                  <>Mostrando <b>{rangeStart}–{rangeEnd}</b> de <b>{results.length}</b> cartas</>
+                {language === "ja" ? (
+                  <>全{results.length}件中 <b>{rangeStart}〜{rangeEnd}件</b>を表示</>
+                ) : pt ? (
+                  <>{___bsJa("Mostrando ", "表示中 ")}<b>{rangeStart}–{rangeEnd}</b>{___bsJa(" de ", " の ")}<b>{results.length}</b>{___bsJa(" cartas", " カード")}</>
                 ) : (
-                  <>Showing <b>{rangeStart}–{rangeEnd}</b> of <b>{results.length}</b> cards</>
+                  <>{___bsJa("Showing ", "表示中 ")}<b>{rangeStart}–{rangeEnd}</b>{___bsJa(" of ", " の ")}<b>{results.length}</b>{___bsJa(" cards", " カード")}</>
                 )}
               </span>
-              <span>{pt ? "Catálogo" : "Catalog"}: <b>{cardIndex.size}</b> · {pt ? "Página" : "Page"} <b>{currentPage}</b> / <b>{totalPages}</b></span>
+              <span>{pt ? ___bsJa("Catálogo", "カタログ") : ___bsJa("Catalog", "カタログ")}: <b>{cardIndex.size}</b> · {pt ? ___bsJa("Página", "ページ") : ___bsJa("Page", "ページ")} <b>{currentPage}</b> / <b>{totalPages}</b></span>
             </div>
           </div>
 
           {!results.length ? (
-            <EmptyState title={t("noCardsFound")}>{language === "en" ? "Try changing the filters or search." : "Tente alterar os filtros ou a busca."}</EmptyState>
+            <EmptyState title={t("noCardsFound")}>{language === "en" ? ___bsJa("Try changing the filters or search.", "フィルターを変更するか検索してみてください。") : ___bsJa("Tente alterar os filtros ou a busca.", "フィルターを変更するか検索してみてください。")}</EmptyState>
           ) : (
             <>
               <div className="card-grid deck-builder-v3-grid">
@@ -784,10 +794,10 @@ export default function DeckBuilder({ onBack, deckId = null }) {
                     <CardTile card={card} imageVariant="thumbnail" loading="lazy" fetchPriority="low" onClick={() => setDetailsCard(card)} />
                     <div className="deck-v398-card-caption">
                       <strong title={getCardName(card)}>{getCardName(card)}</strong>
-                      <span>{card.id} · {card.rarity || "—"} · {pt ? "Custo" : "Cost"} {card.cost ?? 0}</span>
+                      <span>{card.id} · {card.rarity || "—"} · {pt ? ___bsJa("Custo", "コスト") : ___bsJa("Cost", "コスト")} {card.cost ?? 0}</span>
                     </div>
 
-                    <div className="deck-v421-ownership"><span>{pt ? "Possui" : "Owned"}</span><b>{owned}/{MAX_OWNED_COPIES}</b></div>
+                    <div className="deck-v421-ownership"><span>{pt ? ___bsJa("Possui", "所有") : ___bsJa("Owned", "所有")}</span><b>{owned}/{MAX_OWNED_COPIES}</b></div>
                     <div className="qty-control deck-builder-v3-qty-control">
                       <button disabled={qty(card.id) <= 0} onClick={() => setQty(card.id, qty(card.id) - 1)}>-</button>
                       <b>{qty(card.id)}</b>
@@ -802,20 +812,20 @@ export default function DeckBuilder({ onBack, deckId = null }) {
                         ★ {t("deckCover")}
                       </button>
                     )}
-                    {locked && <div className="deck-v421-lock"><b>LOCKED</b><small>{pt ? "Obtenha esta carta na Shop" : "Get this card in the Shop"}</small></div>}
+                    {locked && <div className="deck-v421-lock"><b>{___bsJa("LOCKED", "ロック済み")}</b><small>{pt ? ___bsJa("Obtenha esta carta na Shop", "このカードをショップで入手") : ___bsJa("Get this card in the Shop", "このカードをショップで入手")}</small></div>}
                   </div>
                   );
                 })}
               </div>
 
               {totalPages > 1 && (
-                <nav className="deck-pagination deck-builder-v3-pagination" aria-label={pt ? "Páginas de cartas" : "Card pages"}>
+                <nav className="deck-pagination deck-builder-v3-pagination" aria-label={pt ? ___bsJa("Páginas de cartas", "カードページ") : ___bsJa("Card pages", "カードページ")}>
                   <button
                     className="deck-pagination-arrow"
                     disabled={currentPage === 1}
                     onClick={() => goToPage(currentPage - 1)}
                   >
-                    ← <span>{pt ? "Anterior" : "Previous"}</span>
+                    ← <span>{pt ? ___bsJa("Anterior", "前の") : ___bsJa("Previous", "前の")}</span>
                   </button>
 
                   <div className="deck-pagination-pages">
@@ -841,7 +851,7 @@ export default function DeckBuilder({ onBack, deckId = null }) {
                     disabled={currentPage === totalPages}
                     onClick={() => goToPage(currentPage + 1)}
                   >
-                    <span>{pt ? "Próxima" : "Next"}</span> →
+                    <span>{pt ? ___bsJa("Próxima", "次") : ___bsJa("Next", "次")}</span> →
                   </button>
                 </nav>
               )}
@@ -853,7 +863,7 @@ export default function DeckBuilder({ onBack, deckId = null }) {
       {detailsCard && typeof document !== "undefined" && createPortal(
         <CardDetailsModal
           card={detailsCard}
-          initialLanguage={language === "en" ? "en" : "ptBR"}
+          initialLanguage={language}
           relatedCards={relatedCards}
           onSelectRelated={setDetailsCard}
           onClose={() => setDetailsCard(null)}

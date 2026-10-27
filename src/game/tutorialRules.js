@@ -34,6 +34,11 @@ export const ETERNAL_TUTORIAL_RULES = Object.freeze({
 });
 
 export function tutorialRuleSummary(language = "ptBR") {
+  if (language === "ja") return {
+    setup: "ライフにコア5個、リザーブにコア3個とソウルコア1個を置き、手札を4枚引きます。",
+    goal: "相手のライフを0にするか、相手がデッキ切れでカードを引けなくなると勝利です。",
+    firstTurn: "先攻の最初のターンは、コアステップとアタックステップを行いません。"
+  };
   const en = language === "en";
   return {
     setup: en

@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa, isJapaneseDisplay as ___bsJapanese } from "../../../localization/displayLanguage.js";
 import { useEffect, useRef, useState } from "react";
 import "../../../styles/arena/burstPresentationV490.css";
 
@@ -38,7 +39,7 @@ export default function BurstPresentation({
 
       setReveal({
         id: `${lastAction.sequence}:${lastAction.actorId}`,
-        playerName: player?.name || (language === "en" ? "Player" : "Jogador"),
+        playerName: player?.name || (language === "ja" ? "プレイヤー" : language === "en" ? "Player" : "Jogador"),
         ...presentation
       });
     }
@@ -66,13 +67,13 @@ export default function BurstPresentation({
     <>
       {burstOpportunity && opportunityPlayer && !reveal && (
         <div className="burst-opportunity-cue" role="status" aria-live="polite">
-          <span>BURST</span>
+          <span>{___bsJa("BURST", "バースト")}</span>
           <strong>
             {language === "en"
-              ? `${opportunityPlayer.name} has a Burst window`
-              : `${opportunityPlayer.name} possui uma janela de Burst`}
+              ? (___bsJapanese() ? `${opportunityPlayer.name} にはバースト ウィンドウがあります` : `${opportunityPlayer.name} has a Burst window`)
+              : (___bsJapanese() ? `${opportunityPlayer.name} にはバースト ウィンドウがあります` : `${opportunityPlayer.name} possui uma janela de Burst`)}
           </strong>
-          <small>{language === "en" ? "Activate or pass." : "Ative ou passe a janela."}</small>
+          <small>{language === "en" ? ___bsJa("Activate or pass.", "アクティブ化またはパスします。") : ___bsJa("Ative ou passe a janela.", "アクティブ化またはパスします。")}</small>
         </div>
       )}
 
@@ -80,10 +81,10 @@ export default function BurstPresentation({
         <div className="burst-presentation" role="status" aria-live="assertive">
           <div className="burst-presentation-backdrop" />
           <div className="burst-presentation-card">
-            <span className="burst-presentation-eyebrow">BURST ACTIVATED</span>
+            <span className="burst-presentation-eyebrow">{___bsJa("BURST ACTIVATED", "バースト発動")}</span>
             {reveal.image ? <img src={reveal.image} alt="" /> : <div className="burst-presentation-placeholder" />}
             <div>
-              <strong>{reveal.name || "Burst"}</strong>
+              <strong>{reveal.name || ___bsJa("Burst", "バースト")}</strong>
               <small>{reveal.playerName}</small>
             </div>
           </div>

@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa, isJapaneseDisplay as ___bsJapanese } from "../../../../localization/displayLanguage.js";
 import ArenaVisualBattlefieldCard from "../battlefield/ArenaVisualBattlefieldCard.jsx";
 import { playHandCardIntent } from "../../interactions/arenaIntentFactory.js";
 import { readArenaVisualCardDrag } from "../../interactions/arenaCardDrag.js";
@@ -32,7 +33,7 @@ export default function ArenaVisualBattlefield({ side, battlefield = {}, onSelec
   return (
     <section
       className={`arena-visual-battlefield is-${side}${canReceiveHandCard ? " is-hand-drop-target" : ""}`}
-      aria-label={`${side} battlefield`}
+      aria-label={(___bsJapanese() ? `${side === "player" ? "自分" : "相手"}のフィールド` : `${side} battlefield`)}
       data-zone="battlefield"
       onDragOver={canReceiveHandCard ? (event) => {
         const payload = readArenaVisualCardDrag(event);
@@ -81,7 +82,7 @@ export default function ArenaVisualBattlefield({ side, battlefield = {}, onSelec
           />
         </div>
       ) : (
-        <span className="arena-visual-battlefield-caption">{count > 0 ? `${count} card${count === 1 ? "" : "s"}` : "Battlefield"}</span>
+        <span className="arena-visual-battlefield-caption">{count > 0 ? (___bsJapanese() ? `${count}枚` : `${count} card${count === 1 ? "" : "s"}`) : ___bsJa("Battlefield", "フィールド")}</span>
       )}
     </section>
   );

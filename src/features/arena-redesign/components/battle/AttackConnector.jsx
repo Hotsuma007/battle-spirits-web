@@ -1,10 +1,11 @@
+import { japaneseText as ___bsJa } from "../../../../localization/displayLanguage.js";
 export default function AttackConnector({ blocked = false }) {
   return (
     <svg
       className="arena-redesign-attack-connector"
       viewBox="0 0 180 24"
       role="img"
-      aria-label={blocked ? "Attacker to blocker" : "Attacker to Life"}
+      aria-label={blocked ? ___bsJa("Attacker to blocker", "アタッカーからブロッカーへ") : ___bsJa("Attacker to Life", "アタッカーからライフへ")}
       preserveAspectRatio="none"
     >
       <defs>

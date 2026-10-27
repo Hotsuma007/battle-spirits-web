@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa, isJapaneseDisplay as ___bsJapanese } from "../../../localization/displayLanguage.js";
 import { useState } from "react";
 import HomeWallpaperSlideshow from "../../../components/layout/HomeWallpaperSlideshow.jsx";
 import PointerTiltSurface from "../../../components/layout/PointerTiltSurface.jsx";
@@ -5,6 +6,7 @@ import { cardIndex } from "../../../services/cards/cardRepository.js";
 import { resolveCardImage } from "../../../game/cardAdapter.js";
 import { validateDeck } from "../../../game/state.js";
 import { useLanguage } from "../../../localization/i18n.jsx";
+import { japaneseMatchSetupText } from "../../../localization/matchSetupText.js";
 import "../../../styles/pages/matchSetupV341.css";
 
 export function deckSize(deck) {
@@ -82,12 +84,12 @@ export function MatchSetupScreen({ children, menu, footer, error, className = ""
 
       {error && (
         <div className="match-setup-error" role="alert">
-          <strong>{language === "ja" ? "確認" : "ATENÇÃO"}</strong>
-          <span>{error}</span>
+          <strong>{language === "ja" ? "確認" : ___bsJa("ATENÇÃO", "注意")}</strong>
+          <span>{language === "ja" ? japaneseMatchSetupText(error) : error}</span>
         </div>
       )}
 
-      {footer && <footer className="match-setup-footer">{footer}</footer>}
+      {footer && <footer className="match-setup-footer">{language === "ja" ? japaneseMatchSetupText(footer) : footer}</footer>}
     </main>
   );
 }
@@ -170,13 +172,13 @@ export function PlayerBattlePreview({
   return (
     <article className={`match-player-preview ${side} rank-theme-${frameTheme} ${waiting ? "is-waiting" : ""} ${detailsOpen ? "is-revealed" : ""}`}>
       <div className="match-player-heading">
-        {kicker && <span>{kicker}</span>}
+        {kicker && <span>{language === "ja" ? japaneseMatchSetupText(kicker) : kicker}</span>}
         {onNameChange ? (
           <input
             className="match-player-name-input"
             value={name}
             onChange={(event) => onNameChange(event.target.value)}
-            aria-label={language === "ja" ? "プレイヤー名" : "Nome do jogador"}
+            aria-label={language === "ja" ? "プレイヤー名" : ___bsJa("Nome do jogador", "プレイヤー名")}
           />
         ) : (
           <h2>{name}</h2>
@@ -189,7 +191,7 @@ export function PlayerBattlePreview({
           className={`match-player-banner ${canReveal ? "is-interactive" : ""}`}
           onClick={canReveal ? () => setDetailsOpen((value) => !value) : undefined}
           aria-pressed={canReveal ? detailsOpen : undefined}
-          aria-label={canReveal ? `${name}: ${details.value}` : `${name}`}
+          aria-label={canReveal ? `${name}: ${language === "ja" ? japaneseMatchSetupText(details.value) : details.value}` : `${name}`}
         >
           <div className="match-player-banner-frame" aria-hidden="true">
             <i className="top-line" />
@@ -225,8 +227,8 @@ export function PlayerBattlePreview({
 
           <div className={`match-player-detail-panel ${detailsOpen ? "is-open" : ""}`}>
             <i className="match-player-detail-crest" aria-hidden="true" />
-            <span>{details.label}</span>
-            <strong>{details.value}</strong>
+            <span>{language === "ja" ? japaneseMatchSetupText(details.label) : details.label}</span>
+            <strong>{language === "ja" ? japaneseMatchSetupText(details.value) : details.value}</strong>
             {details.sub && <small>{details.sub}</small>}
           </div>
         </button>
@@ -235,7 +237,7 @@ export function PlayerBattlePreview({
       <div className="match-change-deck-slot">
         {onChangeDeck && (
           <button type="button" className="match-change-deck" onClick={onChangeDeck}>
-            {changeDeckLabel || (language === "ja" ? "デッキを変更" : "Trocar deck")}
+            {changeDeckLabel || (language === "ja" ? "デッキを変更" : ___bsJa("Trocar deck", "トロカールデッキ"))}
             <i aria-hidden="true" />
           </button>
         )}
@@ -253,21 +255,27 @@ export function VersusMark({ label = "VS" }) {
 }
 
 export function MatchSetupMenu({ eyebrow, titleTop, titleBottom, children, status, badge }) {
+  const { language } = useLanguage();
+  const ja = language === "ja";
+  const top = ja && titleTop === "CRIAR" ? "ルームを" : ja && titleTop === "ENTRAR EM" ? "ルームに" : ja ? japaneseMatchSetupText(titleTop) : titleTop;
+  const bottom = ja && titleTop === "TIPO DE" && titleBottom === "PARTIDA" ? "選択" : ja && titleBottom === "SALA" ? (titleTop === "CRIAR" ? "作成" : "参加") : ja ? japaneseMatchSetupText(titleBottom) : titleBottom;
   return (
     <div className="match-setup-menu">
       <div className="match-setup-menu-title">
         {eyebrow && <small>{eyebrow}</small>}
-        <span>{titleTop}</span>
-        <strong>{titleBottom}</strong>
-        {badge && <em>{badge}</em>}
+        <span>{top}</span>
+        <strong>{bottom}</strong>
+        {badge && <em>{ja ? japaneseMatchSetupText(badge) : badge}</em>}
       </div>
-      {status && <div className="match-menu-status">{status}</div>}
+      {status && <div className="match-menu-status">{ja ? japaneseMatchSetupText(status) : status}</div>}
       <nav>{children}</nav>
     </div>
   );
 }
 
 export function MatchMenuButton({ label, detail, badge, active = false, disabled = false, onClick, children }) {
+  const { language } = useLanguage();
+  const ja = language === "ja";
   return (
     <button
       type="button"
@@ -277,10 +285,10 @@ export function MatchMenuButton({ label, detail, badge, active = false, disabled
     >
       <span className="match-menu-selector" aria-hidden="true" />
       <span className="match-menu-button-copy">
-        <b>{label}</b>
-        {detail && <small>{detail}</small>}
+        <b>{ja ? japaneseMatchSetupText(label) : label}</b>
+        {detail && <small>{ja ? japaneseMatchSetupText(detail) : detail}</small>}
       </span>
-      {badge && <em>{badge}</em>}
+      {badge && <em>{ja ? japaneseMatchSetupText(badge) : badge}</em>}
       {children}
     </button>
   );
@@ -297,10 +305,10 @@ export function DeckPicker({ open, title = "Selecione o deck", decks, selectedId
       <section className="match-deck-picker" role="dialog" aria-modal="true" aria-label={title}>
         <header>
           <div>
-            <span>{language === "ja" ? "デッキ選択" : "DECK SELECT"}</span>
+            <span>{language === "ja" ? "デッキ選択" : ___bsJa("DECK SELECT", "デッキセレクト")}</span>
             <h3>{title}</h3>
           </div>
-          <button type="button" onClick={onClose} aria-label={language === "ja" ? "閉じる" : "Fechar"}>×</button>
+          <button type="button" onClick={onClose} aria-label={language === "ja" ? "閉じる" : ___bsJa("Fechar", "閉じる")}>×</button>
         </header>
 
         <div className="match-deck-picker-list">
@@ -317,7 +325,7 @@ export function DeckPicker({ open, title = "Selecione o deck", decks, selectedId
                 }}
               >
                 <span>{deck.name}</span>
-                <small>{language === "ja" ? `${deckSize(deck)}枚 · ${valid ? "使用可能" : "要確認"}` : `${deckSize(deck)} CARTAS · ${valid ? "PRONTO" : "REVISAR"}`}</small>
+                <small>{language === "ja" ? `${deckSize(deck)}枚 · ${valid ? "使用可能" : "要確認"}` : (___bsJapanese() ? `${deckSize(deck)} カルタス · ${valid ? "PRONTO" : "REVISAR"}` : `${deckSize(deck)} CARTAS · ${valid ? "PRONTO" : "REVISAR"}`)}</small>
                 <i aria-hidden="true">›</i>
               </button>
             );
@@ -326,9 +334,9 @@ export function DeckPicker({ open, title = "Selecione o deck", decks, selectedId
 
         <footer>
           {onDeckBuilder && (
-            <button type="button" onClick={onDeckBuilder}>{language === "ja" ? "デッキ構築" : "Abrir Deck Builder"}</button>
+            <button type="button" onClick={onDeckBuilder}>{language === "ja" ? "デッキ構築" : ___bsJa("Abrir Deck Builder", "デッキビルダーを開く")}</button>
           )}
-          <button type="button" onClick={onClose}>{language === "ja" ? "戻る" : "Voltar"}</button>
+          <button type="button" onClick={onClose}>{language === "ja" ? "戻る" : ___bsJa("Voltar", "戻る")}</button>
         </footer>
       </section>
     </div>

@@ -1,4 +1,5 @@
 import { COLORS } from "./constants.js";
+import { japaneseCardNames } from "../localization/japaneseCardNames.js";
 
 const TYPE_ALIASES = {
   spirit: "spirit",
@@ -90,7 +91,7 @@ export function makeCardIndex(cards = []) {
 }
 
 export function getCardName(card, language = "ptBR") {
-  if (language === "ja") return card?.nameJP || card?.nameEN || card?.namePT || card?.name || card?.id || "カード";
+  if (language === "ja") return card?.nameJP || japaneseCardNames[card?.id] || card?.nameEN || card?.namePT || card?.name || card?.id || "カード";
   if (language === "en") return card?.nameEN || card?.namePT || card?.name || card?.id || "Card";
   return card?.namePT || card?.nameEN || card?.name || card?.id || "Carta";
 }

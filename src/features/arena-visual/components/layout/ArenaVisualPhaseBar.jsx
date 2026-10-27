@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../../../../localization/displayLanguage.js";
 import { useLanguage } from "../../../../localization/i18n.jsx";
 
 const PHASES = [
@@ -20,7 +21,7 @@ export default function ArenaVisualPhaseBar({ utility = {}, onAdvanceRequest }) 
   const advanceLabel = utility?.advanceStepLabel || "Avançar";
 
   return (
-    <section className="arena-visual-phase-bar" aria-label={language === "ja" ? "ターンの進行" : "Turn phase tracker"}>
+    <section className="arena-visual-phase-bar" aria-label={language === "ja" ? "ターンの進行" : ___bsJa("Turn phase tracker", "ターンフェーズトラッカー")}>
       <div className="arena-visual-phase-bar-track" role="list">
         {PHASES.map((phase, index) => {
           const current = index === currentIndex;

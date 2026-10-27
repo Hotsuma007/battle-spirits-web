@@ -1,5 +1,6 @@
 import { createContext, useContext, useMemo, useState } from "react";
 import { getSettings, saveSettings } from "../services/platform/storage.js";
+import { setDisplayLanguage } from "./displayLanguage.js";
 
 const translations = {
   ja: {
@@ -13,7 +14,7 @@ const translations = {
     reserve: "リザーブ", coreTrash: "コアトラッシュ", dragCores: "コアを移動", pendingPlay: "使用中のカード", confirmPlay: "確定", cancelPlay: "取り消す",
     cost: "コスト", summonCost: "召喚コスト", paid: "支払い済み", minLevel: "必要なコア", costReduction: "軽減", printedCost: "基本コスト", finalCost: "支払うコスト", current: "現在", manualPaymentHint: "リザーブのコアを選び、コストと召喚に必要なコアを支払ってください。",
     settingsTitle: "設定", language: "言語", resolution: "解像度", displayMode: "表示モード", fullscreen: "全画面", windowed: "ウィンドウ", apply: "適用",
-    portuguese: "Português (Brasil)", english: "English", japanese: "日本語", effect: "効果", abilities: "能力", families: "系統", noEffect: "効果テキストはありません。",
+    portuguese: "ポルトガル語", english: "英語", japanese: "日本語", effect: "効果", abilities: "能力", families: "系統", noEffect: "効果テキストはありません。",
     deckBuilder: "デッキ構築", eternalFormat: "エターナル", currentList: "現在のデッキ", myDecks: "マイデッキ", cards: "枚", validDeck: "使用可能", allTypes: "すべての種類", allColors: "すべての色", searchCards: "名前、カード番号、系統で検索",
     noDecks: "デッキがありません", noDecksOnline: "オンライン対戦には使用可能なデッキが必要です。",
     manualResolution: "手動処理", battleSequence: "エターナルの進行", battleSequenceText: "スタート → コア → ドロー → リフレッシュ → メイン → アタック → エンド",
@@ -69,9 +70,10 @@ const LanguageContext = createContext({ language: "ja", t: (key) => key, setLang
 export function LanguageProvider({ children }) {
   const initial = getSettings().language || "ja";
   const [language, setLanguageState] = useState(initial);
+  setDisplayLanguage(language);
   const value = useMemo(() => ({
     language,
-    t: (key) => translations[language]?.[key] ?? translations.ptBR[key] ?? key,
+    t: (key) => translations[language]?.[key] ?? translations.ja[key] ?? key,
     setLanguage(next) {
       const safe = ["ja", "en", "ptBR"].includes(next) ? next : "ja";
       saveSettings({ ...getSettings(), language: safe });

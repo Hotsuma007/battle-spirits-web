@@ -1,3 +1,5 @@
+import { japaneseText as ___bsJa, isJapaneseDisplay as ___bsJapanese } from "../../localization/displayLanguage.js";
+import { japaneseLessons, japanesePractice, japanesePhases } from "./japaneseTutorial.js";
 import { useEffect, useMemo, useState } from "react";
 import EternalCinematicBackdrop from "../../components/layout/EternalCinematicBackdrop.jsx";
 import { useLanguage } from "../../localization/i18n.jsx";
@@ -178,10 +180,10 @@ function LessonIcon({ id }) {
   return <span className={`tutorial-glyph tutorial-glyph-${id}`}>{glyph}</span>;
 }
 
-function QuickPractice({ pt, onComplete }) {
+function QuickPractice({ pt, language, onComplete }) {
   const [step, setStep] = useState(0);
   const [path, setPath] = useState("block");
-  const stages = pt ? [
+  const stages = language === "ja" ? japanesePractice : pt ? [
     { title: "Seu turno chegou", text: "Observe a sequência Eternal. Em um turno normal, você passa por Core, Draw e Refresh antes da Main Step.", action: "Ir para a Main Step" },
     { title: "Main Step", text: "Você tem um Spirit pronto em campo. Para este treino, imagine que o custo e os Cores já foram pagos corretamente.", action: "Ir para Attack Step" },
     { title: "Declare o ataque", text: "Escolha o Spirit em Refresh. Ao atacar, ele fica Exaurido.", action: "Atacar" },
@@ -220,37 +222,37 @@ function QuickPractice({ pt, onComplete }) {
     <section className="tutorial-practice">
       <div className="tutorial-practice-board">
         <div className="tutorial-practice-opponent">
-          <span>{pt ? "OPONENTE" : "OPPONENT"}</span>
-          <div className="tutorial-life-row" aria-label="Life">
+          <span>{pt ? ___bsJa("OPONENTE", "相手") : ___bsJa("OPPONENT", "相手")}</span>
+          <div className="tutorial-life-row" aria-label={___bsJa("Life", "ライフ")}>
             {[0,1,2,3,4].map((n) => <i key={n} className={lifeHit && n === 4 ? "is-lost" : ""} />)}
           </div>
           {!defenderDestroyed && <div className={`tutorial-demo-card enemy ${blocked ? "exhausted" : ""}`}><b>3000</b><small>BP</small></div>}
-          {defenderDestroyed && <div className="tutorial-destroyed">{pt ? "TRASH" : "TRASH"}</div>}
+          {defenderDestroyed && <div className="tutorial-destroyed">{pt ? ___bsJa("TRASH", "トラッシュ") : ___bsJa("TRASH", "トラッシュ")}</div>}
         </div>
 
         <div className={`tutorial-battle-line ${attacked ? "active" : ""} ${blocked ? "blocked" : ""}`}>
-          <span>{blocked ? (pt ? "BLOQUEIO" : "BLOCK") : attacked ? (pt ? "ATAQUE" : "ATTACK") : ""}</span>
+          <span>{blocked ? (pt ? ___bsJa("BLOQUEIO", "ブロック") : ___bsJa("BLOCK", "ブロック")) : attacked ? (pt ? ___bsJa("ATAQUE", "攻撃") : ___bsJa("ATTACK", "攻撃")) : ""}</span>
         </div>
 
         <div className="tutorial-practice-player">
-          <div className={`tutorial-demo-card player ${attacked ? "exhausted" : ""}`}><b>4000</b><small>BP · ◆</small></div>
-          <span>{pt ? "VOCÊ" : "YOU"}</span>
+          <div className={`tutorial-demo-card player ${attacked ? "exhausted" : ""}`}><b>4000</b><small>{___bsJa("BP · ◆", "BP・◆")}</small></div>
+          <span>{pt ? ___bsJa("VOCÊ", "自分") : ___bsJa("YOU", "自分")}</span>
         </div>
       </div>
 
       <div className="tutorial-practice-copy">
-        <span className="eyebrow">{pt ? "TREINO GUIADO" : "GUIDED PRACTICE"}</span>
+        <span className="eyebrow">{pt ? ___bsJa("TREINO GUIADO", "対戦練習") : ___bsJa("GUIDED PRACTICE", "対戦練習")}</span>
         <strong>{current.title}</strong>
         <p>{current.text}</p>
         {actualStep === 4 ? (
           <div className="tutorial-choice-row">
-            <button type="button" className="primary" onClick={() => { setPath("block"); setStep(5); }}>{pt ? "Bloquear" : "Block"}</button>
-            <button type="button" className="ghost" onClick={() => { setPath("life"); setStep(5); }}>{pt ? "Não bloquear" : "Do not block"}</button>
+            <button type="button" className="primary" onClick={() => { setPath("block"); setStep(5); }}>{pt ? ___bsJa("Bloquear", "ブロック") : ___bsJa("Block", "ブロック")}</button>
+            <button type="button" className="ghost" onClick={() => { setPath("life"); setStep(5); }}>{pt ? ___bsJa("Não bloquear", "ブロックしないでください") : ___bsJa("Do not block", "ブロックしないでください")}</button>
           </div>
         ) : (
           <button type="button" className="primary" onClick={advance}>{current.action}</button>
         )}
-        <button type="button" className="tutorial-practice-reset" onClick={() => { setStep(0); setPath("block"); }}>{pt ? "Recomeçar treino" : "Restart practice"}</button>
+        <button type="button" className="tutorial-practice-reset" onClick={() => { setStep(0); setPath("block"); }}>{pt ? ___bsJa("Recomeçar treino", "練習を再開する") : ___bsJa("Restart practice", "練習を再開する")}</button>
       </div>
     </section>
   );
@@ -264,6 +266,7 @@ export default function Tutorial({ onBack, onPlayCpu, onDeckBuilder }) {
   const [view, setView] = useState("lessons");
   const lesson = useMemo(() => LESSONS.find((item) => item.id === lessonId) || LESSONS[0], [lessonId]);
   const locale = pt ? "pt" : "en";
+  const lessonText = (item, field) => language === "ja" ? japaneseLessons[item.id][field] : item[field][locale];
   const summary = tutorialRuleSummary(language);
   const completedCount = LESSONS.filter((item) => progress.completed.includes(item.id)).length;
   const percent = Math.round(((completedCount + (progress.practiceCompleted ? 1 : 0)) / (LESSONS.length + 1)) * 100);
@@ -296,32 +299,32 @@ export default function Tutorial({ onBack, onPlayCpu, onDeckBuilder }) {
     <main className="tutorial-page">
       <EternalCinematicBackdrop />
       <header className="tutorial-topbar">
-        <button type="button" className="ghost" onClick={onBack}>← {pt ? "Voltar" : "Back"}</button>
+        <button type="button" className="ghost" onClick={onBack}>← {pt ? ___bsJa("Voltar", "戻る") : ___bsJa("Back", "戻る")}</button>
         <div>
-          <span className="eyebrow">BATTLE SPIRITS · ETERNAL</span>
-          <h1>{pt ? "APRENDA A JOGAR" : "LEARN TO PLAY"}</h1>
+          <span className="eyebrow">{___bsJa("BATTLE SPIRITS · ETERNAL", "バトルスピリッツ・エターナル")}</span>
+          <h1>{pt ? ___bsJa("APRENDA A JOGAR", "遊び方を学ぶ") : ___bsJa("LEARN TO PLAY", "遊び方を学ぶ")}</h1>
         </div>
-        <div className="tutorial-progress-pill"><b>{percent}%</b><span>{pt ? "concluído" : "complete"}</span></div>
+        <div className="tutorial-progress-pill"><b>{percent}%</b><span>{pt ? ___bsJa("concluído", "完了") : ___bsJa("complete", "完了")}</span></div>
       </header>
 
       <section className="tutorial-hero">
         <div>
-          <span className="eyebrow">{pt ? "TUTORIAL RÁPIDO" : "QUICK TUTORIAL"}</span>
-          <h2>{pt ? "Entenda o básico. Depois, jogue." : "Learn the basics. Then play."}</h2>
-          <p>{pt ? "Sem paredes de texto. Em poucos minutos você aprende a mesa, o turno, Cores, batalha e as mecânicas que vai encontrar no seu primeiro duelo." : "No walls of text. In a few minutes you'll learn the field, turn flow, Cores, battle and the mechanics you'll see in your first duel."}</p>
+          <span className="eyebrow">{pt ? ___bsJa("TUTORIAL RÁPIDO", "クイックチュートリアル") : ___bsJa("QUICK TUTORIAL", "クイックチュートリアル")}</span>
+          <h2>{pt ? ___bsJa("Entenda o básico. Depois, jogue.", "基本を学んで対戦しよう") : ___bsJa("Learn the basics. Then play.", "基本を学んで対戦しよう")}</h2>
+          <p>{pt ? ___bsJa("Sem paredes de texto. Em poucos minutos você aprende a mesa, o turno, Cores, batalha e as mecânicas que vai encontrar no seu primeiro duelo.", "フィールド、ターンの進行、コア、バトルなど、対戦の基本を学びます。") : ___bsJa("No walls of text. In a few minutes you'll learn the field, turn flow, Cores, battle and the mechanics you'll see in your first duel.", "フィールド、ターンの進行、コア、バトルなど、対戦の基本を学びます。")}</p>
         </div>
         <div className="tutorial-hero-facts">
-          <div><b>5</b><span>Life</span></div>
-          <div><b>4</b><span>{pt ? "cartas iniciais" : "opening cards"}</span></div>
-          <div><b>7</b><span>Steps</span></div>
-          <div><b>1</b><span>{pt ? "objetivo" : "goal"}</span></div>
+          <div><b>5</b><span>{___bsJa("Life", "ライフ")}</span></div>
+          <div><b>4</b><span>{pt ? ___bsJa("cartas iniciais", "最初の手札") : ___bsJa("opening cards", "最初の手札")}</span></div>
+          <div><b>7</b><span>{___bsJa("Steps", "ステップ")}</span></div>
+          <div><b>1</b><span>{pt ? ___bsJa("objetivo", "勝利条件") : ___bsJa("goal", "勝利条件")}</span></div>
         </div>
       </section>
 
       <div className="tutorial-tabs">
-        <button type="button" className={view === "lessons" ? "active" : ""} onClick={() => setView("lessons")}>{pt ? "Fundamentos" : "Basics"}</button>
-        <button type="button" className={view === "practice" ? "active" : ""} onClick={() => setView("practice")}>{pt ? "Treino guiado" : "Guided practice"}</button>
-        <button type="button" className={view === "reference" ? "active" : ""} onClick={() => setView("reference")}>{pt ? "Consulta rápida" : "Quick reference"}</button>
+        <button type="button" className={view === "lessons" ? "active" : ""} onClick={() => setView("lessons")}>{pt ? ___bsJa("Fundamentos", "基本") : ___bsJa("Basics", "基本")}</button>
+        <button type="button" className={view === "practice" ? "active" : ""} onClick={() => setView("practice")}>{pt ? ___bsJa("Treino guiado", "対戦練習") : ___bsJa("Guided practice", "対戦練習")}</button>
+        <button type="button" className={view === "reference" ? "active" : ""} onClick={() => setView("reference")}>{pt ? ___bsJa("Consulta rápida", "ルール早見表") : ___bsJa("Quick reference", "ルール早見表")}</button>
       </div>
 
       {view === "lessons" && (
@@ -332,7 +335,7 @@ export default function Tutorial({ onBack, onPlayCpu, onDeckBuilder }) {
               return (
                 <button type="button" key={item.id} className={lesson.id === item.id ? "active" : ""} onClick={() => setLessonId(item.id)}>
                   <span>{item.number}</span>
-                  <div><b>{item.title[locale]}</b><small>{done ? (pt ? "Concluído" : "Complete") : item.time}</small></div>
+                  <div><b>{lessonText(item, "title")}</b><small>{done ? (pt ? ___bsJa("Concluído", "完了") : ___bsJa("Complete", "完了")) : language === "ja" ? item.time.replace(" MIN", "分") : item.time}</small></div>
                   <i>{done ? "✓" : "›"}</i>
                 </button>
               );
@@ -342,57 +345,57 @@ export default function Tutorial({ onBack, onPlayCpu, onDeckBuilder }) {
           <article className="tutorial-lesson-card">
             <header>
               <LessonIcon id={lesson.id} />
-              <div><span className="eyebrow">{pt ? `LIÇÃO ${lesson.number}` : `LESSON ${lesson.number}`}</span><h2>{lesson.title[locale]}</h2><p>{lesson.lead[locale]}</p></div>
+              <div><span className="eyebrow">{pt ? (___bsJapanese() ? `レッスン ${lesson.number}` : `LIÇÃO ${lesson.number}`) : (___bsJapanese() ? `レッスン ${lesson.number}` : `LESSON ${lesson.number}`)}</span><h2>{lessonText(lesson, "title")}</h2><p>{lessonText(lesson, "lead")}</p></div>
             </header>
             {lesson.id === "turn" && (
               <div className="tutorial-phase-strip">
-                {ETERNAL_TUTORIAL_RULES.phases.map((phase, index) => <span key={phase}><b>{String(index + 1).padStart(2, "0")}</b>{PHASE_LABELS[phase][pt ? 0 : 1]}</span>)}
+                {ETERNAL_TUTORIAL_RULES.phases.map((phase, index) => <span key={phase}><b>{String(index + 1).padStart(2, "0")}</b>{language === "ja" ? japanesePhases[phase] : PHASE_LABELS[phase][pt ? 0 : 1]}</span>)}
               </div>
             )}
             {lesson.id === "setup" && (
               <div className="tutorial-setup-visual">
-                <div><b>5</b><span>Life</span></div><div><b>3 + 1</b><span>Core + Soul Core</span></div><div><b>4</b><span>{pt ? "Mão" : "Hand"}</span></div>
+                <div><b>5</b><span>{___bsJa("Life", "ライフ")}</span></div><div><b>3 + 1</b><span>{___bsJa("Core + Soul Core", "コア+ソウルコア")}</span></div><div><b>4</b><span>{pt ? ___bsJa("Mão", "手札") : ___bsJa("Hand", "手札")}</span></div>
               </div>
             )}
-            <ul className="tutorial-points">{lesson.points[locale].map((point) => <li key={point}>{point}</li>)}</ul>
-            <div className="tutorial-rule-key"><span>{pt ? "LEMBRE" : "REMEMBER"}</span><b>{lesson.key[locale]}</b></div>
+            <ul className="tutorial-points">{lessonText(lesson, "points").map((point) => <li key={point}>{point}</li>)}</ul>
+            <div className="tutorial-rule-key"><span>{pt ? ___bsJa("LEMBRE", "覚えておこう") : ___bsJa("REMEMBER", "覚えておこう")}</span><b>{lessonText(lesson, "key")}</b></div>
             <footer>
-              <button type="button" className="primary" onClick={completeLesson}>{progress.completed.includes(lesson.id) ? (pt ? "Próxima lição" : "Next lesson") : (pt ? "Entendi" : "Got it")}</button>
+              <button type="button" className="primary" onClick={completeLesson}>{progress.completed.includes(lesson.id) ? (pt ? ___bsJa("Próxima lição", "次のレッスン") : ___bsJa("Next lesson", "次のレッスン")) : (pt ? ___bsJa("Entendi", "わかった") : ___bsJa("Got it", "わかった"))}</button>
             </footer>
           </article>
         </section>
       )}
 
-      {view === "practice" && <QuickPractice pt={pt} onComplete={finishPractice} />}
+      {view === "practice" && <QuickPractice pt={pt} language={language} onComplete={finishPractice} />}
 
       {view === "reference" && (
         <section className="tutorial-reference">
-          <div className="tutorial-reference-card"><span>01</span><h3>{pt ? "Começo da partida" : "Game setup"}</h3><p>{summary.setup}</p></div>
-          <div className="tutorial-reference-card"><span>02</span><h3>{pt ? "Objetivo" : "Goal"}</h3><p>{summary.goal}</p></div>
-          <div className="tutorial-reference-card"><span>03</span><h3>{pt ? "Primeiro turno" : "First turn"}</h3><p>{summary.firstTurn}</p></div>
-          <div className="tutorial-reference-card"><span>04</span><h3>Flash Timing</h3><p>{pt ? "Até 2 por batalha. O defensor tem a primeira oportunidade. O segundo só existe se houve bloqueio." : "Up to 2 per battle. The defender gets the first opportunity. The second only exists if a block was declared."}</p></div>
-          <div className="tutorial-reference-card"><span>05</span><h3>Refresh / Exhaust</h3><p>{pt ? "Refresh = carta pronta. Exhaust = carta exaurida. Normalmente, apenas cartas em Refresh podem atacar ou bloquear." : "Refresh = ready card. Exhaust = exhausted card. Normally, only refreshed cards can attack or block."}</p></div>
-          <div className="tutorial-reference-card"><span>06</span><h3>Brave</h3><p>{pt ? "Na Main Step, um Brave pode combinar com um alvo que cumpra sua condição. O conjunto é tratado como uma unidade combinada." : "During Main Step, a Brave can combine with a target that meets its condition. The pair is treated as one combined unit."}</p></div>
-          <a className="tutorial-official-link" href="https://www.battlespirits.com/rule/official-rule-manual-eternal/" target="_blank" rel="noreferrer">{pt ? "Consultar Manual Oficial Eternal ↗" : "Open Official Eternal Rule Manual ↗"}</a>
+          <div className="tutorial-reference-card"><span>01</span><h3>{pt ? ___bsJa("Começo da partida", "ゲームのセットアップ") : ___bsJa("Game setup", "ゲームのセットアップ")}</h3><p>{summary.setup}</p></div>
+          <div className="tutorial-reference-card"><span>02</span><h3>{pt ? ___bsJa("Objetivo", "勝利条件") : ___bsJa("Goal", "勝利条件")}</h3><p>{summary.goal}</p></div>
+          <div className="tutorial-reference-card"><span>03</span><h3>{pt ? ___bsJa("Primeiro turno", "最初のターン") : ___bsJa("First turn", "最初のターン")}</h3><p>{summary.firstTurn}</p></div>
+          <div className="tutorial-reference-card"><span>04</span><h3>{___bsJa("Flash Timing", "フラッシュのタイミング")}</h3><p>{pt ? ___bsJa("Até 2 por batalha. O defensor tem a primeira oportunidade. O segundo só existe se houve bloqueio.", "1回のバトル中に最大2回あります。相手側から先に使えます。2回目はブロックされた場合に発生します。") : ___bsJa("Up to 2 per battle. The defender gets the first opportunity. The second only exists if a block was declared.", "1回のバトル中に最大2回あります。相手側から先に使えます。2回目はブロックされた場合に発生します。")}</p></div>
+          <div className="tutorial-reference-card"><span>05</span><h3>{___bsJa("Refresh / Exhaust", "回復と疲労")}</h3><p>{pt ? ___bsJa("Refresh = carta pronta. Exhaust = carta exaurida. Normalmente, apenas cartas em Refresh podem atacar ou bloquear.", "回復はカードを使える状態、疲労は使った状態です。通常、アタックやブロックには回復状態のカードを使います。") : ___bsJa("Refresh = ready card. Exhaust = exhausted card. Normally, only refreshed cards can attack or block.", "回復はカードを使える状態、疲労は使った状態です。通常、アタックやブロックには回復状態のカードを使います。")}</p></div>
+          <div className="tutorial-reference-card"><span>06</span><h3>{___bsJa("Brave", "ブレイヴ")}</h3><p>{pt ? ___bsJa("Na Main Step, um Brave pode combinar com um alvo que cumpra sua condição. O conjunto é tratado como uma unidade combinada.", "メインステップ中、ブレイヴは条件を満たすターゲットと合体することができます。ペアは 1 つの結合ユニットとして扱われます。") : ___bsJa("During Main Step, a Brave can combine with a target that meets its condition. The pair is treated as one combined unit.", "メインステップ中、ブレイヴは条件を満たすターゲットと合体することができます。ペアは 1 つの結合ユニットとして扱われます。")}</p></div>
+          <a className="tutorial-official-link" href="https://www.battlespirits.com/rule/official-rule-manual-eternal/" target="_blank" rel="noreferrer">{pt ? ___bsJa("Consultar Manual Oficial Eternal ↗", "エターナルの公式ルールを開く ↗") : ___bsJa("Open Official Eternal Rule Manual ↗", "エターナルの公式ルールを開く ↗")}</a>
         </section>
       )}
 
       {view === "finish" && (
         <section className="tutorial-finish">
           <span className="tutorial-finish-mark">✓</span>
-          <span className="eyebrow">{pt ? "PRONTO PARA O PRIMEIRO DUELO" : "READY FOR YOUR FIRST DUEL"}</span>
-          <h2>{pt ? "Você já sabe o necessário para começar." : "You know enough to start playing."}</h2>
-          <p>{pt ? "Não tente decorar todas as cartas agora. Jogue, leia os efeitos com calma e volte ao tutorial quando precisar." : "Do not try to memorize every card now. Play, read effects at your own pace, and come back whenever you need a refresher."}</p>
+          <span className="eyebrow">{pt ? ___bsJa("PRONTO PARA O PRIMEIRO DUELO", "最初の決闘の準備はできていますか") : ___bsJa("READY FOR YOUR FIRST DUEL", "最初の決闘の準備はできていますか")}</span>
+          <h2>{pt ? ___bsJa("Você já sabe o necessário para começar.", "プレイを始めるのに十分な知識があります。") : ___bsJa("You know enough to start playing.", "プレイを始めるのに十分な知識があります。")}</h2>
+          <p>{pt ? ___bsJa("Não tente decorar todas as cartas agora. Jogue, leia os efeitos com calma e volte ao tutorial quando precisar.", "今はすべてのカードを暗記しようとしないでください。自分のペースでプレイして効果を読み、復習が必要なときにいつでも戻ってきてください。") : ___bsJa("Do not try to memorize every card now. Play, read effects at your own pace, and come back whenever you need a refresher.", "今はすべてのカードを暗記しようとしないでください。自分のペースでプレイして効果を読み、復習が必要なときにいつでも戻ってきてください。")}</p>
           <div className="tutorial-finish-actions">
-            <button type="button" className="primary" onClick={onPlayCpu}>{pt ? "Jogar contra Eternal CPU" : "Play Eternal CPU"}</button>
-            <button type="button" className="ghost" onClick={onDeckBuilder}>Deck Builder</button>
-            <button type="button" className="ghost" onClick={onBack}>{pt ? "Voltar ao menu" : "Back to menu"}</button>
+            <button type="button" className="primary" onClick={onPlayCpu}>{pt ? ___bsJa("Jogar contra Eternal CPU", "CPUと対戦する") : ___bsJa("Play Eternal CPU", "CPUと対戦する")}</button>
+            <button type="button" className="ghost" onClick={onDeckBuilder}>{___bsJa("Deck Builder", "デッキ構築")}</button>
+            <button type="button" className="ghost" onClick={onBack}>{pt ? ___bsJa("Voltar ao menu", "メニューに戻る") : ___bsJa("Back to menu", "メニューに戻る")}</button>
           </div>
-          <button type="button" className="tutorial-restart" onClick={restart}>{pt ? "Refazer tutorial" : "Restart tutorial"}</button>
+          <button type="button" className="tutorial-restart" onClick={restart}>{pt ? ___bsJa("Refazer tutorial", "チュートリアルを再開する") : ___bsJa("Restart tutorial", "チュートリアルを再開する")}</button>
         </section>
       )}
 
-      <footer className="tutorial-source-note">{pt ? "Regras de referência: Manual Oficial Battle Spirits Eternal Ver.17.1." : "Rules reference: Battle Spirits Official Eternal Rule Manual Ver.17.1."}</footer>
+      <footer className="tutorial-source-note">{pt ? ___bsJa("Regras de referência: Manual Oficial Battle Spirits Eternal Ver.17.1.", "ルール参照：バトルスピリッツ公式エターナルルールマニュアル Ver.17.1。") : ___bsJa("Rules reference: Battle Spirits Official Eternal Rule Manual Ver.17.1.", "ルール参照：バトルスピリッツ公式エターナルルールマニュアル Ver.17.1。")}</footer>
     </main>
   );
 }

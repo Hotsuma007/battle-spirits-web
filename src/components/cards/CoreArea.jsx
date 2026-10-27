@@ -1,3 +1,4 @@
+import { japaneseText as ___bsJa } from "../../localization/displayLanguage.js";
 import { useMemo, useState } from "react";
 
 function seedPosition(index, salt = 0) {
@@ -11,7 +12,7 @@ export function CoreToken({ coreType="regular", source, canDrag=true, style, onD
     className={`core-token ${coreType === "soul" ? "soul-core" : "regular-core"} ${onClick && canDrag ? "core-clickable" : ""}`}
     draggable={canDrag}
     style={style}
-    title={title || (coreType === "soul" ? "Soul Core" : "Core")}
+    title={title || (coreType === "soul" ? ___bsJa("Soul Core", "ソウルコア") : ___bsJa("Core", "コア"))}
     onDragStart={(e)=>{ e.stopPropagation(); onDragStart?.(e, { ...source, coreType }); }}
     onMouseDown={(e)=>e.stopPropagation()}
     onClick={(e)=>{
@@ -59,7 +60,7 @@ export default function CoreArea({ title, playerId, zone, regularCount=0, soul=f
   return <div className={`core-area ${accent} ${guidance ? `core-guidance core-guidance-${guidance.role || "active"}` : ""}`} onDragOver={(e)=>e.preventDefault()} onDrop={drop}>
     <div className="core-area-header">
       <strong>{title}</strong>
-      <span>{regularCount}{soul ? " + Soul" : ""}</span>
+      <span>{regularCount}{soul ? ___bsJa(" + Soul", "+ソウル") : ""}</span>
     </div>
     {guidance && (
       <div className="core-area-guidance" aria-live="polite">
