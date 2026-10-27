@@ -4,6 +4,7 @@ import PointerTiltSurface from "../../../components/layout/PointerTiltSurface.js
 import { cardIndex } from "../../../services/cards/cardRepository.js";
 import { resolveCardImage } from "../../../game/cardAdapter.js";
 import { validateDeck } from "../../../game/state.js";
+import { useLanguage } from "../../../localization/i18n.jsx";
 import "../../../styles/pages/matchSetupV341.css";
 
 export function deckSize(deck) {
@@ -67,6 +68,7 @@ export function deckIsValid(deck, options = {}) {
 }
 
 export function MatchSetupScreen({ children, menu, footer, error, className = "" }) {
+  const { language } = useLanguage();
   return (
     <main className={`match-setup-page ${className}`}>
       <HomeWallpaperSlideshow />
@@ -80,7 +82,7 @@ export function MatchSetupScreen({ children, menu, footer, error, className = ""
 
       {error && (
         <div className="match-setup-error" role="alert">
-          <strong>ATENÇÃO</strong>
+          <strong>{language === "ja" ? "確認" : "ATENÇÃO"}</strong>
           <span>{error}</span>
         </div>
       )}
@@ -152,12 +154,13 @@ export function PlayerBattlePreview({
   deckName,
   deckMeta,
   onChangeDeck,
-  changeDeckLabel = "Trocar deck",
+  changeDeckLabel,
   status,
   rank,
   waiting = false
 }) {
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const { language } = useLanguage();
   const coverSrc = bannerSrc || (deck ? getDeckPortrait(deck) : null);
   const avatarImage = avatarSrc || null;
   const details = detailPayload({ rank, status, waiting });
@@ -173,7 +176,7 @@ export function PlayerBattlePreview({
             className="match-player-name-input"
             value={name}
             onChange={(event) => onNameChange(event.target.value)}
-            aria-label="Nome do jogador"
+            aria-label={language === "ja" ? "プレイヤー名" : "Nome do jogador"}
           />
         ) : (
           <h2>{name}</h2>
@@ -232,7 +235,7 @@ export function PlayerBattlePreview({
       <div className="match-change-deck-slot">
         {onChangeDeck && (
           <button type="button" className="match-change-deck" onClick={onChangeDeck}>
-            {changeDeckLabel}
+            {changeDeckLabel || (language === "ja" ? "デッキを変更" : "Trocar deck")}
             <i aria-hidden="true" />
           </button>
         )}
@@ -284,6 +287,7 @@ export function MatchMenuButton({ label, detail, badge, active = false, disabled
 }
 
 export function DeckPicker({ open, title = "Selecione o deck", decks, selectedId, onSelect, onClose, onDeckBuilder }) {
+  const { language } = useLanguage();
   if (!open) return null;
 
   return (
@@ -293,10 +297,10 @@ export function DeckPicker({ open, title = "Selecione o deck", decks, selectedId
       <section className="match-deck-picker" role="dialog" aria-modal="true" aria-label={title}>
         <header>
           <div>
-            <span>DECK SELECT</span>
+            <span>{language === "ja" ? "デッキ選択" : "DECK SELECT"}</span>
             <h3>{title}</h3>
           </div>
-          <button type="button" onClick={onClose} aria-label="Fechar">×</button>
+          <button type="button" onClick={onClose} aria-label={language === "ja" ? "閉じる" : "Fechar"}>×</button>
         </header>
 
         <div className="match-deck-picker-list">
@@ -313,7 +317,7 @@ export function DeckPicker({ open, title = "Selecione o deck", decks, selectedId
                 }}
               >
                 <span>{deck.name}</span>
-                <small>{deckSize(deck)} CARTAS · {valid ? "PRONTO" : "REVISAR"}</small>
+                <small>{language === "ja" ? `${deckSize(deck)}枚 · ${valid ? "使用可能" : "要確認"}` : `${deckSize(deck)} CARTAS · ${valid ? "PRONTO" : "REVISAR"}`}</small>
                 <i aria-hidden="true">›</i>
               </button>
             );
@@ -322,9 +326,9 @@ export function DeckPicker({ open, title = "Selecione o deck", decks, selectedId
 
         <footer>
           {onDeckBuilder && (
-            <button type="button" onClick={onDeckBuilder}>Abrir Deck Builder</button>
+            <button type="button" onClick={onDeckBuilder}>{language === "ja" ? "デッキ構築" : "Abrir Deck Builder"}</button>
           )}
-          <button type="button" onClick={onClose}>Voltar</button>
+          <button type="button" onClick={onClose}>{language === "ja" ? "戻る" : "Voltar"}</button>
         </footer>
       </section>
     </div>

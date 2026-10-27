@@ -25,8 +25,11 @@ const bridge = fs.readFileSync("src/features/arena-visual/controller/ArenaVisual
 if (bridge.includes("game/reducer")) throw new Error("Arena Visual bridge must not import the reducer.");
 
 const actionCenter = fs.readFileSync("src/features/arena-visual/components/layout/ArenaVisualActionCenter.jsx", "utf8");
-if (!actionCenter.includes('["DECLARE_ATTACK", "DECLARE_BLOCK", "RESOLVE_BATTLE"]')) {
-  throw new Error("Attack/Block buttons must be filtered out of the central prompt.");
+if (!actionCenter.includes('action?.type !== "RESOLVE_BATTLE"')) {
+  throw new Error("Battle resolution must remain automatic in the central prompt.");
+}
+if (!bridge.includes('type: "DECLARE_ATTACK"') || !bridge.includes('type: "DECLARE_BLOCK"')) {
+  throw new Error("Selected legal attackers and blockers must have button actions as well as drag controls.");
 }
 
 console.log("Arena Visual classic interaction restoration audit: PASS");

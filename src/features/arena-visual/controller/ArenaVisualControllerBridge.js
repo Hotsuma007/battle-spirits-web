@@ -18,6 +18,12 @@ function arrayOrEmpty(value) {
 function effectText(card, language) {
   if (!card) return "";
   if (typeof card.effectText === "string") return card.effectText;
+  if (language === "ja") {
+    const japanese = card.effectText?.ja || card.textJP;
+    if (japanese) return japanese;
+    if (/^this card has no effect\.?$/i.test(String(card.effectText?.en || "").trim())) return "このカードに効果はありません。";
+    return card.effectText?.en || card.effectText?.ptBR || card.description || "";
+  }
   return language === "en"
     ? (card.effectText?.en || card.textEN || card.effectText?.ptBR || card.textPT || card.description || "")
     : (card.effectText?.ptBR || card.textPT || card.effectText?.en || card.textEN || card.description || "");
@@ -403,6 +409,19 @@ function setupPresentation({ match, playerId, legalActions, language }) {
 
 function authorityPresentation({ match, playerId, actorId, canControlActor, language }) {
   if (!match || match.winnerId) return { hidden: true };
+  if (language === "ja") {
+    if (actorId === playerId && canControlActor) return {
+      hidden: false, state: "your-action", blocking: false, title: "自分の操作",
+      detail: match.pendingEffectDecision ? "効果の処理を選択してください。" : match.burstOpportunity ? "バーストを処理してください。" : match.battle?.flash?.priorityPlayerId === playerId ? "フラッシュの優先権があります。" : ""
+    };
+    const actorName = match.players?.[actorId]?.name || "相手";
+    const cpu = match.ai?.playerId === actorId;
+    return {
+      hidden: false, state: cpu ? "cpu" : "waiting", blocking: true,
+      title: cpu ? "CPU が操作中…" : `${actorName}の操作を待っています`,
+      detail: match.pendingEffectDecision ? "効果を処理中です。" : match.battle ? "相手のバトル操作を待っています。" : ""
+    };
+  }
   const en = language === "en";
   if (actorId === playerId && canControlActor) {
     return {
@@ -466,9 +485,9 @@ function battlePresentation(match, playerId, cardIndex, language) {
     end: language === "en" ? "Battle End" : "Fim da Batalha"
   };
   const restrictions = [];
-  if (attacker?.pendingDestruction) restrictions.push(language === "en" ? "Attacker is pending destruction." : "O atacante está pendente de destruição.");
-  if (blocker?.pendingDestruction) restrictions.push(language === "en" ? "Blocker is pending destruction." : "O bloqueador está pendente de destruição.");
-  if (battle.stage === "block" && !battle.blockerInstanceId) restrictions.push(language === "en" ? "Defender may block or decline." : "O defensor pode bloquear ou não bloquear.");
+  if (attacker?.pendingDestruction) restrictions.push(language === "ja" ? "アタックしたカードは破壊待ちです。" : language === "en" ? "Attacker is pending destruction." : "O atacante está pendente de destruição.");
+  if (blocker?.pendingDestruction) restrictions.push(language === "ja" ? "ブロックしたカードは破壊待ちです。" : language === "en" ? "Blocker is pending destruction." : "O bloqueador está pendente de destruição.");
+  if (battle.stage === "block" && !battle.blockerInstanceId) restrictions.push(language === "ja" ? "ブロックするか選択してください。" : language === "en" ? "Defender may block or decline." : "O defensor pode bloquear ou não bloquear.");
 
   return {
     stage: battle.stage || null,
@@ -495,7 +514,7 @@ function legalActionMatches(legalActions, type, instanceId = null) {
   });
 }
 
-function createContextActions({ match, playerId, selectedInstanceId, cardIndex, canControlActor, language, playableInstanceIds = null, legalActions = [] }) {
+function createContextActions({ match, playerId, selectedInstanceId, cardIndex, canControlActor, language, playableInstanceIds = null, attackableInstanceIds = null, blockableInstanceIds = null, legalActions = [] }) {
   if (!playerId || !canControlActor) return [];
 
   if (match?.pendingEffectDecision) return [];
@@ -535,7 +554,7 @@ function createContextActions({ match, playerId, selectedInstanceId, cardIndex, 
 
   if (!selectedInstanceId) return globalBattleActions;
   const selected = findPhysicalCard(match, selectedInstanceId);
-  if (!selected || selected.playerId !== playerId) return [];
+  if (!selected || selected.playerId !== playerId) return globalBattleActions;
   const selectedCard = getDatabaseCard(cardIndex, selected.card);
   const selectedLegalActions = arrayOrEmpty(legalActions).filter((entry) =>
     entry?.instanceId === selectedInstanceId ||
@@ -615,6 +634,17 @@ if (selected.zone === "hand") {
 
   return [...actions, ...globalBattleActions].slice(0, 7);
 }
+
+  if (selected.zone === "spirits") {
+    const combat = [];
+    if (attackableInstanceIds?.has(selectedInstanceId)) {
+      combat.push({ id: "declare-attack", type: "DECLARE_ATTACK", instanceId: selectedInstanceId, label: language === "ja" ? "アタック" : language === "en" ? "Attack" : "Atacar", emphasis: true });
+    }
+    if (blockableInstanceIds?.has(selectedInstanceId)) {
+      combat.push({ id: "declare-block", type: "DECLARE_BLOCK", instanceId: selectedInstanceId, label: language === "ja" ? "ブロック" : language === "en" ? "Block" : "Bloquear", emphasis: true });
+    }
+    if (combat.length) return [...combat, ...globalBattleActions];
+  }
 
   const fieldFlashAction = selectedLegalActions.find((entry) => entry.type === "ACTIVATE_FIELD_FLASH");
   if (fieldFlashAction) {
@@ -746,6 +776,8 @@ export function createArenaVisualControllerBridge({
       canControlActor,
       language,
       playableInstanceIds: playableSet,
+      attackableInstanceIds: attackableSet,
+      blockableInstanceIds: blockableSet,
       legalActions
     }),
     showAdvanceStep,

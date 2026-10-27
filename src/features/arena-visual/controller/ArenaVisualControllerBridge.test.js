@@ -82,7 +82,7 @@ test("bridge never exposes opponent hand identity", () => {
   assert.equal(vm.opponent.hand.cards[0].name, undefined);
 });
 
-test("bridge marks drag-based attack/block affordances and keeps Flash actions contextual", () => {
+test("bridge exposes selected legal combat actions and keeps Flash actions contextual", () => {
   const state = match();
   state.phase = "attack";
   const attackVm = createArenaVisualControllerBridge({
@@ -95,7 +95,13 @@ test("bridge marks drag-based attack/block affordances and keeps Flash actions c
     attackableInstanceIds: ["field-1"]
   });
   assert.equal(attackVm.player.battlefield.cards[0].canAttack, true);
-  assert.equal(attackVm.availableActions.some((action) => action.type === "DECLARE_ATTACK"), false);
+  assert.ok(attackVm.availableActions.some((action) => action.type === "DECLARE_ATTACK" && action.instanceId === "field-1"));
+
+  const blockedVm = createArenaVisualControllerBridge({
+    match: state, viewerPlayerId: "player1", cardIndex: index, canControlActor: true,
+    selectedInstanceId: "field-1", attackableInstanceIds: []
+  });
+  assert.equal(blockedVm.availableActions.some((action) => action.type === "DECLARE_ATTACK"), false);
 
   state.battle = {
     stage: "block",
@@ -114,6 +120,12 @@ test("bridge marks drag-based attack/block affordances and keeps Flash actions c
   assert.equal(flashVm.player.battlefield.cards[0].canBlock, true);
   assert.ok(flashVm.availableActions.some((action) => action.type === "PASS_FLASH"));
   assert.equal(flashVm.battle.attackerInstanceId, "enemy-1");
+
+  const blockVm = createArenaVisualControllerBridge({
+    match: state, viewerPlayerId: "player1", cardIndex: index, language: "ja", canControlActor: true,
+    selectedInstanceId: "field-1", blockableInstanceIds: ["field-1"]
+  });
+  assert.ok(blockVm.availableActions.some((action) => action.type === "DECLARE_BLOCK" && action.instanceId === "field-1"));
 });
 
 test("bridge preserves Main Step affordability feedback for hand cards", () => {

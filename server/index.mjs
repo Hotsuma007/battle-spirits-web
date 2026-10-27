@@ -5,7 +5,7 @@ import crypto from "node:crypto";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { Server } from "socket.io";
 import { createClient } from "@supabase/supabase-js";
-import { normalizeCard, makeCardIndex } from "../src/game/cardAdapter.js";
+import { buildCardCatalog } from "../src/game/cardCatalog.js";
 import { createMatch, validateDeck } from "../src/game/state.js";
 import { applyGameAction } from "../src/game/reducer.js";
 import {
@@ -32,25 +32,10 @@ const root = path.resolve(__dirname, "..");
 
 function loadCardIndex() {
   const dataDir = path.join(root, "src", "data");
-  const rawCards = fs.readdirSync(dataDir)
+  const sources = fs.readdirSync(dataDir)
     .filter((name) => name.toLowerCase().endsWith(".json"))
-    .sort((a, b) => {
-      const aBase = a.toLowerCase() === "cards.json";
-      const bBase = b.toLowerCase() === "cards.json";
-      if (aBase !== bBase) return aBase ? -1 : 1;
-      return a.localeCompare(b);
-    })
-    .flatMap((name) => {
-      const parsed = JSON.parse(fs.readFileSync(path.join(dataDir, name), "utf8"));
-      return Array.isArray(parsed) ? parsed : (Array.isArray(parsed?.cards) ? parsed.cards : []);
-    });
-
-  const uniqueCards = new Map();
-  for (const raw of rawCards) {
-    const card = normalizeCard(raw);
-    if (card.id && card.id !== "unknown") uniqueCards.set(card.id, card);
-  }
-  return makeCardIndex([...uniqueCards.values()]);
+    .map((name) => [name, JSON.parse(fs.readFileSync(path.join(dataDir, name), "utf8"))]);
+  return buildCardCatalog(sources);
 }
 
 export async function createBattleSpiritsServer(options = {}) {
@@ -354,7 +339,7 @@ export async function createBattleSpiritsServer(options = {}) {
       ...(includeChat ? { chat: (room.chat || []).slice(-100) } : {}),
       match: sanitizeMatchForViewer(match, viewerId),
       matchSync: roomMatchSync(room),
-      matchHistoryRecord: room.matchHistory?.matchId === match?.id ? room.matchHistory.records?.[viewerId] || null : null,
+      matchHistoryRecord: match && room.matchHistory && room.matchHistory.matchId === match.id ? room.matchHistory.records?.[viewerId] || null : null,
       ranked: room.ranked ? { season: room.ranked.season } : null,
       matchMode: roomMatchMode(room),
       settings: {

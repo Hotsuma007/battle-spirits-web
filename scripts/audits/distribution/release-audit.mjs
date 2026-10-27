@@ -4,6 +4,8 @@ import path from "node:path";
 const root = process.cwd();
 const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
 const problems = [];
+const sourceCheckout = process.argv.includes("--source");
+const checkoutOnlyDirs = new Set([".git", "node_modules", "dist"]);
 
 const disposableDirs = new Set([".git", "node_modules", "dist", "release", "coverage", ".cache", ".parcel-cache", ".vite", ".vite-temp", ".turbo", "card-imports"]);
 const disposableFilePatterns = [/\.log$/i, /\.tmp$/i, /\.temp$/i, /\.bak$/i, /\.old$/i, /^\.DS_Store$/i, /^Thumbs\.db$/i];
@@ -14,6 +16,7 @@ function walk(dir, rel = "") {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       if (disposableDirs.has(entry.name)) {
+        if (sourceCheckout && !rel && checkoutOnlyDirs.has(entry.name)) continue;
         problems.push(`Diretório descartável no release: ${childRel}`);
         continue;
       }
@@ -98,7 +101,7 @@ function scanSecrets(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      if ([".git", "public"].includes(entry.name)) continue;
+      if ([".git", "node_modules", "dist", "public"].includes(entry.name)) continue;
       scanSecrets(full);
     } else if (/\.(?:js|jsx|mjs|cjs|json|md|txt|example|yml|yaml)$/i.test(entry.name)) {
       if (entry.name === ".env.example") continue;

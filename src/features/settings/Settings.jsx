@@ -745,6 +745,7 @@ export default function Settings({
                     value={draft.language}
                     onChange={(e) => setDraft({ ...draft, language: e.target.value })}
                   >
+                    <option value="ja">{t("japanese")}</option>
                     <option value="ptBR">{t("portuguese")}</option>
                     <option value="en">{t("english")}</option>
                   </select>

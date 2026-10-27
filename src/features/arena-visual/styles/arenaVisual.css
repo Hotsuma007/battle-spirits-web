@@ -1120,7 +1120,9 @@
   font: inherit;
   font-size: clamp(0.6rem, 0.68vw, 0.75rem);
   font-weight: 780;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
+  padding: 0 .1rem;
+  white-space: nowrap;
   text-transform: uppercase;
   cursor: pointer;
   transition: 120ms ease;
@@ -4317,4 +4319,10 @@
   .arena-visual-postmatch-social-row {
     grid-template-columns: 1fr;
   }
+}
+
+@media (max-width: 600px) {
+  .arena-visual-root[data-responsive-profile] .arena-visual-layout.is-utility-collapsed { grid-template-columns: minmax(0, 1fr) 2.65rem; }
+  .arena-visual-root[data-responsive-profile] .arena-visual-phase-bar-track { display: flex; overflow-x: auto; gap: .7rem; }
+  .arena-visual-root[data-responsive-profile] .arena-visual-phase-bar-step { flex: 0 0 auto; font-size: .72rem; }
 }

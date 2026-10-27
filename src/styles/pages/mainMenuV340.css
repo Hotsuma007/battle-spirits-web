@@ -282,7 +282,7 @@
   gap: 1px 12px;
   border: 0;
   background: transparent;
-  color: rgba(255,255,255,.37);
+  color: rgba(255,255,255,.92);
   text-align: left;
   cursor: pointer;
   transform: translateX(0);
@@ -314,6 +314,11 @@
   opacity: .72;
 }
 
+.bs-main-menu-item:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
 .bs-main-menu-selector {
   position: absolute;
   left: 0;
@@ -338,7 +343,7 @@
   grid-column: 1;
   grid-row: 1;
   font-size: clamp(15px, 1.18vw, 20px);
-  font-style: italic;
+  font-style: normal;
   font-weight: 720;
   line-height: 1.1;
 }
@@ -346,8 +351,8 @@
 .bs-main-menu-item small {
   grid-column: 1;
   grid-row: 2;
-  color: rgba(255,255,255,.25);
-  font-size: 9px;
+  color: rgba(255,255,255,.76);
+  font-size: 12px;
   font-style: normal;
   letter-spacing: .035em;
   transition: color .16s ease;
@@ -355,7 +360,7 @@
 
 .bs-main-menu-item:hover small,
 .bs-main-menu-item:focus-visible small {
-  color: rgba(255,255,255,.53);
+  color: rgba(255,255,255,.9);
 }
 
 .bs-main-menu-item em {

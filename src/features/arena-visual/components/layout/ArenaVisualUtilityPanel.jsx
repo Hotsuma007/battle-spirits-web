@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLanguage } from "../../../../localization/i18n.jsx";
 
 const TABS = [
   ["inspector", "Card"],
@@ -89,12 +90,14 @@ function effectBlocks(card) {
 }
 
 function InspectorPanel({ card }) {
+  const { language } = useLanguage();
+  const ja = language === "ja";
   if (!card) {
     return (
       <div className="arena-visual-utility-empty">
-        <span>Card Inspector</span>
-        <strong>Select a card</strong>
-        <p>Click a card in your hand or on either Battlefield to inspect its information and effects.</p>
+        <span>{ja ? "カード詳細" : "Card Inspector"}</span>
+        <strong>{ja ? "カードを選択" : "Select a card"}</strong>
+        <p>{ja ? "手札やフィールドのカードを選ぶと、詳細を確認できます。" : "Click a card in your hand or on either Battlefield to inspect its information and effects."}</p>
       </div>
     );
   }
@@ -116,11 +119,11 @@ function InspectorPanel({ card }) {
       </div>
 
       <div className="arena-visual-inspector-identity">
-        <span className="arena-visual-inspector-type">{card.cardType || card.type || "Card"}</span>
+        <span className="arena-visual-inspector-type">{ja ? ({ spirit: "スピリット", nexus: "ネクサス", magic: "マジック", brave: "ブレイヴ", ultimate: "アルティメット" }[card.cardType || card.type] || "カード") : (card.cardType || card.type || "Card")}</span>
         <h2>{card.name || "Card"}</h2>
         <div className="arena-visual-inspector-tags">
-          {card.id ? <b>{card.id}</b> : null}
-          {Number.isFinite(card.cost) ? <b>Cost {card.cost}</b> : null}
+          {card.cardId ? <b>{card.cardId}</b> : null}
+          {Number.isFinite(card.cost) ? <b>{ja ? "コスト" : "Cost"} {card.cost}</b> : null}
           {Number.isFinite(card.level) ? <b>Lv{card.level}</b> : null}
           {Number.isFinite(card.bp) ? <b>{card.bp} BP</b> : null}
           {card.rarity ? <b>{card.rarity}</b> : null}
@@ -128,19 +131,19 @@ function InspectorPanel({ card }) {
       </div>
 
       <div className="arena-visual-inspector-section">
-        <span>Effects & Keywords</span>
+        <span>{ja ? "効果" : "Effects & Keywords"}</span>
         {effectParagraphs.length ? effectParagraphs.map((effect, index) => (
           <article className="arena-visual-effect-block" key={`${index}-${effect.slice(0, 24)}`}>
-            <b>Effect {String(index + 1).padStart(2, "0")}</b>
+            <b>{ja ? "効果" : "Effect"} {String(index + 1).padStart(2, "0")}</b>
             <p><HighlightedRulesText card={card} text={effect} /></p>
           </article>
-        )) : <p className="is-muted">No card text available.</p>}
+        )) : <p className="is-muted">{ja ? "効果テキストがありません。" : "No card text available."}</p>}
       </div>
 
       <div className="arena-visual-inspector-stats">
-        <div><span>Cores</span><strong>{card.coreCount || 0}</strong></div>
-        <div><span>Soul Core</span><strong>{card.soulCoreCount || 0}</strong></div>
-        <div><span>Status</span><strong>{card.exhausted ? "Exhausted" : "Ready"}</strong></div>
+        <div><span>{ja ? "コア" : "Cores"}</span><strong>{card.coreCount || 0}</strong></div>
+        <div><span>{ja ? "ソウルコア" : "Soul Core"}</span><strong>{card.soulCoreCount || 0}</strong></div>
+        <div><span>{ja ? "状態" : "Status"}</span><strong>{card.exhausted ? (ja ? "疲労" : "Exhausted") : (ja ? "回復" : "Ready")}</strong></div>
       </div>
     </div>
   );
@@ -480,17 +483,18 @@ function PendingActionBanner({ pending }) {
 }
 
 export default function ArenaVisualUtilityPanel({ selectedCard = null, utility = {}, onActionRequest, collapsed = false, onToggleCollapsed }) {
+  const { language } = useLanguage();
   const [activeTab, setActiveTab] = useState("inspector");
   const [showGameSettings, setShowGameSettings] = useState(false);
   if (collapsed) {
     return (
-      <aside className="arena-visual-utility is-collapsed" aria-label="Arena utility panel collapsed">
+      <aside className="arena-visual-utility is-collapsed" aria-label={language === "ja" ? "操作パネルを閉じています" : "Arena utility panel collapsed"}>
         <button
           type="button"
           className="arena-visual-utility-collapse-toggle is-collapsed"
           onClick={onToggleCollapsed}
-          aria-label="Open utility panel"
-          title="Open panel"
+          aria-label={language === "ja" ? "操作パネルを開く" : "Open utility panel"}
+          title={language === "ja" ? "パネルを開く" : "Open panel"}
         >
           <span aria-hidden="true">‹</span>
         </button>
@@ -499,20 +503,20 @@ export default function ArenaVisualUtilityPanel({ selectedCard = null, utility =
   }
 
   return (
-    <aside className="arena-visual-utility" aria-label="Arena utility panel">
+    <aside className="arena-visual-utility" aria-label={language === "ja" ? "操作パネル" : "Arena utility panel"}>
       <button
         type="button"
         className="arena-visual-utility-collapse-toggle"
         onClick={onToggleCollapsed}
-        aria-label="Hide utility panel"
-        title="Hide panel"
+        aria-label={language === "ja" ? "操作パネルを閉じる" : "Hide utility panel"}
+        title={language === "ja" ? "パネルを閉じる" : "Hide panel"}
       >
         <span aria-hidden="true">›</span>
       </button>
-      <nav className="arena-visual-utility-tabs" aria-label="Utility navigation">
+      <nav className="arena-visual-utility-tabs" aria-label={language === "ja" ? "操作パネルのメニュー" : "Utility navigation"}>
         {TABS.map(([id, label]) => (
           <button key={id} type="button" className={activeTab === id ? "is-active" : ""} onClick={() => setActiveTab(id)}>
-            {label}
+            {language === "ja" ? ({ inspector: "カード", manual: "手動", log: "履歴", chat: "チャット" }[id] || label) : label}
           </button>
         ))}
       </nav>
@@ -520,11 +524,10 @@ export default function ArenaVisualUtilityPanel({ selectedCard = null, utility =
       <div className="arena-visual-utility-main" data-active-tab={showGameSettings ? "settings" : activeTab}>
         {showGameSettings ? (
           <section className="arena-visual-game-settings">
-            <span>Game Settings</span>
-            <strong>Match interface</strong>
-            <p>System controls live here so gameplay prompts can remain independent from this panel.</p>
-            <button type="button" onClick={onToggleCollapsed}>Hide Utility Panel</button>
-            <button type="button" className="is-quiet" onClick={() => setShowGameSettings(false)}>Close Settings</button>
+            <span>{language === "ja" ? "対戦画面" : "Game Settings"}</span>
+            <strong>{language === "ja" ? "表示設定" : "Match interface"}</strong>
+            <button type="button" onClick={onToggleCollapsed}>{language === "ja" ? "パネルを閉じる" : "Hide Utility Panel"}</button>
+            <button type="button" className="is-quiet" onClick={() => setShowGameSettings(false)}>{language === "ja" ? "戻る" : "Close Settings"}</button>
           </section>
         ) : null}
         {!showGameSettings && activeTab === "inspector" ? <InspectorPanel card={selectedCard} /> : null}
@@ -533,19 +536,19 @@ export default function ArenaVisualUtilityPanel({ selectedCard = null, utility =
         {!showGameSettings && activeTab === "chat" ? <ChatPanel messages={utility?.chatMessages || []} /> : null}
       </div>
 
-      <div className="arena-visual-system-actions" aria-label="Game system actions">
+      <div className="arena-visual-system-actions" aria-label={language === "ja" ? "対戦の設定と終了" : "Game system actions"}>
         <button
           type="button"
           onClick={() => setShowGameSettings((value) => !value)}
         >
-          Game Settings
+          {language === "ja" ? "表示設定" : "Game Settings"}
         </button>
         <button
           type="button"
           className="is-danger"
           onClick={() => onActionRequest?.({ id: "surrender-match", type: "SURRENDER_MATCH", label: "Surrender" })}
         >
-          Surrender
+          {language === "ja" ? "降参" : "Surrender"}
         </button>
       </div>
     </aside>

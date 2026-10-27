@@ -89,7 +89,9 @@ export function makeCardIndex(cards = []) {
   return map;
 }
 
-export function getCardName(card) {
+export function getCardName(card, language = "ptBR") {
+  if (language === "ja") return card?.nameJP || card?.nameEN || card?.namePT || card?.name || card?.id || "カード";
+  if (language === "en") return card?.nameEN || card?.namePT || card?.name || card?.id || "Card";
   return card?.namePT || card?.nameEN || card?.name || card?.id || "Carta";
 }
 

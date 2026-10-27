@@ -1,33 +1,15 @@
-import { makeCardIndex, normalizeCard, resolveCardImage } from "../../game/cardAdapter.js";
+import { resolveCardImage } from "../../game/cardAdapter.js";
+import { buildCardCatalog } from "../../game/cardCatalog.js";
 import { officialRestrictionForCard } from "../../game/eternalDeckRules.js";
 
 const modules = import.meta.glob("../../data/**/*.json", { eager: true, import: "default" });
-const byId = new Map();
 const setDetails = new Map();
-const orderedModules = Object.entries(modules).sort(([a], [b]) => {
-  const aBase = a.endsWith("/cards.json");
-  const bBase = b.endsWith("/cards.json");
-  if (aBase !== bBase) return aBase ? -1 : 1;
-  return a.localeCompare(b);
-});
-
-function mergeCatalogOverride(previous, incoming) {
-  if (!previous) return incoming;
-  return { ...incoming, image: incoming.image || previous.image || null };
-}
-
-for (const [, rawModule] of orderedModules) {
+for (const rawModule of Object.values(modules)) {
   if (rawModule?.set?.code) setDetails.set(String(rawModule.set.code).toUpperCase(), { ...rawModule.set, code: String(rawModule.set.code).toUpperCase() });
-  const list = Array.isArray(rawModule) ? rawModule : (Array.isArray(rawModule?.cards) ? rawModule.cards : []);
-  for (const raw of list) {
-    const card = normalizeCard(raw);
-    if (!card.id || card.id === "unknown") continue;
-    byId.set(card.id, mergeCatalogOverride(byId.get(card.id), card));
-  }
 }
 
-export const cards = [...byId.values()];
-export const cardIndex = makeCardIndex(cards);
+export const cardIndex = buildCardCatalog(Object.entries(modules));
+export const cards = [...cardIndex.values()];
 
 export function getCardById(cardId) {
   if (cardId == null) return null;

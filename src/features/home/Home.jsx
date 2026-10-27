@@ -10,7 +10,7 @@ import "../../styles/pages/mainMenuV340.css";
 function playerName(profile, language) {
   const value = String(profile?.displayName || profile?.name || "").trim();
   if (value) return value;
-  return language === "en" ? "Player" : "Jogador";
+  return language === "ja" ? "プレイヤー" : language === "en" ? "Player" : "Jogador";
 }
 
 function initials(value) {
@@ -39,6 +39,7 @@ function MainMenuItem({ label, detail, badge, onClick, disabled = false }) {
 export default function Home({ go, initialSection = "root" }) {
   const { language } = useLanguage();
   const pt = language !== "en";
+  const text = (ja, portuguese, english) => language === "ja" ? ja : pt ? portuguese : english;
   const profile = useMemo(() => getProfile() || {}, []);
   const name = playerName(profile, language);
   const [section, setSection] = useState(initialSection || "root");
@@ -54,37 +55,36 @@ export default function Home({ go, initialSection = "root" }) {
   const rootMenu = (
     <>
       <MainMenuItem
-        label={pt ? "Aprenda a Jogar" : "Learn to Play"}
+        label={text("遊び方", "Aprenda a Jogar", "Learn to Play")}
         detail={tutorialComplete
-          ? (pt ? "Rever tutorial e consulta rápida" : "Review tutorial and quick reference")
-          : (pt ? "Tutorial rápido · Regras Eternal" : "Quick tutorial · Eternal rules")}
-        badge={tutorialComplete ? null : (pt ? "NOVO" : "NEW")}
+          ? text("チュートリアルを確認", "Rever tutorial e consulta rápida", "Review tutorial and quick reference")
+          : text("エターナルの基本ルール", "Tutorial rápido · Regras Eternal", "Quick tutorial · Eternal rules")}
+        badge={tutorialComplete ? null : text("未完了", "NOVO", "NEW")}
         onClick={() => { dismissTutorialWelcome(); setTutorialWelcome(false); go("tutorial"); }}
       />
       <MainMenuItem
-        label={pt ? "Partida Local" : "Local Match"}
-        detail={pt ? "Jogo Livre ou Eternal CPU" : "Free Play or Eternal CPU"}
+        label={text("ローカル対戦", "Partida Local", "Local Match")}
+        detail={text("CPU 対戦・ひとりで両側を操作", "Jogo Livre ou Eternal CPU", "Free Play or Eternal CPU")}
         onClick={() => setSection("local")}
       />
       <MainMenuItem
-        label={pt ? "Multiplayer Online" : "Online Multiplayer"}
-        detail={pt ? "Normal ou Ranqueada" : "Normal or Ranked"}
+        label={text("オンライン対戦", "Multiplayer Online", "Online Multiplayer")}
+        detail={text("通常対戦・ランク対戦", "Normal ou Ranqueada", "Normal or Ranked")}
         onClick={() => setSection("online")}
       />
       <MainMenuItem
-        label={pt ? "Loja" : "Store"}
-        detail={pt ? "Boosters, coleção e economia" : "Boosters, collection and economy"}
-        badge="NEW"
+        label={text("ショップ", "Loja", "Store")}
+        detail={text("パック・デッキ・コレクション", "Boosters, coleção e economia", "Boosters, collection and economy")}
         onClick={() => go("store")}
       />
       <MainMenuItem
-        label="Deck Builder"
-        detail={pt ? "Criar e gerenciar decks" : "Create and manage decks"}
+        label={text("デッキ構築", "Deck Builder", "Deck Builder")}
+        detail={text("デッキの作成・編集", "Criar e gerenciar decks", "Create and manage decks")}
         onClick={() => go("decks")}
       />
       <MainMenuItem
-        label={pt ? "Configurações" : "Settings"}
-        detail={pt ? "Sistema, tema e idioma" : "System, theme and language"}
+        label={text("設定", "Configurações", "Settings")}
+        detail={text("画面・言語", "Sistema, tema e idioma", "System, theme and language")}
         onClick={() => go("settings")}
       />
     </>
@@ -93,18 +93,17 @@ export default function Home({ go, initialSection = "root" }) {
   const localMenu = (
     <>
       <MainMenuItem
-        label={pt ? "Jogo Livre" : "Free Play"}
-        detail={pt ? "Controle os dois lados da mesa" : "Control both sides of the table"}
+        label={text("フリープレイ", "Jogo Livre", "Free Play")}
+        detail={text("両プレイヤーを操作", "Controle os dois lados da mesa", "Control both sides of the table")}
         onClick={() => go("local")}
       />
       <MainMenuItem
-        label="Eternal CPU"
-        detail={pt ? "Jogue contra a IA em Fácil, Normal ou Difícil" : "Play the AI on Easy, Normal or Hard"}
-        badge="AI"
+        label={text("CPU 対戦", "Eternal CPU", "Eternal CPU")}
+        detail={text("CPU と対戦", "Jogue contra a IA em Fácil, Normal ou Difícil", "Play the AI on Easy, Normal or Hard")}
         onClick={() => go("ai")}
       />
       <MainMenuItem
-        label={pt ? "Voltar" : "Back"}
+        label={text("戻る", "Voltar", "Back")}
         onClick={() => setSection("root")}
       />
     </>
@@ -113,27 +112,27 @@ export default function Home({ go, initialSection = "root" }) {
   const onlineMenu = (
     <>
       <MainMenuItem
-        label={pt ? "Partida Normal" : "Normal Match"}
-        detail={pt ? "Matchmaking rápido, sala privada ou código" : "Quick match, private room or room code"}
+        label={text("通常対戦", "Partida Normal", "Normal Match")}
+        detail={text("マッチング・ルーム対戦", "Matchmaking rápido, sala privada ou código", "Quick match, private room or room code")}
         onClick={() => go("online")}
       />
       <MainMenuItem
-        label={pt ? "Partida Ranqueada" : "Ranked Match"}
-        detail={pt ? "Season 0 · Bronze ao Master" : "Season 0 · Bronze to Master"}
-        badge={pt ? "PRÉ-TEMPORADA" : "PRE-SEASON"}
+        label={text("ランク対戦", "Partida Ranqueada", "Ranked Match")}
+        detail={text("シーズン 0", "Season 0 · Bronze ao Master", "Season 0 · Bronze to Master")}
+        badge={text("プレシーズン", "PRÉ-TEMPORADA", "PRE-SEASON")}
         onClick={() => go("ranked")}
       />
       <MainMenuItem
-        label={pt ? "Voltar" : "Back"}
+        label={text("戻る", "Voltar", "Back")}
         onClick={() => setSection("root")}
       />
     </>
   );
 
   const heading = section === "local"
-    ? (pt ? "PARTIDA LOCAL" : "LOCAL MATCH")
+    ? text("ローカル対戦", "PARTIDA LOCAL", "LOCAL MATCH")
     : section === "online"
-      ? (pt ? "MULTIPLAYER ONLINE" : "ONLINE MULTIPLAYER")
+      ? text("オンライン対戦", "MULTIPLAYER ONLINE", "ONLINE MULTIPLAYER")
       : "GATE OPEN";
 
   return (
@@ -149,7 +148,7 @@ export default function Home({ go, initialSection = "root" }) {
           </span>
           <span className="bs-account-copy">
             <strong>{name}</strong>
-            <small>{pt ? "Conta & Social Hub" : "Account & Social Hub"}</small>
+            <small>{text("アカウント", "Conta & Social Hub", "Account & Social Hub")}</small>
           </span>
         </button>
 
@@ -158,13 +157,13 @@ export default function Home({ go, initialSection = "root" }) {
         </div>
       </header>
 
-      <section className="bs-main-menu-shell" aria-label={pt ? "Menu principal" : "Main menu"}>
+      <section className="bs-main-menu-shell" aria-label={text("メインメニュー", "Menu principal", "Main menu")}>
         <div className="bs-main-menu-brand">
           <img src="./images/logo_battlespirits.png" alt="Battle Spirits: KAIHOU! Simulator" />
 
           <div className={`bs-main-menu-title ${section !== "root" ? "is-submenu" : ""}`}>
             <span>{heading}</span>
-            {section === "root" ? <strong>KAIHOU!</strong> : <strong>SELECT</strong>}
+            {section === "root" ? <strong>KAIHOU!</strong> : <strong>{text("対戦方法を選ぶ", "SELECT", "SELECT")}</strong>}
           </div>
         </div>
 
@@ -175,15 +174,15 @@ export default function Home({ go, initialSection = "root" }) {
 
 
       {tutorialWelcome && section === "root" && (
-        <section className="bs-tutorial-welcome" role="dialog" aria-label={pt ? "Boas-vindas" : "Welcome"}>
+        <section className="bs-tutorial-welcome" role="dialog" aria-label={text("遊び方", "Boas-vindas", "Welcome")}>
           <div>
-            <span className="eyebrow">{pt ? "NOVO NO BATTLE SPIRITS?" : "NEW TO BATTLE SPIRITS?"}</span>
-            <strong>{pt ? "Aprenda o básico em poucos minutos." : "Learn the basics in a few minutes."}</strong>
-            <small>{pt ? "Turnos, Cores, ataques, bloqueios e Flash sem enrolação." : "Turns, Cores, attacks, blocks and Flash — straight to the point."}</small>
+            <span className="eyebrow">{text("バトスピの遊び方", "NOVO NO BATTLE SPIRITS?", "NEW TO BATTLE SPIRITS?")}</span>
+            <strong>{text("基本ルールを確認できます。", "Aprenda o básico em poucos minutos.", "Learn the basics in a few minutes.")}</strong>
+            <small>{text("ターンの進行、コア、アタック、ブロックを学びます。", "Turnos, Cores, ataques, bloqueios e Flash sem enrolação.", "Turns, Cores, attacks, blocks and Flash — straight to the point.")}</small>
           </div>
           <div className="bs-tutorial-welcome-actions">
-            <button type="button" className="primary" onClick={() => { dismissTutorialWelcome(); setTutorialWelcome(false); go("tutorial"); }}>{pt ? "Começar tutorial" : "Start tutorial"}</button>
-            <button type="button" className="ghost" onClick={() => { dismissTutorialWelcome(); setTutorialWelcome(false); }}>{pt ? "Já sei jogar" : "I already know"}</button>
+            <button type="button" className="primary" onClick={() => { dismissTutorialWelcome(); setTutorialWelcome(false); go("tutorial"); }}>{text("遊び方を見る", "Começar tutorial", "Start tutorial")}</button>
+            <button type="button" className="ghost" onClick={() => { dismissTutorialWelcome(); setTutorialWelcome(false); }}>{text("閉じる", "Já sei jogar", "I already know")}</button>
           </div>
         </section>
       )}
@@ -191,7 +190,7 @@ export default function Home({ go, initialSection = "root" }) {
       <footer className="bs-main-menu-footer">
         <span>Battle Spirits © BANDAI.</span>
         <span className="bs-main-menu-footer-line" aria-hidden="true" />
-        <strong>{pt ? "SIMULADOR NÃO OFICIAL" : "UNOFFICIAL SIMULATOR"} · {APP_VERSION_LABEL}</strong>
+        <strong>{text("非公式シミュレーター", "SIMULADOR NÃO OFICIAL", "UNOFFICIAL SIMULATOR")} · {APP_VERSION_LABEL}</strong>
       </footer>
     </main>
   );

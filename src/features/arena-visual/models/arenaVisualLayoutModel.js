@@ -5,6 +5,7 @@ function normalizeCard(card, index) {
   return {
     id: card.id || card.instanceId || `card-${index}`,
     instanceId: card.instanceId || card.id || null,
+    cardId: card.cardId || null,
     name: card.name || card.cardName || "Card",
     image: card.image || card.imagePath || card.artwork || null,
     hidden: card.hidden === true,

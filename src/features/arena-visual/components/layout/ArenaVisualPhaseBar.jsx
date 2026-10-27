@@ -1,3 +1,5 @@
+import { useLanguage } from "../../../../localization/i18n.jsx";
+
 const PHASES = [
   { id: "start", label: "Start" },
   { id: "core", label: "Core" },
@@ -7,8 +9,10 @@ const PHASES = [
   { id: "attack", label: "Attack" },
   { id: "end", label: "End" }
 ];
+const JA_PHASES = { start: "スタート", core: "コア", draw: "ドロー", refresh: "リフレッシュ", main: "メイン", attack: "アタック", end: "エンド" };
 
 export default function ArenaVisualPhaseBar({ utility = {}, onAdvanceRequest }) {
+  const { language } = useLanguage();
   const currentPhase = String(utility?.currentPhase || "start").toLowerCase();
   const currentIndex = Math.max(0, PHASES.findIndex((phase) => phase.id === currentPhase));
   const showAdvance = utility?.showAdvanceStep !== false;
@@ -16,7 +20,7 @@ export default function ArenaVisualPhaseBar({ utility = {}, onAdvanceRequest }) 
   const advanceLabel = utility?.advanceStepLabel || "Avançar";
 
   return (
-    <section className="arena-visual-phase-bar" aria-label="Turn phase tracker">
+    <section className="arena-visual-phase-bar" aria-label={language === "ja" ? "ターンの進行" : "Turn phase tracker"}>
       <div className="arena-visual-phase-bar-track" role="list">
         {PHASES.map((phase, index) => {
           const current = index === currentIndex;
@@ -29,7 +33,7 @@ export default function ArenaVisualPhaseBar({ utility = {}, onAdvanceRequest }) 
               aria-current={current ? "step" : undefined}
             >
               <i aria-hidden="true" />
-              <span>{phase.label}</span>
+              <span>{language === "ja" ? JA_PHASES[phase.id] : phase.label}</span>
             </div>
           );
         })}

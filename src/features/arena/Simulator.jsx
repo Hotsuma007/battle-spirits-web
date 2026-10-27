@@ -5773,7 +5773,7 @@ export default function Simulator({
       })) : [],
       showAdvanceStep: !match.battle,
       canAdvanceStep: !match.battle && canControlActor && !blockingPending,
-      advanceStepLabel: language === "en" ? "Advance" : "Avançar",
+      advanceStepLabel: language === "ja" ? "次へ" : language === "en" ? "Advance" : "Avançar",
       effectDecisionTitle: effectDecision ? effectDecisionTitle() : "",
       effectDecisionInstruction: effectDecision ? effectDecisionInstruction() : "",
       playableInstanceIds: arenaVisualNormalPlayableIds,
@@ -5875,9 +5875,9 @@ if (match?.winnerId) {
         return;
       }
       if (type === "SURRENDER_MATCH") {
-        const confirmed = window.confirm(language === "en"
-          ? "Surrender this match?"
-          : "Desistir desta partida?");
+        const confirmed = window.confirm(language === "ja"
+          ? "降参しますか？"
+          : language === "en" ? "Surrender this match?" : "Desistir desta partida?");
         if (!confirmed) return;
 
         const exitStrategy = resolveArenaVisualExitStrategy({

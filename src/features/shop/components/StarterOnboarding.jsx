@@ -5,6 +5,8 @@ import { cardIndex } from "../../../services/cards/cardRepository.js";
 import CardDetailsModal from "../../../components/cards/CardDetailsModal.jsx";
 import { getCardName, resolveCardImage } from "../../../game/cardAdapter.js";
 import { useLanguage } from "../../../localization/i18n.jsx";
+import { getDecks, saveDecks } from "../../../services/platform/storage.js";
+import { PREBUILT_DECKS } from "../../../data/decks/prebuilt-decks.js";
 import "../../../styles/pages/onboardingV450.css";
 
 function DeckArt({ product }) {
@@ -12,15 +14,17 @@ function DeckArt({ product }) {
   return failed ? <div className="starter-v450-fallback">{product.setCode}</div> : <img src={product.artwork} alt="" draggable="false" onError={() => setFailed(true)} />;
 }
 
-function CoverCard({ recipe, product }) {
+function CoverCard({ recipe, product, language }) {
+  const [failed, setFailed] = useState(false);
   const card = recipe?.cover || cardIndex.get(recipe?.entries?.[0]?.cardId);
-  if (!card) return <DeckArt product={product} />;
-  return <img src={resolveCardImage(card)} alt={getCardName(card)} draggable="false" />;
+  if (!card || failed) return <DeckArt product={product} />;
+  return <img src={resolveCardImage(card)} alt={getCardName(card, language)} draggable="false" onError={() => setFailed(true)} />;
 }
 
 export default function StarterOnboarding() {
   const { language } = useLanguage();
   const pt = language !== "en";
+  const text = (ja, portuguese, english) => language === "ja" ? ja : pt ? portuguese : english;
   const railRef = useRef(null);
   const [snapshot, setSnapshot] = useState(null);
   const [recipes, setRecipes] = useState(new Map());
@@ -86,33 +90,51 @@ export default function StarterOnboarding() {
     setError("");
     const result = await completeStarterOnboarding(selected);
     if (!result.ok) {
-      setError(pt ? "Não foi possível preparar seus Starter Decks agora. Tente novamente em instantes." : "Could not prepare your Starter Decks right now. Please try again in a moment.");
+      setError(text("デッキを準備できませんでした。しばらくしてからもう一度お試しください。", "Não foi possível preparar seus Starter Decks agora. Tente novamente em instantes.", "Could not prepare your Starter Decks right now. Please try again in a moment."));
       setSubmitting(false);
       return;
     }
+    const currentDecks = getDecks();
+    const additions = selected.flatMap((productId) => {
+      const product = ONBOARDING_DECK_PRODUCTS.find((item) => item.id === productId);
+      const template = PREBUILT_DECKS.find((item) => item.recipeId === product?.recipeId);
+      const recipe = recipes.get(productId);
+      if (!template || !recipe?.ready || currentDecks.some((deck) => deck.prebuiltTemplateId === template.id)) return [];
+      return [{
+        id: `starter-${template.id}`,
+        name: `${template.setCode} · ${template.title}`,
+        cards: recipe.entries.map((entry) => ({ ...entry })),
+        coverCardId: recipe.cover?.id || template.coverCardId || recipe.entries[0]?.cardId || null,
+        createdFromPrebuilt: true,
+        prebuiltTemplateId: template.id,
+        prebuiltSetCode: template.setCode,
+        updatedAt: new Date().toISOString()
+      }];
+    });
+    saveDecks([...currentDecks, ...additions]);
     setSnapshot(result.snapshot || { onboardingComplete: true });
     window.dispatchEvent(new CustomEvent("bs:economy-changed"));
     setSubmitting(false);
   }
 
   return (
-    <div className="starter-v450-overlay" role="dialog" aria-modal="true" aria-label={pt ? "Escolha seus Starter Decks" : "Choose your Starter Decks"}>
+    <div className="starter-v450-overlay" role="dialog" aria-modal="true" aria-label={text("スターターデッキを選択", "Escolha seus Starter Decks", "Choose your Starter Decks")}>
       <section className="starter-v450-shell">
         <header className="starter-v450-header">
           <div>
-            <span>BATTLE SPIRITS ETERNAL · PLAYER ONBOARDING</span>
-            <h1>{pt ? "Escolha 3 Starter Decks" : "Choose 3 Starter Decks"}</h1>
-            <p>{pt ? "Explore cada deck, veja a lista completa e leia as cartas antes de escolher. Deslize horizontalmente no celular ou use as setas em telas grandes." : "Explore each deck, inspect the full decklist and read every card before choosing. Swipe horizontally on mobile or use the arrows on larger screens."}</p>
+            <span>{text("エターナル", "BATTLE SPIRITS ETERNAL · PLAYER ONBOARDING", "BATTLE SPIRITS ETERNAL · PLAYER ONBOARDING")}</span>
+            <h1>{text("スターターデッキを3つ選ぶ", "Escolha 3 Starter Decks", "Choose 3 Starter Decks")}</h1>
+            <p>{text("選んだデッキですぐに対戦できます。一部のカード効果は手動での処理が必要です。", "Explore cada deck, veja a lista completa e leia as cartas antes de escolher. Deslize horizontalmente no celular ou use as setas em telas grandes.", "Explore each deck, inspect the full decklist and read every card before choosing. Swipe horizontally on mobile or use the arrows on larger screens.")}</p>
           </div>
           <div className="starter-v450-counter">
             <strong>{selected.length}/3</strong>
-            <span>{pt ? "selecionados" : "selected"}</span>
-            <small>{snapshot?.signedIn ? (pt ? "Conta conectada" : "Account connected") : (pt ? "Guest Mode" : "Guest Mode")}</small>
+            <span>{text("選択中", "selecionados", "selected")}</span>
+            <small>{snapshot?.signedIn ? text("ログイン中", "Conta conectada", "Account connected") : text("ゲスト", "Guest Mode", "Guest Mode")}</small>
           </div>
         </header>
 
         <div className="starter-v450-carousel-wrap">
-          <button className="starter-v450-arrow prev" type="button" onClick={() => scrollRail(-1)} aria-label={pt ? "Deck anterior" : "Previous deck"}>‹</button>
+          <button className="starter-v450-arrow prev" type="button" onClick={() => scrollRail(-1)} aria-label={text("前のデッキ", "Deck anterior", "Previous deck")}>‹</button>
           <div className="starter-v450-rail" ref={railRef}>
             {ONBOARDING_DECK_PRODUCTS.map((product) => {
               const recipe = recipes.get(product.id);
@@ -122,48 +144,48 @@ export default function StarterOnboarding() {
                 <article key={product.id} className={`starter-v450-deck-card ${active ? "selected" : ""} ${!ready ? "disabled" : ""}`}>
                   <div className="starter-v450-product-art"><DeckArt product={product} /></div>
                   <div className="starter-v450-cover-stage">
-                    <span>{pt ? "CARTA CAPA" : "COVER CARD"}</span>
-                    <div className="starter-v450-cover"><CoverCard recipe={recipe} product={product} /></div>
+                    <span>{text("表紙カード", "CARTA CAPA", "COVER CARD")}</span>
+                    <div className="starter-v450-cover"><CoverCard recipe={recipe} product={product} language={language} /></div>
                   </div>
                   <div className="starter-v450-copy">
                     <small>{product.setCode}</small>
                     <h2>{product.title}</h2>
-                    <p>{ready ? `${recipe?.totalCards || 0} ${pt ? "cartas na lista" : "cards in decklist"}` : (pt ? "Lista indisponível na database atual." : "Decklist unavailable in the current database.")}</p>
+                    <p>{ready ? text(`${recipe?.totalCards || 0}枚`, `${recipe?.totalCards || 0} cartas na lista`, `${recipe?.totalCards || 0} cards in decklist`) : text("デッキリストを利用できません。", "Lista indisponível na database atual.", "Decklist unavailable in the current database.")}</p>
                   </div>
                   <div className="starter-v450-actions">
-                    <button type="button" className="ghost" disabled={!ready} onClick={() => setDecklistProductId(product.id)}>{pt ? "Ver Decklist" : "View Decklist"}</button>
+                    <button type="button" className="ghost" disabled={!ready} onClick={() => setDecklistProductId(product.id)}>{text("リストを見る", "Ver Decklist", "View Decklist")}</button>
                     <button type="button" className={active ? "selected" : "primary"} disabled={!ready} onClick={() => toggle(product)}>
-                      {active ? (pt ? "Selecionado ✓" : "Selected ✓") : (pt ? "Selecionar este Deck" : "Select this Deck")}
+                      {active ? text("選択中", "Selecionado ✓", "Selected ✓") : text("このデッキを選ぶ", "Selecionar este Deck", "Select this Deck")}
                     </button>
                   </div>
                 </article>
               );
             })}
           </div>
-          <button className="starter-v450-arrow next" type="button" onClick={() => scrollRail(1)} aria-label={pt ? "Próximo deck" : "Next deck"}>›</button>
+          <button className="starter-v450-arrow next" type="button" onClick={() => scrollRail(1)} aria-label={text("次のデッキ", "Próximo deck", "Next deck")}>›</button>
         </div>
 
         <footer className="starter-v450-footer">
-          <p>{pt ? `${availableCount} decks disponíveis · escolha exatamente 3 para continuar.` : `${availableCount} decks available · choose exactly 3 to continue.`}</p>
+          <p>{text(`${availableCount}種類から3つ選択してください。`, `${availableCount} decks disponíveis · escolha exatamente 3 para continuar.`, `${availableCount} decks available · choose exactly 3 to continue.`)}</p>
           {error && <strong className="starter-v450-error">{error}</strong>}
           <button type="button" className="starter-v450-confirm" disabled={selected.length !== 3 || submitting} onClick={confirm}>
-            {submitting ? (pt ? "Preparando coleção…" : "Preparing collection…") : (pt ? "Confirmar Escolha" : "Confirm Selection")}
+            {submitting ? text("準備中…", "Preparando coleção…", "Preparing collection…") : text("デッキを決定", "Confirmar Escolha", "Confirm Selection")}
           </button>
         </footer>
       </section>
 
       {activeDecklistProduct && (
         <div className="starter-v450-decklist-backdrop" role="presentation" onMouseDown={(e) => e.target === e.currentTarget && setDecklistProductId(null)}>
-          <section className="starter-v450-decklist" role="dialog" aria-modal="true" aria-label={`${pt ? "Decklist" : "Decklist"}: ${activeDecklistProduct.title}`}>
+          <section className="starter-v450-decklist" role="dialog" aria-modal="true" aria-label={`${text("デッキリスト", "Decklist", "Decklist")}: ${activeDecklistProduct.title}`}>
             <header>
-              <div><small>{activeDecklistProduct.setCode}</small><h2>{activeDecklistProduct.title}</h2><p>{pt ? "Toque ou clique em qualquer carta para abrir os detalhes completos." : "Tap or click any card to open its complete details."}</p></div>
-              <button type="button" onClick={() => setDecklistProductId(null)} aria-label={pt ? "Fechar" : "Close"}>×</button>
+              <div><small>{activeDecklistProduct.setCode}</small><h2>{activeDecklistProduct.title}</h2><p>{text("カードを選ぶと詳細を確認できます。", "Toque ou clique em qualquer carta para abrir os detalhes completos.", "Tap or click any card to open its complete details.")}</p></div>
+              <button type="button" onClick={() => setDecklistProductId(null)} aria-label={text("閉じる", "Fechar", "Close")}>×</button>
             </header>
             <div className="starter-v450-decklist-grid">
               {decklistCards.map(({ entry, card }) => (
                 <button type="button" key={card.id} className="starter-v450-decklist-card" onClick={() => setDetailCard(card)}>
-                  <img src={resolveCardImage(card)} alt={getCardName(card)} draggable="false" />
-                  <span><strong>{entry.quantity}×</strong><b>{getCardName(card)}</b><small>{card.id}</small></span>
+                  <img src={resolveCardImage(card)} alt={getCardName(card, language)} draggable="false" />
+                  <span><strong>{entry.quantity}×</strong><b>{getCardName(card, language)}</b><small>{card.id}</small></span>
                 </button>
               ))}
             </div>

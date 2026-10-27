@@ -52,7 +52,7 @@ const LEGACY_PLAYER_COLORS = new Set([
 
 
 const DEFAULT_SETTINGS = {
-  language: "ptBR",
+  language: "ja",
 
   backgroundMode:
     "static",
@@ -224,14 +224,16 @@ export function deleteDeck(
 ========================================================= */
 
 export function getProfile() {
+  const language = getSettings().language;
+  const defaultName = language === "ja" ? "プレイヤー" : language === "en" ? "Player" : "Jogador";
   return read(
     "profile",
     {
       name:
-        "Jogador",
+        defaultName,
 
       displayName:
-        "Jogador",
+        defaultName,
 
       username:
         "",

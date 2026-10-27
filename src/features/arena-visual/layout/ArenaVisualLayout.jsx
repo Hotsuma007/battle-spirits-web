@@ -6,7 +6,7 @@ import ArenaVisualActionCenter from "../components/layout/ArenaVisualActionCente
 import { createArenaVisualMockupStyle } from "../models/arenaVisualMockupMetrics.js";
 
 export default function ArenaVisualLayout({ model, selectedCard, onSelectCard, onUtilityActionRequest, interaction, hoverCardHandlers }) {
-  const [utilityCollapsed, setUtilityCollapsed] = useState(false);
+  const [utilityCollapsed, setUtilityCollapsed] = useState(() => typeof window !== "undefined" && window.innerWidth <= 600);
 
   return (
     <div

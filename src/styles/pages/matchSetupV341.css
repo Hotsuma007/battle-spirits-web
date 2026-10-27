@@ -403,7 +403,7 @@
   gap: 1px 12px;
   border: 0;
   background: transparent;
-  color: rgba(255,255,255,.37);
+  color: rgba(255,255,255,.9);
   text-align: left;
   cursor: pointer;
   transform: translateX(0);
@@ -431,6 +431,10 @@
   color: #fff;
   text-shadow: 0 0 12px rgba(255,255,255,.38);
 }
+.match-menu-button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
 .match-menu-button:hover::after,
 .match-menu-button:focus-visible::after { opacity: .72; }
 .match-menu-button:disabled { cursor: default; opacity: .35; transform: none; }
@@ -454,14 +458,14 @@
 .match-menu-button-copy b {
   font: inherit;
   font-size: clamp(15px, 1.18vw, 20px);
-  font-style: italic;
+  font-style: normal;
   font-weight: 720;
   line-height: 1.1;
   text-transform: none;
 }
 .match-menu-button-copy small {
-  color: rgba(255,255,255,.25);
-  font-size: 9px;
+  color: rgba(255,255,255,.75);
+  font-size: 12px;
   font-style: normal;
   font-weight: 400;
   letter-spacing: .035em;
@@ -469,7 +473,7 @@
 }
 .match-menu-button:hover small,
 .match-menu-button:focus-visible small,
-.match-menu-button.active small { color: rgba(255,255,255,.53); }
+.match-menu-button.active small { color: rgba(255,255,255,.9); }
 .match-menu-button > em {
   grid-column: 2;
   grid-row: 1 / span 2;
@@ -1395,7 +1399,7 @@
 @media (max-width: 720px) {
   .match-setup-duel {
     --match-heading-row: 48px;
-    --match-action-row: 28px;
+    --match-action-row: 36px;
   }
 
   .match-player-preview {
@@ -1405,4 +1409,6 @@
   .match-player-banner-shell {
     width: min(100%, 176px);
   }
+
+  .match-change-deck { min-height: 32px; font-size: 12px; }
 }

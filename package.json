@@ -17,7 +17,7 @@
     "online:check": "node scripts/online/check-online-config.mjs",
     "deploy:cloudflare": "npm run build && npx wrangler@4 deploy",
     "preview:cloudflare": "npm run build && npx wrangler@4 dev",
-    "project:check": "npm run verify && npm test && npm run ui:audit && npm run release:audit && npm run security:audit && npm run build",
+    "project:check": "npm run verify && npm test && npm run ui:audit && npm run release:audit -- --source && npm run security:audit && npm run build",
     "publish:cloudflare": "npm run check && npx wrangler@4 deploy",
     "release:audit": "node scripts/audits/distribution/release-audit.mjs",
     "ui:audit": "node scripts/audits/ui/ui-audit.mjs",

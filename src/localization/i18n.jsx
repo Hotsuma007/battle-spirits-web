@@ -2,6 +2,26 @@ import { createContext, useContext, useMemo, useState } from "react";
 import { getSettings, saveSettings } from "../services/platform/storage.js";
 
 const translations = {
+  ja: {
+    back: "← 戻る", local: "ローカル対戦", online: "オンライン対戦", decks: "デッキ", profile: "プロフィール", account: "アカウント", settings: "設定",
+    gateOpen: "ゲートオープン！", fanSimulator: "非公式シミュレーター", cardsLoaded: "枚", savedDecks: "デッキ", rulesTarget: "ルール",
+    deckLibrary: "マイデッキ", newDeck: "新しいデッキ", editDeck: "デッキを編集", createDeck: "デッキを作成", deleteDeck: "デッキを削除", deckCover: "表紙カード",
+    save: "保存", name: "名前", playerName: "プレイヤー名", avatar: "プロフィール画像", saveProfile: "プロフィールを保存", removePhoto: "画像を削除", profileSaved: "プロフィールを保存しました。",
+    local1v1: "ローカル対戦", prepareBattle: "対戦準備", player1: "プレイヤー1", player2: "プレイヤー2", deck: "デッキ", firstPlayer: "先攻", random: "ランダム", startMatch: "対戦を始める",
+    online1v1: "オンライン対戦", roomByCode: "ルームコードで参加", server: "サーバー", connected: "接続中", disconnected: "未接続", createRoom: "ルームを作成", join: "参加", roomCode: "ルームコード", waiting: "待機中...",
+    selectedCard: "選択中のカード", selectCardHint: "カードを選ぶと詳細を確認できます。", matchControl: "対戦操作", advancePhase: "次のステップへ", log: "履歴", chat: "チャット", exit: "終了",
+    reserve: "リザーブ", coreTrash: "コアトラッシュ", dragCores: "コアを移動", pendingPlay: "使用中のカード", confirmPlay: "確定", cancelPlay: "取り消す",
+    cost: "コスト", summonCost: "召喚コスト", paid: "支払い済み", minLevel: "必要なコア", costReduction: "軽減", printedCost: "基本コスト", finalCost: "支払うコスト", current: "現在", manualPaymentHint: "リザーブのコアを選び、コストと召喚に必要なコアを支払ってください。",
+    settingsTitle: "設定", language: "言語", resolution: "解像度", displayMode: "表示モード", fullscreen: "全画面", windowed: "ウィンドウ", apply: "適用",
+    portuguese: "Português (Brasil)", english: "English", japanese: "日本語", effect: "効果", abilities: "能力", families: "系統", noEffect: "効果テキストはありません。",
+    deckBuilder: "デッキ構築", eternalFormat: "エターナル", currentList: "現在のデッキ", myDecks: "マイデッキ", cards: "枚", validDeck: "使用可能", allTypes: "すべての種類", allColors: "すべての色", searchCards: "名前、カード番号、系統で検索",
+    noDecks: "デッキがありません", noDecksOnline: "オンライン対戦には使用可能なデッキが必要です。",
+    manualResolution: "手動処理", battleSequence: "エターナルの進行", battleSequenceText: "スタート → コア → ドロー → リフレッシュ → メイン → アタック → エンド",
+    turn: "ターン", priority: "自分の優先権", waitingPlayer: "待機中", phase: "現在のステップ", battle: "バトル", passFlash: "フラッシュをパス", noBlock: "ブロックしない", resolveBattle: "バトルを解決",
+    summon: "召喚", deployNexus: "ネクサスを配置", useMain: "メイン効果を使用", useFlash: "フラッシュ効果を使用", declareAttack: "アタック", block: "このカードでブロック",
+    chatPlaceholder: "メッセージを入力", send: "送信", noMessages: "メッセージはありません。",
+    settingsSaved: "設定を保存しました。", updates: "更新", updateServer: "自動更新", updateServerHint: "利用可否はインストールされたバージョンにより異なります。", updateDescription: "新しいバージョンを確認します。", checkUpdates: "更新を確認", playerDataStored: "プレイヤーデータ", mainMenu: "メインメニュー", opponent: "相手", player: "プレイヤー", currentTurn: "現在のターン", matchEnd: "対戦終了", wins: "の勝利", noCardsFound: "カードがありません"
+  },
   ptBR: {
     back: "← Voltar", local: "Partida local", online: "Jogar online", decks: "Decks", profile: "Perfil", account: "Conta", settings: "Configurações",
     gateOpen: "Gate Open, Kaihou!", fanSimulator: "SIMULADOR NÃO OFICIAL", cardsLoaded: "cartas", savedDecks: "decks", rulesTarget: "regras",
@@ -13,7 +33,7 @@ const translations = {
     reserve: "RESERVE", coreTrash: "CORE TRASH", dragCores: "Arraste os Cores", pendingPlay: "JOGADA PENDENTE", confirmPlay: "Confirmar jogada", cancelPlay: "Cancelar jogada",
     cost: "Custo", summonCost: "Custo de invocação", paid: "Pago", minLevel: "Cores mínimo", costReduction: "Redução", printedCost: "Custo base", finalCost: "Custo final", current: "Atual", manualPaymentHint: "Clique ou arraste Cores da Reserve para pagar o custo e colocar os Cores de Lv antes de confirmar.",
     settingsTitle: "Configurações do simulador", language: "Idioma", resolution: "Resolução", displayMode: "Modo de exibição", fullscreen: "Tela cheia", windowed: "Janela", apply: "Aplicar",
-    portuguese: "Português (Brasil)", english: "English", effect: "Efeito", abilities: "Habilidades", families: "Famílias", noEffect: "Nenhum texto de efeito disponível.",
+    portuguese: "Português (Brasil)", english: "English", japanese: "日本語", effect: "Efeito", abilities: "Habilidades", families: "Famílias", noEffect: "Nenhum texto de efeito disponível.",
     deckBuilder: "DECK BUILDER", eternalFormat: "Formato Eternal", currentList: "Lista atual", myDecks: "Meus decks", cards: "cartas", validDeck: "Deck válido", allTypes: "Todos os tipos", allColors: "Todas as cores", searchCards: "Buscar nome, número ou família...",
     noDecks: "Você ainda não tem decks", noDecksOnline: "Crie um deck válido antes de entrar no online.",
     manualResolution: "Resolução manual", battleSequence: "Sequência Eternal", battleSequenceText: "Start → Core → Draw → Refresh → Main → Attack → End",
@@ -33,7 +53,7 @@ const translations = {
     reserve: "RESERVE", coreTrash: "CORE TRASH", dragCores: "Drag Cores", pendingPlay: "PENDING PLAY", confirmPlay: "Confirm play", cancelPlay: "Cancel play",
     cost: "Cost", summonCost: "Summon cost", paid: "Paid", minLevel: "Minimum Cores", costReduction: "Reduction", printedCost: "Base cost", finalCost: "Final cost", current: "Current", manualPaymentHint: "Click or drag Reserve Cores to pay the cost and place the required Lv Cores before confirming.",
     settingsTitle: "Simulator settings", language: "Language", resolution: "Resolution", displayMode: "Display mode", fullscreen: "Fullscreen", windowed: "Windowed", apply: "Apply",
-    portuguese: "Português (Brasil)", english: "English", effect: "Effect", abilities: "Abilities", families: "Families", noEffect: "No effect text available.",
+    portuguese: "Português (Brasil)", english: "English", japanese: "日本語", effect: "Effect", abilities: "Abilities", families: "Families", noEffect: "No effect text available.",
     deckBuilder: "DECK BUILDER", eternalFormat: "Eternal Format", currentList: "Current list", myDecks: "My decks", cards: "cards", validDeck: "Valid deck", allTypes: "All types", allColors: "All colors", searchCards: "Search name, number or family...",
     noDecks: "You do not have any decks yet", noDecksOnline: "Create a valid deck before playing online.",
     manualResolution: "Manual resolution", battleSequence: "Eternal sequence", battleSequenceText: "Start → Core → Draw → Refresh → Main → Attack → End",
@@ -44,16 +64,16 @@ const translations = {
   }
 };
 
-const LanguageContext = createContext({ language: "ptBR", t: (key) => key, setLanguage: () => {} });
+const LanguageContext = createContext({ language: "ja", t: (key) => key, setLanguage: () => {} });
 
 export function LanguageProvider({ children }) {
-  const initial = getSettings().language || "ptBR";
+  const initial = getSettings().language || "ja";
   const [language, setLanguageState] = useState(initial);
   const value = useMemo(() => ({
     language,
     t: (key) => translations[language]?.[key] ?? translations.ptBR[key] ?? key,
     setLanguage(next) {
-      const safe = next === "en" ? "en" : "ptBR";
+      const safe = ["ja", "en", "ptBR"].includes(next) ? next : "ja";
       saveSettings({ ...getSettings(), language: safe });
       setLanguageState(safe);
     }

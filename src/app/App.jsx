@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { getSettings } from "../services/platform/storage.js";
 import { applyTheme } from "../services/platform/theme.js";
+import { useLanguage } from "../localization/i18n.jsx";
 
 /*
  * Screens are loaded on demand. This keeps the initial Home bundle small and
@@ -25,11 +26,12 @@ const StarterOnboarding = lazy(() => import("../features/shop/components/Starter
 const ArenaVisualPreview = lazy(() => import("../features/arena-visual/components/preview/ArenaVisualPreview.jsx"));
 
 function LoadingScreen() {
+  const { language } = useLanguage();
   return (
     <main className="route-loading" aria-live="polite">
       <div className="route-loading-mark" />
       <strong>Battle Spirits: KAIHOU! Simulator</strong>
-      <span>Carregando…</span>
+      <span>{language === "ja" ? "読み込み中…" : language === "en" ? "Loading…" : "Carregando…"}</span>
     </main>
   );
 }
