@@ -5805,7 +5805,7 @@ if (match?.winnerId) {
     summary,
     featuredMasteryImage: featuredMasteryCard ? resolveCardImage(featuredMasteryCard) : null,
     featuredMasteryName: featuredMasteryCard ? getCardName(featuredMasteryCard, language) : "",
-    notice: postMatchActionNotice,
+    notice: language === "ja" ? japaneseGameError(postMatchActionNotice) : postMatchActionNotice,
     mode,
     rematchPending,
     opponentUsername: String(summary?.opponent?.username || "").replace(/^@/, "").trim(),
@@ -7504,7 +7504,7 @@ if (match?.winnerId) {
             masteryImageSrc={featuredMasteryCard ? resolveCardImage(featuredMasteryCard) : null}
             masteryCardName={featuredMasteryCard ? getCardName(featuredMasteryCard) : ""}
             rankedDelta={rankedDelta}
-            postMatchActionNotice={postMatchActionNotice}
+            postMatchActionNotice={language === "ja" ? japaneseGameError(postMatchActionNotice) : postMatchActionNotice}
             mode={mode}
             rematchPending={rematchPending}
             opponentUsername={opponentUsername}

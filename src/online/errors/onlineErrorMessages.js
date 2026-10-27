@@ -1,3 +1,4 @@
+import { japaneseMatchSetupText } from "../../localization/matchSetupText.js";
 import { japaneseGameError } from "../../localization/japaneseGameErrors.js";
 import { OnlineErrorCode } from "../domain/onlineErrors.js";
 
@@ -18,6 +19,7 @@ const COPY = Object.freeze({
     FRIEND_REQUIRED: "この操作はフレンド同士でのみ利用できます。",
     CHALLENGE_UNAVAILABLE: "現在、このプレイヤーに対戦を申し込めません。",
     CHALLENGE_EXPIRED: "対戦の申し込み期限が切れました。",
+    CHALLENGE_DECLINED: "対戦の申し込みが拒否されました。",
     CHALLENGE_CANCELLED: "対戦の申し込みが取り消されました。",
     DECK_LOCK_FAILED: "対戦用のデッキを確定できませんでした。",
     RANKED_ACCOUNT_ALREADY_QUEUED: "このアカウントはすでにランク対戦の待機中です。",
@@ -89,7 +91,7 @@ export function onlineErrorMessage(input, {
   const raw = String(input?.error || input?.message || (typeof input === "string" ? input : "")).trim();
   if (raw && raw.length <= 180 && !UNSAFE_ERROR_PATTERN.test(raw)) return locale === "ja" ? japaneseGameError(raw) : raw;
 
-  return fallback || (locale === "ja" ? "オンライン対戦の操作を完了できませんでした。" : locale === "en"
+  return (fallback && (locale === "ja" ? japaneseGameError(japaneseMatchSetupText(fallback)) : fallback)) || (locale === "ja" ? "オンライン対戦の操作を完了できませんでした。" : locale === "en"
     ? "Could not complete this Online action."
     : "Não foi possível concluir esta ação no Online.");
 }
