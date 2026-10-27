@@ -2074,7 +2074,7 @@ export default function Simulator({
               {orderedCandidates.map(({ candidate, card }, index) => {
                 const orderId = candidate.triggerId || candidate.instanceId;
                 const primaryLabel = isTriggerOrderPicker
-                  ? (language === "en" ? candidate.labelEN : candidate.labelPT) || candidate.event || orderId
+                  ? (language === "ja" ? getJapaneseDecisionText(candidate.labelEN || candidate.labelPT || "") : language === "en" ? candidate.labelEN : candidate.labelPT) || candidate.event || orderId
                   : (card ? getCardName(card) : candidate.cardId);
                 const secondaryLabel = isTriggerOrderPicker
                   ? [candidate.cardId, candidate.event].filter(Boolean).join(" · ")
@@ -4704,7 +4704,7 @@ export default function Simulator({
           );
 
     const triggerText =
-      language === "en"
+      language === "ja" ? getJapaneseDecisionText(trigger.effectTextEN || trigger.effectTextPT || "") : language === "en"
         ? (
             trigger.effectTextEN ||
             trigger.effectTextPT ||
@@ -4717,7 +4717,7 @@ export default function Simulator({
           );
 
     const criticalText =
-      language === "en"
+      language === "ja" ? getJapaneseDecisionText(trigger.criticalHit?.textEN || trigger.criticalHit?.textPT || "") : language === "en"
         ? (
             trigger.criticalHit
               ?.textEN ||

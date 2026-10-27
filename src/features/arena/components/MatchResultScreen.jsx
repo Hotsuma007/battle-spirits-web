@@ -65,7 +65,7 @@ export default function MatchResultScreen({
   serverVerified = false
 }) {
   const en = language === "en";
-  const copy = reasonCopy(reason, defeated?.name || (en ? "The opponent" : "O oponente"), language);
+  const copy = reasonCopy(reason, defeated?.name || (language === "ja" ? "相手" : en ? "The opponent" : "O oponente"), language);
 
   return (
     <div

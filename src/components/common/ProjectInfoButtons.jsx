@@ -1487,12 +1487,12 @@ export default function ProjectInfoButtons() {
   return (
     <>
       <div className="project-info-buttons">
-        <button type="button" className="project-menu-card project-menu-about" onClick={() => setModal("about")}>
+        <button type="button" aria-label={pt ? ___bsJa("Sobre o projeto", "プロジェクトについて") : ___bsJa("About the project", "プロジェクトについて")} className="project-menu-card project-menu-about" onClick={() => setModal("about")}>
           <span className="project-menu-icon">i</span>
           <span className="project-menu-copy"><b>{pt ? ___bsJa("Sobre o projeto", "プロジェクトについて") : ___bsJa("About the project", "プロジェクトについて")}</b><small>{pt ? ___bsJa("Conheça mais", "もっと詳しく知る") : ___bsJa("Learn more", "もっと詳しく知る")}</small></span>
           <i className="project-menu-arrow">›</i>
         </button>
-        <button type="button" className="project-menu-card project-menu-patch" onClick={() => { setSelectedIndex(0); setModal("patch"); }}>
+        <button type="button" aria-label={___bsJa("Patch Notes", "更新履歴")} className="project-menu-card project-menu-patch" onClick={() => { setSelectedIndex(0); setModal("patch"); }}>
           <span className="project-menu-icon">▤</span>
           <span className="project-menu-copy"><b>{___bsJa("Patch Notes", "パッチノート")}</b><small>{pt ? ___bsJa("Novidades do jogo", "新着情報") : ___bsJa("What's new", "新着情報")}</small></span>
           <i className="project-menu-arrow">›</i>
